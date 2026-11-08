@@ -633,6 +633,9 @@ html.prelock .lock{display:block}
 .pin-setup .lk-pad button{background:var(--raise);color:var(--ink)}
 .pin-setup .lk-pad button.fn{background:none}
 .pin-setup .lk-pad button:active{background:var(--accFill);color:#111318}
+.lk-face{display:inline-flex;align-items:center;gap:10px;height:50px;padding:0 22px;border-radius:99px;background:#F9DC4A;color:#111318;font-weight:700;font-size:16px;margin:-8px 0 22px;box-shadow:0 10px 28px rgba(249,220,74,.3)}
+.lk-face svg{width:22px;height:22px}
+.lk-face:active{transform:scale(.97)}
 /* ---------- Tagesstart ---------- */
 .kick{position:fixed;inset:0;z-index:85;display:none;background:radial-gradient(100% 55% at 50% 0%,rgba(249,220,74,.35),transparent 65%),#0B0C10;color:#fff;overflow:auto;padding:calc(var(--safeT) + 16px) 22px calc(var(--safeB) + 22px)}
 .kick.on{display:block;animation:kin .5s cubic-bezier(.2,.8,.2,1)}
@@ -1877,9 +1880,8 @@ let LOCKED=false,PINBUF='',FAILS=0,LOCKUNTIL=0,HIDDEN_AT=0;
 const lockActive=()=>!!SEC().pin;
 function padHtml(fn,face){return `<div class="lk-pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="${fn}('${n}')"><b>${n}</b></button>`).join('')}<button class="fn" onclick="tryFace()" ${face?'':'style="visibility:hidden"'} aria-label="Face ID">${ic('faceid')}</button><button onclick="${fn}('0')"><b>0</b></button><button class="fn" onclick="${fn}('del')" aria-label="Löschen">${ic('del')}</button></div>`}
 function showLock(){if(!lockActive())return;LOCKED=true;PINBUF='';const el=document.getElementById('lock');
-  el.innerHTML=`<div class="lk-in"><div class="lk-logo">${logoSvg(S.settings.logo)}</div><div class="lk-hi">${greet()}${S.settings.name?', '+esc(S.settings.name):''} ${greetEmo()}</div><div class="lk-sub" id="lkSub">PIN eingeben</div><div class="lk-dots" id="lkDots"><i></i><i></i><i></i><i></i></div>${padHtml('pinKey',!!SEC().faceId)}<button class="lk-forgot" onclick="forgotPin()">PIN vergessen?</button></div>`;
-  el.classList.remove('out');el.classList.add('on');document.documentElement.classList.add('islocked');document.documentElement.classList.remove('prelock');
-  if(SEC().faceId)setTimeout(()=>tryFace(true),400);}
+  el.innerHTML=`<div class="lk-in"><div class="lk-logo">${logoSvg(S.settings.logo)}</div><div class="lk-hi">${greet()}${S.settings.name?', '+esc(S.settings.name):''} ${greetEmo()}</div><div class="lk-sub" id="lkSub">PIN eingeben</div><div class="lk-dots" id="lkDots"><i></i><i></i><i></i><i></i></div>${SEC().faceId?`<button class="lk-face" onclick="tryFace()">${ic('faceid')} Mit Face ID entsperren</button>`:''}${padHtml('pinKey',!!SEC().faceId)}<button class="lk-forgot" onclick="forgotPin()">PIN vergessen?</button></div>`;
+  el.classList.remove('out');el.classList.add('on');document.documentElement.classList.add('islocked');document.documentElement.classList.remove('prelock');}
 function dots(n,err){const d=document.getElementById('lkDots');if(!d)return;[...d.children].forEach((x,i)=>x.classList.toggle('f',i<n));d.classList.toggle('err',!!err);if(err){d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake')}}
 async function pinKey(k){if(Date.now()<LOCKUNTIL)return;if(k==='del'){PINBUF=PINBUF.slice(0,-1);dots(PINBUF.length);return}if(PINBUF.length>=4)return;PINBUF+=k;dots(PINBUF.length);
   if(PINBUF.length===4){const h=await sha(PINBUF);if(h===SEC().pin){FAILS=0;unlock()}else{FAILS++;dots(4,true);if(navigator.vibrate)try{navigator.vibrate([30,40,30])}catch(e){}const sub=document.getElementById('lkSub');
@@ -2102,7 +2104,11 @@ const SYNC_KEY='sd_sync';
 let SY=(()=>{try{return JSON.parse(localStorage.getItem(SYNC_KEY)||'null')}catch(e){return null}})();
 let initialPulled=true,bootTs=0,_afterQ=[],pendingPush=false;
 let syncState='local',syncAt=0,pushTimer=null,pulling=false,pushing=false,dirty=false,pushAgain=false,syncErr='';
-const saveSY=()=>{try{SY?localStorage.setItem(SYNC_KEY,JSON.stringify(SY)):localStorage.removeItem(SYNC_KEY)}catch(e){}};
+function idb(){return new Promise((res,rej)=>{try{const r=indexedDB.open('sales-dashboard',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
+async function idbSet(k,v){try{const d=await idb();await new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');v==null?t.objectStore('kv').delete(k):t.objectStore('kv').put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error)})}catch(e){}}
+async function idbGet(k){try{const d=await idb();return await new Promise((res,rej)=>{const q=d.transaction('kv','readonly').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}catch(e){return null}}
+const saveSY=()=>{try{SY?localStorage.setItem(SYNC_KEY,JSON.stringify(SY)):localStorage.removeItem(SYNC_KEY)}catch(e){}idbSet(SYNC_KEY,SY?JSON.parse(JSON.stringify(SY)):null)};
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 const syncOn=()=>!!(SY&&SY.token&&SY.owner&&SY.repo);
 const ghUrl=()=>`https://api.github.com/repos/${encodeURIComponent(SY.owner)}/${encodeURIComponent(SY.repo)}/contents/${SY.path||'data.json'}`;
 const ghH=(x={})=>({'Authorization':'Bearer '+SY.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...x});
@@ -2157,14 +2163,14 @@ function syncSheet(){const on=syncOn();
     <div class="field"><label>Token (beginnt mit github_pat_)</label><input class="inp" id="syT" type="password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="github_pat_…"></div>
     <div class="field"><label>Verschlüsselungs-Passwort (mind. 10 Zeichen)</label><input class="inp" id="syP" type="password" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Auf allen Geräten gleich"></div>
     <button class="btn pri block" onclick="syncConnect()">${ic('cloud')} Verbinden</button>
-   </div><p class="hint">Token und Passwort bleiben nur auf diesem Gerät. In GitHub liegt nur verschlüsselter Text. Das Passwort gut merken: Ohne es lassen sich die Cloud-Daten nicht mehr öffnen.</p>`}`)}
+   </div>${/iPhone|iPad|iPod/.test(navigator.userAgent)&&!navigator.standalone?`<div class="warn" style="margin-top:12px">${ic('alert')} Du bist gerade in Safari. Öffne die App über das Icon auf dem Home-Bildschirm und verbinde dort, sonst wirst du dort erneut gefragt.</div>`:''}<p class="hint">Token und Passwort bleiben nur auf diesem Gerät. In GitHub liegt nur verschlüsselter Text. Das Passwort gut merken: Ohne es lassen sich die Cloud-Daten nicht mehr öffnen.</p>`}`)}
 async function syncConnect(){const o=document.getElementById('syO').value.trim(),r=document.getElementById('syR').value.trim(),t=document.getElementById('syT').value.trim(),pw=document.getElementById('syP').value;
   if(!o||!r||!t){toast('Bitte Benutzername, Repository und Token ausfüllen');return}
   if(pw&&pw.length<10){toast('Das Passwort sollte mindestens 10 Zeichen haben');return}
-  const prev=SY;SY={owner:o,repo:r,token:t,path:'data.json'};toast('Prüfe Verbindung…');
+  const prev=SY;let validated=false;SY={owner:o,repo:r,token:t,path:'data.json'};toast('Prüfe Verbindung…');
   try{const rr=await fetch(`https://api.github.com/repos/${encodeURIComponent(o)}/${encodeURIComponent(r)}`,{headers:ghH(),cache:'no-store'});
     if(rr.status===401)throw 'Der Token ist ungültig oder abgelaufen.';if(rr.status===404)throw 'Repository nicht gefunden. Prüfe Benutzername, Repository-Name und ob der Token Zugriff auf dieses Repository hat.';if(!rr.ok)throw 'GitHub antwortet mit Fehler '+rr.status+'.';
-    const g=await fetch(ghUrl(),{headers:ghH(),cache:'no-store'});
+    validated=true;saveSY();const g=await fetch(ghUrl(),{headers:ghH(),cache:'no-store'});
     if(g.status===404){if(pw){SY.salt=b64s(crypto.getRandomValues(new Uint8Array(16)));SY.key=await deriveKey(pw,SY.salt)}SY.sha=null;saveSY();await pushNow();if(syncState==='ok'){closeSheet();render();toast('Verbunden. Deine Daten liegen jetzt in der Cloud','ok')}else{syncSheet()}return}
     if(!g.ok)throw 'Fehler '+g.status+' beim Lesen der Daten.';
     const j=await g.json();const txt=dec(j.content);const raw=JSON.parse(txt);let remote;
@@ -2177,10 +2183,10 @@ async function syncConnect(){const o=document.getElementById('syO').value.trim()
      <p class="hint" style="margin:0">Empfohlen auf dem zweiten Gerät, z. B. dem iPad.</p>
      <button class="btn block" onclick="SY.sha=SC.sha;saveSY();S._ts=Date.now();_rawSave();pushNow().then(()=>{closeSheet();render();toast('Dieses Gerät hochgeladen','ok')})">${ic('up')} Dieses Gerät hochladen</button>
      <p class="hint" style="margin:0">Überschreibt die Daten in der Cloud mit denen von diesem Gerät.</p></div>`)}
-  catch(e){SY=prev;saveSY();toast(typeof e==='string'?e:'Keine Verbindung zu GitHub möglich');}}
+  catch(e){const pwErr=typeof e==='string'&&/Passwort/.test(e);if(!validated||pwErr){SY=prev;saveSY()}else{saveSY()}toast(typeof e==='string'?e:'Keine Verbindung zu GitHub möglich');}}
 
 /* ---------- Start ---------- */
-load(); if(syncOn()){initialPulled=false;bootTs=S._ts||0;setTimeout(finishBoot,4000)} if(S.salary.provHist['2026-10']==null)S.salary.provHist['2026-10']=0; if(!S.settings.appName||['Takt','Zeitwerk','ClosingTime'].includes(S.settings.appName))S.settings.appName='Sales Dashboard'; S.deals.forEach(d=>{if(d.name==='Übernahme aus Excel'){d.name='';if(d.date<(S.settings.startMonth||'2026-11'))d.retro=true}});S.leads.forEach(l=>{if(l.note==='Übernahme aus Excel')l.note=''});if(!S.settings.name)S.settings.name='Alexander'; if(!LOGOS[S.settings.logo])S.settings.logo='a'; if(!S.settings.theme)S.settings.theme='auto'; _rawSave(); applyTheme(); setTouchIcon(); route(); paintSync(); if(syncOn())pullNow('boot'); if(lockActive())showLock(); else setTimeout(()=>afterInitial(dailyFlow),500);
+load(); if(syncOn()){initialPulled=false;bootTs=S._ts||0;setTimeout(finishBoot,4000)} if(S.salary.provHist['2026-10']==null)S.salary.provHist['2026-10']=0; if(!S.settings.appName||['Takt','Zeitwerk','ClosingTime'].includes(S.settings.appName))S.settings.appName='Sales Dashboard'; S.deals.forEach(d=>{if(d.name==='Übernahme aus Excel'){d.name='';if(d.date<(S.settings.startMonth||'2026-11'))d.retro=true}});S.leads.forEach(l=>{if(l.note==='Übernahme aus Excel')l.note=''});if(!S.settings.name)S.settings.name='Alexander'; if(!LOGOS[S.settings.logo])S.settings.logo='a'; if(!S.settings.theme)S.settings.theme='auto'; _rawSave(); applyTheme(); setTouchIcon(); route(); paintSync(); if(syncOn()){pullNow('boot');idbSet(SYNC_KEY,JSON.parse(JSON.stringify(SY)))}else{idbGet(SYNC_KEY).then(v=>{if(v&&v.token&&!syncOn()){SY=v;try{localStorage.setItem(SYNC_KEY,JSON.stringify(SY))}catch(e){}initialPulled=false;bootTs=S._ts||0;setTimeout(finishBoot,4000);pullNow('boot');paintSync()}})} if(lockActive())showLock(); else setTimeout(()=>afterInitial(dailyFlow),500);
 setInterval(()=>{if(!document.hidden&&VIEW==='home'&&!document.getElementById('sheet').classList.contains('on')&&document.activeElement.tagName!=='INPUT')render()},60000);
 </script>
 </body>
