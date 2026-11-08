@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..700&display=swap" rel="stylesheet">
 <style>
+.spx{display:inline-flex;align-items:center;gap:2px;font-style:normal;line-height:1}.spx s{text-decoration:none;opacity:.45;font-weight:600;font-size:.85em}.spx svg{width:14px;height:14px;flex:none}.cd .spx{font-size:13px;gap:1px}.cd span .spx{flex:none;overflow:visible}.cd span .spx svg{width:15px;height:15px;min-width:15px;flex:none}
 :root{
   --canvas:#EEF0F5; --paper:#FFFFFF; --raise:#F6F7FA; --ink:#0A0B10; --ink2:#454A57; --muted:#868B99; --hair:#E5E7EE; --hair2:#D1D5DE; --line:rgba(10,11,16,.04);
   --hover:#F5F6F9; --slim:#FAFBFC; --shadow:0 1px 2px rgba(15,18,30,.04),0 8px 28px rgba(15,18,30,.06);
@@ -822,7 +823,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='23';
+const APP_VERSION='25';
 
 /* Zoom sperren (iOS ignoriert user-scalable, daher zusätzlich per Script) */
 document.addEventListener('gesturestart',e=>e.preventDefault());
@@ -984,12 +985,16 @@ const TYPES={
   urlaub:{l:'Urlaub',i:'plane'}, krank:{l:'Krank',i:'thermo'}, feiertag:{l:'Feiertag',i:'flag'}
 };
 const isFree=t=>t==='urlaub'||t==='krank'||t==='feiertag';
+/* 24.12. + 31.12.: ½ Tag geschenkt + ½ Pflichturlaub (Standard, ab App-Start) */
+function specialDay(k){const md=k.slice(5);return md==='12-24'?'Heiligabend':md==='12-31'?'Silvester':null}
+function spOf(k,weekend,hol){return(!weekend&&!hol&&!S.days[k]&&k>=S.settings.startMonth+'-01')?specialDay(k):null}
 function worked(e){ if(!e||!e.start||!e.end)return null; let m=toMin(e.end)-toMin(e.start); if(m<0)m+=1440; m-=(+e.pause||0); return m/60; }
 function dayInfo(k){
   const d=pD(k), wd=d.getDay(), weekend=wd===0||wd===6;
   const hol=holidays(d.getFullYear())[k]||null;
   const e=S.days[k]||null; const tk=todayK();
-  let type=e?e.type:(hol?'feiertag':weekend?'we':'leer');
+  const sp=spOf(k,weekend,hol);
+  let type=e?e.type:(hol?'feiertag':weekend?'we':sp?'sonder':'leer');
   let soll=0,ist=0,w=null,counted=false,running=false,missing=false;
   const sollTag=+S.settings.sollTag, sollHalb=+S.settings.sollHalb;
   if(e){
@@ -1001,24 +1006,25 @@ function dayInfo(k){
       else{ running=k===tk&&!!e.start&&!e.end; counted=k<tk; missing=k<tk; }
     }
   }else{
-    if(weekend||hol){counted=true}
+    if(weekend||hol||sp){counted=true}
     else{soll=sollTag;counted=k<tk;missing=k<tk}
   }
-  return {k,d,wd,weekend,hol,e,type,soll,ist,w,counted,running,missing,future:k>tk};
+  return {k,d,wd,weekend,hol,sp,e,type,soll,ist,w,counted,running,missing,future:k>tk};
 }
 function monthDays(m){const n=dim(m),a=[];for(let i=1;i<=n;i++)a.push(dayInfo(`${m}-${pad(i)}`));return a}
 function monthStats(m){
   const days=monthDays(m);let sollAll=0,soll=0,ist=0,urlaub=0,missing=0,workDays=0;
   days.forEach(x=>{sollAll+=x.soll; if(x.counted){soll+=x.soll;ist+=x.ist}
-    if(x.e&&x.e.type==='urlaub'&&!x.weekend&&!x.hol)urlaub+=1; if(x.e&&x.e.type==='halb')urlaub+=.5;
+    if(x.e&&x.e.type==='urlaub'&&!x.weekend&&!x.hol)urlaub+=1; if(x.e&&x.e.type==='halb')urlaub+=.5; if(x.sp)urlaub+=.5;
     if(x.missing)missing++; if(x.soll>0)workDays++});
   return {days,sollAll,soll,ist,saldo:ist-soll,urlaub,missing,workDays};
 }
 function carryIn(m){ const st=S.settings.startMonth; if(m<st)return null; let c=+S.settings.startSaldo||0; let k=st; let guard=0; while(k<m&&guard++<240){c+=monthStats(k).saldo;k=addM(k,1)} return c; }
 function urlaubYear(y){
-  const keys=Object.keys(S.days).filter(k=>k.startsWith(y+'-')).sort();
+  const spk=[y+'-12-24',y+'-12-31'].filter(k=>{const d=pD(k);return spOf(k,d.getDay()===0||d.getDay()===6,holidays(+y)[k])});
+  const keys=[...new Set([...Object.keys(S.days).filter(k=>k.startsWith(y+'-')),...spk])].sort();
   let n=+(S.settings.urlaubVorher[y]||0);const idx={};
-  keys.forEach(k=>{const e=S.days[k];const d=pD(k);const we=d.getDay()===0||d.getDay()===6||holidays(+y)[k];
+  keys.forEach(k=>{const e=S.days[k];if(!e){n+=.5;idx[k]=n;return}const d=pD(k);const we=d.getDay()===0||d.getDay()===6||holidays(+y)[k];
     if(e.type==='urlaub'&&!we){n+=1;idx[k]=n} else if(e.type==='halb'){n+=.5;idx[k]=n}});
   return {used:n,idx,total:+S.settings.urlaubAnspruch};
 }
@@ -1030,7 +1036,7 @@ const leadsOf=m=>S.leads.filter(l=>l.date.startsWith(m)).sort((a,b)=>b.date.loca
 const LEVELS=[70,100,120,140,160,180,200];
 
 /* ---------- Gehalt-Logik ---------- */
-function compDaysAuto(m){let n=0;monthDays(m).forEach(x=>{if(x.weekend)return; if(x.e){if(isFree(x.e.type))n+=1;else if(x.e.type==='halb')n+=.5} else if(x.hol)n+=1});return n}
+function compDaysAuto(m){let n=0;monthDays(m).forEach(x=>{if(x.weekend)return; if(x.e){if(isFree(x.e.type))n+=1;else if(x.e.type==='halb')n+=.5} else if(x.hol||x.sp)n+=1});return n}
 function provisionOf(m){ if(S.salary.provHist[m]!=null)return +S.salary.provHist[m]; if(S.targets[m]){const x=salary(m,true);return x.provision+x.planBonus+x.bigBonus} return 0; }
 function workDaysOf(m){let n=0;const c=dim(m);for(let i=1;i<=c;i++){const k=`${m}-${pad(i)}`;const d=pD(k);const w=d.getDay();if(w!==0&&w!==6&&!holidays(d.getFullYear())[k])n++}return n}
 function salary(m,noComp){
@@ -1155,8 +1161,8 @@ function ringG(p,size=148){
 const fmtK=n=>n>=1000?fmtN(n/1000,(n%1000===0)?0:(n%100===0?1:2))+'k':fmtN(n);
 const QUOTES_FREE=['Akku laden. Der Montag kommt von allein.','Der beste Abschluss heute: ein freier Kopf.','Ausgeruhte Closer schließen besser ab.','Heute zählt nur eine Quote: deine Erholung.','Kein Call, kein Forecast. Nur du.','Abschalten ist auch Pipeline-Pflege.','Zeit für dich. Die Deals warten.'];
 const QUOTES_WORK=['Jeder Call bringt dich näher an die 70 %.','Ein Nein ist nur der Weg zum nächsten Ja.','Pipeline füllen, Takt halten.','Heute ist ein guter Tag für einen Abschluss.','Fokus auf die nächsten zwei Deals.','Kleine Schritte, große Quote.','Erst zuhören, dann abschließen.','Dranbleiben schlägt Talent.'];
-function lastWorkday(m){const n=dim(m);for(let i=n;i>=1;i--){const x=dayInfo(`${m}-${pad(i)}`);if(!x.weekend&&!x.hol)return x.k}return null}
-function workdaysLeft(m,from){let n=0;monthDays(m).forEach(x=>{if(x.k<from||x.weekend||x.hol)return;if(x.e&&isFree(x.e.type))return;n+=(x.e&&x.e.type==='halb')?.5:1});return n}
+function lastWorkday(m){const n=dim(m);for(let i=n;i>=1;i--){const x=dayInfo(`${m}-${pad(i)}`);if(!x.weekend&&!x.hol&&!x.sp)return x.k}return null}
+function workdaysLeft(m,from){let n=0;monthDays(m).forEach(x=>{if(x.k<from||x.weekend||x.hol||x.sp)return;if(x.e&&isFree(x.e.type))return;n+=(x.e&&x.e.type==='halb')?.5:1});return n}
 function dayTile(){
   const d0=new Date(),tk=todayK(),m=ymOf(d0),di=dayInfo(tk),e=S.days[tk];
   const doy=Math.floor((d0-new Date(d0.getFullYear(),0,0))/864e5);
@@ -1166,6 +1172,7 @@ function dayTile(){
   else if(e&&e.type==='krank'){status='Krank gemeldet';icon='thermo';free=true;quote='Gute Besserung. Heute zählt nur das Gesundwerden.'}
   else if(e&&e.type==='feiertag'||di.hol){status=di.hol||'Feiertag';icon='flag';free=true}
   else if(di.weekend){status='Wochenende';icon='sun';free=true}
+  else if(di.sp){status=di.sp+': ½ Tag geschenkt + ½ Pflichturlaub';icon='plane';free=true}
   else if(e&&e.type==='halb'){status='Halber Urlaubstag, Soll '+fmtN(+S.settings.sollHalb)+' h';icon='halfplane'}
   else if(e&&e.type==='koeln'){status='Office-Tag, Soll '+fmtN(+S.settings.sollTag)+' h';icon='building'}
   else {status='Arbeitstag, Soll '+fmtN(+S.settings.sollTag)+' h';icon='brief'}
@@ -1197,9 +1204,9 @@ function vHome(){
   const y=d0.getFullYear(); const strip=[...Array(12)].map((_,i)=>({i,...heatVal(`${y}-${pad(i+1)}`)}));
   const nm=S.settings.name?`, ${esc(S.settings.name)}`:'';
   const type=e.type||'arbeit'; const free=isFree(type)&&S.days[tk];
-  const soll=(di.weekend||di.hol)?0:(type==='halb'?+S.settings.sollHalb:+S.settings.sollTag);
-  const w=worked(e); const locked=(di.weekend||di.hol)&&!S.days[tk];
-  const mSt=monthStreak(),tSt=timeStreak(),miSt=missionStreak();const T=tempo(m),WG=weekGoal(m);const msn=missionsFor(tk),mst=missionState(tk);const workday=!di.weekend&&!di.hol&&!(e.type&&isFree(e.type));
+  const soll=(di.weekend||di.hol||di.sp)?0:(type==='halb'?+S.settings.sollHalb:+S.settings.sollTag);
+  const w=worked(e); const locked=(di.weekend||di.hol||di.sp)&&!S.days[tk];
+  const mSt=monthStreak(),tSt=timeStreak(),miSt=missionStreak();const T=tempo(m),WG=weekGoal(m);const msn=missionsFor(tk),mst=missionState(tk);const workday=!di.weekend&&!di.hol&&!di.sp&&!(e.type&&isFree(e.type));
   const dw=d0.getDay();const showFri=(dw===5&&d0.getHours()>=12)||dw===6||dw===0;const fri=showFri?(()=>{const mon=new Date(d0);mon.setDate(d0.getDate()-((dw+6)%7));const ks=[...Array(5)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return ymd(d)});const ds=S.deals.filter(x=>!x.retro&&ks.includes(x.date));return {n:ds.length,sum:ds.reduce((a,x)=>a+ +x.amount,0),h:ks.reduce((a,k)=>a+(worked(S.days[k]||{})||0),0),mis:ks.reduce((a,k)=>a+missionState(k).filter(Boolean).length,0)}})():null;
   const dSaved=S.dream?dreamSaved():0;
   const prevW=(()=>{const d=new Date(d0);for(let i=0;i<14;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start&&x.end)return dayInfo(ymd(d))}return null})();
@@ -1290,6 +1297,7 @@ function todaySet(f,v){
 /* ============================================================
    Zeit
    ============================================================ */
+const spEmo=n=>n==='Heiligabend'?'🎄':'🥂';
 function calendar(m){
   const days=monthDays(m); const off=(days[0].d.getDay()+6)%7; const tk=todayK();
   const short={urlaub:'Urlaub',halb:'½ Urlaub',krank:'Krank',feiertag:'Feiertag'};const sic=t=>`${ic(TYPES[t].i)}<em class="lt">${short[t]}</em>`;
@@ -1297,11 +1305,12 @@ function calendar(m){
   days.forEach(x=>{const e=x.e;let cls='',txt='';
     if(e){cls=e.type; if(isFree(e.type)||e.type==='halb'&&x.w==null)txt=sic(e.type); else txt=x.w!=null?hm(x.w).replace('h ',':').replace('m',''):(x.missing?'fehlt':(e.type==='koeln'?ic('building'):''));}
     else if(x.hol){cls='feiertag';txt=sic('feiertag')}
+    else if(x.sp){cls='halb sonder';txt=`<i class="spx">${spEmo(x.sp)}<s>/</s>${ic('plane')}</i>`}
     else if(x.weekend){cls='we'}
     else if(x.missing){cls='missing';txt='fehlt'}
     else cls='open';
     if(e&&!isFree(e.type)&&x.missing)cls+=' missing';
-    cells.push(`<button class="cd ${cls} ${x.k===tk?'today':''} ${x.k===FLASH?'flash':''}" onclick="editDay('${x.k}')" data-tip="${WDL[x.wd]}, ${dLabel(x.k)}${e?'<br>'+TYPES[e.type].l:''}${x.w!=null?'<br>'+hm(x.w):''}"><b>${x.d.getDate()}</b><span>${txt}</span></button>`)});
+    cells.push(`<button class="cd ${cls} ${x.k===tk?'today':''} ${x.k===FLASH?'flash':''}" onclick="editDay('${x.k}')" data-tip="${WDL[x.wd]}, ${dLabel(x.k)}${e?'<br>'+TYPES[e.type].l:''}${x.sp?'<br>'+x.sp+': ½ frei + ½ Urlaub':''}${x.w!=null?'<br>'+hm(x.w):''}"><b>${x.d.getDate()}</b><span>${txt}</span></button>`)});
   return `<div class="panel cal"><div class="cw">${['Mo','Di','Mi','Do','Fr','Sa','So'].map(d=>`<span>${d}</span>`).join('')}</div><div class="cg">${cells.join('')}</div>
   <div class="legend" style="margin-top:14px"><span><i style="background:var(--accFill)"></i>Gearbeitet</span><span><i style="background:var(--k)"></i>Office</span><span><i style="background:var(--u)"></i>Urlaub</span><span><i style="background:var(--h)"></i>½ Urlaub</span><span><i style="background:var(--s)"></i>Krank</span><span><i style="background:var(--w)"></i>Wochenende, Feiertag</span><span><i style="background:var(--red)"></i>Fehlt</span></div></div>`;
 }
@@ -1336,6 +1345,7 @@ function dayRow(x,u){
     }
     if(e.note)t2=esc(e.note)+(t2?', '+t2.charAt(0).toLowerCase()+t2.slice(1):'');
   }else if(x.hol){t1=`${ic('flag')}${x.hol}`;t2='Feiertag';cls='feiertag'}
+  else if(x.sp){t1=`<i class="spx">${spEmo(x.sp)}<s>/</s>${ic('plane')}</i>${x.sp}`;t2=`½ Tag geschenkt + ½ Pflichturlaub${u.idx[x.k]?`, Urlaubstag ${one(u.idx[x.k])} von ${u.total}`:''}`;cls='halb';rv=`<small class="mut">neutral</small>`}
   else if(x.weekend){t1=WDL[x.wd];slim=true}
   else if(x.missing){cls='missing';t1=`Kein Eintrag`;t2='Antippen zum Nachtragen';rv=`<b class="neg">−${fmtN(x.soll,2)}</b>`}
   else{t1=x.k===tk?'Heute':'Arbeitstag';t2='';rv=`<small class="mut">Soll ${fmtN(x.soll)} h</small>`}
@@ -1345,7 +1355,7 @@ function dayRow(x,u){
     <div class="rv">${rv}</div></div>`;
 }
 let ED=null;
-function editDay(k){const x0=dayInfo(k);if((x0.weekend||x0.hol)&&!S.days[k]){toast(x0.hol?`${x0.hol}: keine Erfassung`:'Wochenende: keine Erfassung');return}const e=S.days[k]?{...S.days[k]}:{type:'arbeit',start:'',end:'',pause:0,note:''};ED={k,e};drawDaySheet()}
+function editDay(k){const x0=dayInfo(k);if((x0.weekend||x0.hol||x0.sp)&&!S.days[k]){toast(x0.sp?`${x0.sp}: ½ Tag frei + ½ Pflichturlaub`:x0.hol?`${x0.hol}: keine Erfassung`:'Wochenende: keine Erfassung');return}const e=S.days[k]?{...S.days[k]}:{type:'arbeit',start:'',end:'',pause:0,note:''};ED={k,e};drawDaySheet()}
 function drawDaySheet(){
   const {k,e}=ED; const x=dayInfo(k); const free=isFree(e.type);
   openSheet(`${sheetHead(`${WDL[x.wd]}, ${dLabel(k)}`)}
@@ -1368,7 +1378,7 @@ function drawDaySheet(){
 }
 function updDay(){const {k,e}=ED;const x=dayInfo(k);const w=worked(e);const el=document.getElementById('dsum');if(!el)return;
   if(isFree(e.type)){el.innerHTML=`<b>${TYPES[e.type].l}</b> <span class="mut">zählt neutral, Soll 0 h</span>`;return}
-  const soll=(x.weekend||x.hol)?0:(e.type==='halb'?+S.settings.sollHalb:+S.settings.sollTag);
+  const soll=(x.weekend||x.hol||x.sp)?0:(e.type==='halb'?+S.settings.sollHalb:+S.settings.sollTag);
   el.innerHTML=w!=null?`<div class="row"><span class="mut">Arbeitszeit</span><span class="sp"></span><b class="num">${hm(w)} (${dec2(w)} h)</b></div><div class="row" style="margin-top:6px"><span class="mut">Saldo bei ${fmtN(soll,1)} h Soll</span><span class="sp"></span><b class="num ${w-soll>=0?'pos':'neg'}">${sgn(w-soll)} h</b></div>${w>10?`<div class="chip r" style="margin-top:10px">${ic('alert')} Mehr als 10 Stunden</div>`:''}`:`<span class="mut">Beginn und Ende eintragen. Soll ${fmtN(soll,1)} h.</span>`}
 function saveDay(){const {k,e}=ED;FLASH=k;setTimeout(()=>FLASH=null,50);if(isFree(e.type)){S.days[k]={type:e.type,note:e.note||''}}else S.days[k]={type:e.type,start:e.start||'',end:e.end||'',pause:+e.pause||0,note:e.note||''};save();closeSheet();render();const w=worked(S.days[k]);toast(isFree(S.days[k].type)?`${TYPES[S.days[k].type].l} eingetragen`:w!=null?`Gespeichert: ${hm(w)} am ${dLabel(k)}`:'Gespeichert','ok')}
 function delDay(){delete S.days[ED.k];save();closeSheet();render();toast('Eintrag gelöscht')}
@@ -1385,7 +1395,7 @@ function rangeSheet(){
    <button class="btn pri block" onclick="saveRange()">Eintragen</button>`);
 }
 function saveRange(){const f=document.getElementById('rgf').value,t=document.getElementById('rgt').value,n=document.getElementById('rgn').value;if(!f||!t||t<f){toast('Bitte einen gültigen Zeitraum wählen');return}
-  let d=pD(f),c=0;while(ymd(d)<=t){const k=ymd(d);const x=dayInfo(k);if(!x.weekend&&!x.hol){S.days[k]=RG.type==='halb'?{type:'halb',start:'',end:'',pause:0,note:n}:{type:RG.type,note:n};c++}d.setDate(d.getDate()+1)}
+  let d=pD(f),c=0;while(ymd(d)<=t){const k=ymd(d);const x=dayInfo(k);if(!x.weekend&&!x.hol&&!x.sp){S.days[k]=RG.type==='halb'?{type:'halb',start:'',end:'',pause:0,note:n}:{type:RG.type,note:n};c++}d.setDate(d.getDate()+1)}
   save();closeSheet();RG={type:RG.type};render();toast(`${c} ${c===1?'Tag':'Tage'} eingetragen`)}
 
 /* ---------- Export ---------- */
@@ -1837,7 +1847,7 @@ function yearReport(y){
     monthDays(m).forEach(x=>{if(x.k>tk||x.k<S.settings.startMonth+'-01')return;const e=x.e;
       if(e&&!isFree(e.type)&&x.w>0){r.work++;r.hours+=x.w;if(e.type==='koeln')r.office++;if(x.weekend||x.hol)tot.weekend++}
       if(x.weekend)return;
-      if(e&&e.type==='urlaub'&&!x.hol)r.urlaub++; if(e&&e.type==='halb')r.urlaub+=.5;
+      if(e&&e.type==='urlaub'&&!x.hol)r.urlaub++; if(e&&e.type==='halb')r.urlaub+=.5; if(x.sp)r.urlaub+=.5;
       if(e&&e.type==='krank'&&!x.hol)r.krank++;
       if(x.hol||(e&&e.type==='feiertag'))r.feiertag++;});
     months.push(r);['work','office','urlaub','krank','feiertag','hours'].forEach(k=>tot[k]+=r[k]);}
@@ -1917,8 +1927,8 @@ function maybeKickoff(force){if(LOCKED)return;if(!force&&(S.settings.kickoff===f
 function showKickoff(){
   const d0=new Date(),m=ymOf(d0),tk=todayK(),di=dayInfo(tk),r=rev(m),left=workdaysLeft(m,tk),nextLv=LEVELS.find(l=>r.pct<l),final=lastWorkday(m)===tk;
   const doy=Math.floor((d0-new Date(d0.getFullYear(),0,0))/864e5);const e=S.days[tk];
-  const free=di.weekend||di.hol||(e&&isFree(e.type));
-  const yk=(()=>{const d=new Date(d0);for(let i=0;i<7;i++){d.setDate(d.getDate()-1);const x=dayInfo(ymd(d));if(!x.weekend&&!x.hol)return ymd(d)}return null})();
+  const free=di.weekend||di.hol||di.sp||(e&&isFree(e.type));
+  const yk=(()=>{const d=new Date(d0);for(let i=0;i<7;i++){d.setDate(d.getDate()-1);const x=dayInfo(ymd(d));if(!x.weekend&&!x.hol&&!x.sp)return ymd(d)}return null})();
   const yRev=yk?S.deals.filter(x=>x.date===yk&&!x.retro).reduce((s,x)=>s+ +x.amount,0):0;
   const need=r.target?Math.max(0,r.target*.7-r.tot):0;const perDay=left&&r.pct<70?need/left:0;
   let emo,head,msg;
@@ -1965,7 +1975,7 @@ function toggleMission(i,k){k=k||todayK();S.missions=S.missions||{};const m=[...
   if(m.every(Boolean)){confetti();toast(`Mission erfüllt! ${missionStreak()>1?'🔥 '+missionStreak()+' Tage in Folge':'Stark!'}`,'ok')}
   if(VIEW==='home'&&!document.getElementById('kick').classList.contains('on'))render();setTimeout(checkBadges,300)}
 const missionCount=()=>Object.values(S.missions||{}).reduce((s,a)=>s+a.filter(Boolean).length,0);
-function walkWorkdays(fn){const d=new Date();const st=S.settings.startMonth+'-01';for(let g=0;g<400;g++){const k=ymd(d);if(k<st)break;const x=dayInfo(k);if(!x.weekend&&!x.hol){if(fn(k,x,g)===false)break}d.setDate(d.getDate()-1)}}
+function walkWorkdays(fn){const d=new Date();const st=S.settings.startMonth+'-01';for(let g=0;g<400;g++){const k=ymd(d);if(k<st)break;const x=dayInfo(k);if(!x.weekend&&!x.hol&&!x.sp){if(fn(k,x,g)===false)break}d.setDate(d.getDate()-1)}}
 function missionStreak(){let n=0;walkWorkdays((k,x,g)=>{const a=missionState(k);if(a.every(Boolean)){n++;return}if(g===0)return;return false});return n}
 function timeStreak(){let n=0;walkWorkdays((k,x,g)=>{if(S.days[k]){n++;return}if(g===0)return;return false});return n}
 const workedCount=()=>Object.keys(S.days).filter(k=>worked(S.days[k])>0).length;
@@ -2033,7 +2043,7 @@ function tempo(m){const tk=todayK();const total=workdaysLeft(m,m+'-01');const le
   else{st=r.pct>=need?'green':r.pct>=need*.6?'yellow':'red';lbl={green:'Auf Kurs',yellow:'Knapp dran',red:'Gas geben'}[st];txt=`Für 70 % solltest du heute bei ${fmtN(need)} % stehen. Du bist bei ${fmtN(r.pct)} %.`}
   return {st,lbl,txt,share,need}}
 function weekGoal(m){const d0=new Date();const wd=(d0.getDay()+6)%7;const mon=new Date(d0);mon.setDate(d0.getDate()-wd);const days=[...Array(7)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return ymd(d)}).filter(k=>k.startsWith(m));
-  let wdN=0;days.forEach(k=>{const x=dayInfo(k);if(x.weekend||x.hol)return;if(x.e&&isFree(x.e.type))return;wdN+=(x.e&&x.e.type==='halb')?.5:1});
+  let wdN=0;days.forEach(k=>{const x=dayInfo(k);if(x.weekend||x.hol||x.sp)return;if(x.e&&isFree(x.e.type))return;wdN+=(x.e&&x.e.type==='halb')?.5:1});
   const total=workdaysLeft(m,m+'-01');const r=rev(m);const goal=total?r.target*wdN/total:0;const got=S.deals.filter(d=>!d.retro&&days.includes(d.date)).reduce((s,d)=>s+ +d.amount,0);return {goal,got,wdN}}
 /* Traumziel */
 function dreamSaved(){const D=S.dream;if(!D)return 0;let s=+D.start||0;let m=D.since||S.settings.startMonth;const cur=ymOf(new Date());while(m<=cur){if(m>=S.settings.startMonth&&S.targets[m]){const x=salary(m);s+=x.total-x.base}m=addM(m,1)}return s}
