@@ -272,6 +272,8 @@ textarea.inp{height:auto;padding:12px 14px}
 .lv.hit b,.lv.hit span{color:var(--green)}
 .lv.next{background:var(--amberSoft);margin:0 -12px;padding:11px 12px;border-radius:12px;border-top-color:transparent}
 .lv.next+.lv{border-top-color:transparent}
+.addbtn.stbtn{background:color-mix(in srgb,var(--red) 13%,transparent);color:var(--red);box-shadow:none}
+.deal .ico.st{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red)} .deal .v.neg{color:var(--red)}
 .deal .ico.in{background:color-mix(in srgb,var(--in) 14%,transparent);color:var(--in)} .deal .ico.out{background:color-mix(in srgb,var(--out) 14%,transparent);color:var(--out)}
 .yr{display:flex;align-items:flex-end;gap:6px;height:150px;margin-top:12px}
 .yr .c{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;position:relative;cursor:pointer}
@@ -823,7 +825,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='26';
+const APP_VERSION='27';
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
 async function checkUpdate(manual){
@@ -872,6 +874,7 @@ const I={
  city:'<path d="M3 20.5h18M5 20.5V8.5l6-3v15M11 20.5V10h8v10.5M14 13.5h2M14 16.5h2"/>',
  play:'<path d="M8 5.5v13l10-6.5z" fill="currentColor"/>', stop:'<rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/>',
  coffee:'<path d="M5 9.5h11v4.5a4.5 4.5 0 0 1-4.5 4.5h-2A4.5 4.5 0 0 1 5 14z"/><path d="M16 11h1.5a2.2 2.2 0 0 1 0 4.4H16M8.5 4v2.5M12 4v2.5"/>',
+ storno:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
  trash:'<path d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9.5 7V4.5h5V7"/>',
  down:'<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14"/>', up:'<path d="M12 20V9M7.5 13.5 12 9l4.5 4.5M5 4h14"/>',
  copy:'<rect x="9" y="9" width="11" height="11" rx="2.2"/><path d="M5.5 15V6.2A2.2 2.2 0 0 1 7.7 4H15"/>',
@@ -1070,7 +1073,7 @@ function salary(m,noComp){
   let over=0; const tiers=[...P.tiers].sort((a,b)=>a.from-b.from); tiers.forEach(t=>{if(att>=t.from)over=+t.rate});
   const rate=att>=tiers[0].from?otePct+over:0;
   const provision=neu*rate/100;
-  const planBonus=neu*(+P.planRate)/100;
+  const planBonus=Math.max(0,neu)*(+P.planRate)/100;
   const bigBonus=big*(+P.bigRate)/100;
   let comp=0,compDays=0,perDay=0,hist=[];
   if(!noComp){
@@ -1228,7 +1231,7 @@ function vHome(){
   const soll=(di.weekend||di.hol||di.sp)?0:(type==='halb'?+S.settings.sollHalb:+S.settings.sollTag);
   const w=worked(e); const locked=(di.weekend||di.hol||di.sp)&&!S.days[tk];
   const mSt=monthStreak(),tSt=timeStreak(),miSt=missionStreak();const T=tempo(m),WG=weekGoal(m);const msn=missionsFor(tk),mst=missionState(tk);const workday=!di.weekend&&!di.hol&&!di.sp&&!(e.type&&isFree(e.type));
-  const dw=d0.getDay();const showFri=(dw===5&&d0.getHours()>=12)||dw===6||dw===0;const fri=showFri?(()=>{const mon=new Date(d0);mon.setDate(d0.getDate()-((dw+6)%7));const ks=[...Array(5)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return ymd(d)});const ds=S.deals.filter(x=>!x.retro&&ks.includes(x.date));return {n:ds.length,sum:ds.reduce((a,x)=>a+ +x.amount,0),h:ks.reduce((a,k)=>a+(worked(S.days[k]||{})||0),0),mis:ks.reduce((a,k)=>a+missionState(k).filter(Boolean).length,0)}})():null;
+  const dw=d0.getDay();const showFri=(dw===5&&d0.getHours()>=12)||dw===6||dw===0;const fri=showFri?(()=>{const mon=new Date(d0);mon.setDate(d0.getDate()-((dw+6)%7));const ks=[...Array(5)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return ymd(d)});const ds=S.deals.filter(x=>!x.retro&&ks.includes(x.date));return {n:ds.filter(x=>+x.amount>0).length,sum:ds.reduce((a,x)=>a+ +x.amount,0),h:ks.reduce((a,k)=>a+(worked(S.days[k]||{})||0),0),mis:ks.reduce((a,k)=>a+missionState(k).filter(Boolean).length,0)}})():null;
   const dSaved=S.dream?dreamSaved():0;
   const prevW=(()=>{const d=new Date(d0);for(let i=0;i<14;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start&&x.end)return dayInfo(ymd(d))}return null})();
   return `
@@ -1301,7 +1304,7 @@ function vHome(){
 
     <div class="panel deals">
       <div class="row"><div class="ptl">${ic('brief','class="pi"')}Letzte Verträge</div><span class="sp"></span><button class="chip acc" onclick="dealSheet()">${ic('plus')} Umsatz</button></div>
-      ${deals.length?deals.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')"><div class="ico ${d.channel}">${ic(d.channel==='in'?'inb':'outb')}</div><div class="t"><b>${esc(dealName(d))}</b><small>${dLabel(d.date)}</small></div><div class="v">${fmtE(d.amount)}</div></div>`).join(''):`<div class="empty">Noch keine Verträge.</div>`}
+      ${deals.length?deals.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${esc(dealName(d))}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount)}</div></div>`).join(''):`<div class="empty">Noch keine Verträge.</div>`}
     </div>
   </div>`;
 }
@@ -1463,7 +1466,7 @@ function vUmsatz(){
   const y=CUR.slice(0,4); const months=[...Array(12)].map((_,i)=>`${y}-${pad(i+1)}`);
   const yd=months.map(m=>({m,...rev(m)})); const ymax=Math.max(1,...yd.map(d=>Math.max(d.tot,d.target)));
   const ytot=yd.reduce((s,d)=>s+d.tot,0), ytar=yd.reduce((s,d)=>s+d.target,0);
-  return `${head(`<button class="addbtn" onclick="dealSheet()">${ic('plus')}Umsatz eintragen</button>`)}
+  return `${head(`<button class="addbtn" onclick="dealSheet()">${ic('plus')}Umsatz eintragen</button><button class="addbtn stbtn" onclick="dealSheet(null,true)">${ic('storno')}Storno</button>`)}
   <div class="cols two">
     <div class="panel">
       <div class="row"><div class="lbl">Ist-Umsatz ${mn}</div><span class="sp"></span><button class="chip" onclick="targetSheet('${CUR}')">${ic('edit')} Ziel ${r.target?fmtE(r.target):'festlegen'}</button></div>
@@ -1471,7 +1474,7 @@ function vUmsatz(){
       ${rail(r.pct,[70,100,130])}
       <div class="lbl">${!r.target?'Lege ein Monatsziel fest, um die Quote zu sehen.':nextLv?`Noch ${fmtE(r.target*nextLv/100-r.tot)} bis ${nextLv} %.`:'Über 200 %. Rekordverdächtig.'}</div>
       <div style="border-top:1px solid var(--hair);margin:18px 0 0;padding-top:16px">
-        <div class="split">${r.tot?`<i style="flex:${r.inb||0.0001};background:var(--in)"></i><i style="flex:${r.out||0.0001};background:var(--out)"></i>`:'<i style="flex:1;background:var(--raise)"></i>'}</div>
+        <div class="split">${r.tot?`<i style="flex:${Math.max(r.inb,0.0001)};background:var(--in)"></i><i style="flex:${Math.max(r.out,0.0001)};background:var(--out)"></i>`:'<i style="flex:1;background:var(--raise)"></i>'}</div>
         <div class="figs" style="--n:2">
           <div><div class="lbl"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--in);margin-right:6px"></span>Inbound</div><div class="v">${fmtE(r.inb)}</div><div class="s">${fmtP(r.target?r.inb/r.target*100:0,1)} vom Ziel</div></div>
           <div><div class="lbl"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--out);margin-right:6px"></span>Outbound</div><div class="v">${fmtE(r.out)}</div><div class="s">${fmtP(r.target?r.out/r.target*100:0,1)} vom Ziel</div></div>
@@ -1490,7 +1493,7 @@ function vUmsatz(){
   </div>
 
   <div class="sh"><h2>Verträge</h2><span class="sp"></span><span class="meta">${r.ds.length} im ${mn}</span></div>
-  <div class="panel flush">${r.ds.length?r.ds.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')"><div class="ico ${d.channel}">${ic(d.channel==='in'?'inb':'outb')}</div><div class="t"><b>${esc(dealName(d))}</b><small>${dLabel(d.date)}, ${d.channel==='in'?'Inbound':'Outbound'}${+d.amount>+S.salary.bigThreshold?', Big Deal':''}</small></div><div class="v">${fmtE(d.amount,2)}</div></div>`).join(''):`<div class="empty">Noch kein Umsatz im ${mn}.<br><button class="btn pri sm" style="margin-top:12px" onclick="dealSheet()">${ic('plus')} Ersten Vertrag eintragen</button></div>`}</div>
+  <div class="panel flush">${r.ds.length?r.ds.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${esc(dealName(d))}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}, ${d.channel==='in'?'Inbound':'Outbound'}${+d.amount>+S.salary.bigThreshold?', Big Deal':''}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount,2)}</div></div>`).join(''):`<div class="empty">Noch kein Umsatz im ${mn}.<br><button class="btn pri sm" style="margin-top:12px" onclick="dealSheet()">${ic('plus')} Ersten Vertrag eintragen</button></div>`}</div>
 
   <div class="cols half" style="margin-top:14px">
     <div class="panel">
@@ -1507,21 +1510,31 @@ function vUmsatz(){
   </div>`;
 }
 let DL=null;
-function dealSheet(id){
-  const d=id?{...S.deals.find(x=>x.id===id)}:{id:null,date:CUR===ymOf(new Date())?todayK():`${CUR}-01`,amount:'',channel:'out',name:''};DL=d;
-  openSheet(`${sheetHead(id?'Umsatz bearbeiten':'Neuer Umsatz')}
-   <div class="seg"><button class="${d.channel==='in'?'on':''}" onclick="DL.channel='in';this.classList.add('on');this.nextElementSibling.classList.remove('on')">${ic('inb')}Inbound</button><button class="${d.channel==='out'?'on':''}" onclick="DL.channel='out';this.classList.add('on');this.previousElementSibling.classList.remove('on')">${ic('outb')}Outbound</button></div>
-   <div class="field" style="margin-top:16px"><label>Betrag (ARR) in €</label><input class="inp" id="dla" inputmode="decimal" value="${d.amount!==''?String(d.amount).replace('.',','):''}" placeholder="1.611,00" style="font-size:24px;height:58px;font-weight:600"></div>
+function dIco(d){return d.storno?`<div class="ico st">${ic('storno')}</div>`:`<div class="ico ${d.channel}">${ic(d.channel==='in'?'inb':'outb')}</div>`}
+function dealSheet(id,storno){
+  const d=id?{...S.deals.find(x=>x.id===id)}:{id:null,date:CUR===ymOf(new Date())?todayK():`${CUR}-01`,amount:'',channel:'out',name:'',storno:!!storno};DL=d;
+  const st=!!d.storno; const amt=d.amount!==''?String(Math.abs(+d.amount)).replace('.',','):'';
+  const orig=st?S.deals.filter(x=>!x.storno&&!x.retro&&+x.amount>0&&x.id!==d.ref).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,40):[];
+  const refD=d.ref?S.deals.find(x=>x.id===d.ref):null;
+  openSheet(`${sheetHead(id?(st?'Storno bearbeiten':'Umsatz bearbeiten'):(st?'Storno eintragen':'Neuer Umsatz'))}
+   ${id?'':`<div class="seg" style="margin-bottom:12px"><button class="${st?'':'on'}" onclick="dealSheet(null,false)">${ic('plus')}Umsatz</button><button class="${st?'on':''}" onclick="dealSheet(null,true)">${ic('storno')}Storno</button></div>`}
+   ${st?`<p class="hint" style="margin:0 0 12px">Der Betrag wird im gewählten Monat vom Umsatz abgezogen. Der ursprüngliche Vertrag bleibt in seinem Monat stehen.</p>
+   <div class="field" style="margin-bottom:14px"><label>Ursprünglicher Vertrag (optional, übernimmt Betrag)</label><select class="inp" id="dlr" onchange="pickRef(this.value)"><option value="">Nicht ausgewählt</option>${refD?`<option value="${refD.id}" selected>${esc(dealName(refD))}, ${dLabel(refD.date)}, ${fmtE(refD.amount,2)}</option>`:''}${orig.map(x=>`<option value="${x.id}">${esc(dealName(x))}, ${dLabel(x.date)}, ${fmtE(x.amount,2)}</option>`).join('')}</select></div>`:''}
+   <div class="seg"><button class="${d.channel==='in'?'on':''}" id="dlci" onclick="DL.channel='in';this.classList.add('on');this.nextElementSibling.classList.remove('on')">${ic('inb')}Inbound</button><button class="${d.channel==='out'?'on':''}" id="dlco" onclick="DL.channel='out';this.classList.add('on');this.previousElementSibling.classList.remove('on')">${ic('outb')}Outbound</button></div>
+   <div class="field" style="margin-top:16px"><label>${st?'Storno-Betrag in € (wird abgezogen)':'Betrag (ARR) in €'}</label><div style="position:relative">${st?'<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:24px;font-weight:700;color:var(--red)">−</span>':''}<input class="inp" id="dla" inputmode="decimal" value="${amt}" placeholder="1.611,00" style="font-size:24px;height:58px;font-weight:600;${st?'padding-left:36px;color:var(--red)':''}"></div></div>
    <div class="grid2" style="margin-top:14px">
-     <div class="field"><label>Datum</label><input class="inp" type="date" id="dld" value="${d.date}"></div>
+     <div class="field"><label>${st?'Datum der Abbuchung':'Datum'}</label><input class="inp" type="date" id="dld" value="${d.date}"></div>
      <div class="field"><label>Kunde</label><input class="inp" id="dln" value="${esc(d.name)}" placeholder="Optional"></div>
    </div>
-   <div class="row" style="margin-top:18px;gap:8px">${id?`<button class="btn danger" onclick="delDeal()" aria-label="Löschen">${ic('trash')}</button>`:''}<button class="btn pri block" onclick="saveDeal()">Speichern</button></div>`);
+   <div class="row" style="margin-top:18px;gap:8px">${id?`<button class="btn danger" onclick="delDeal()" aria-label="Löschen">${ic('trash')}</button>`:''}<button class="btn ${st?'danger':'pri'} block" onclick="saveDeal()">${st?'Storno speichern':'Speichern'}</button></div>`);
 }
-function saveDeal(){const a=numIn(document.getElementById('dla').value);if(!a){toast('Bitte einen Betrag eingeben');return}const dm=(document.getElementById('dld').value||todayK()).slice(0,7);const before=rev(dm).pct;const sBefore=dm>=S.settings.startMonth&&S.targets[dm]?salary(dm):null;const prevMax=Math.max(0,...S.deals.filter(x=>!x.retro&&x.id!==DL.id).map(x=>+x.amount));
-  const o={id:DL.id||uid(),date:document.getElementById('dld').value||todayK(),amount:a,channel:DL.channel,name:document.getElementById('dln').value};
-  const i=S.deals.findIndex(x=>x.id===o.id);if(i>=0)S.deals[i]=o;else S.deals.push(o);save();closeSheet();CUR=o.date.slice(0,7);render();if(DL.id&&DL.amount==a){toast(`${fmtE(a,2)} gespeichert`,'ok');return}dealMoment(o,before,sBefore,+a>prevMax)}
-function delDeal(){S.deals=S.deals.filter(x=>x.id!==DL.id);save();closeSheet();render();toast('Umsatz gelöscht')}
+function pickRef(v){DL.ref=v||null;const x=S.deals.find(d=>d.id===v);if(!x)return;document.getElementById('dla').value=String(+x.amount).replace('.',',');if(!document.getElementById('dln').value)document.getElementById('dln').value=x.name||'';DL.channel=x.channel;document.getElementById('dlci').classList.toggle('on',x.channel==='in');document.getElementById('dlco').classList.toggle('on',x.channel==='out')}
+function saveDeal(){let a=numIn(document.getElementById('dla').value);if(!a){toast('Bitte einen Betrag eingeben');return}const st=!!DL.storno;a=Math.abs(a);const dm=(document.getElementById('dld').value||todayK()).slice(0,7);const before=rev(dm).pct;const sBefore=dm>=S.settings.startMonth&&S.targets[dm]?salary(dm):null;const prevMax=Math.max(0,...S.deals.filter(x=>!x.retro&&x.id!==DL.id).map(x=>+x.amount));
+  const o={id:DL.id||uid(),date:document.getElementById('dld').value||todayK(),amount:st?-a:a,channel:DL.channel,name:document.getElementById('dln').value};if(st){o.storno=true;if(DL.ref)o.ref=DL.ref}
+  const i=S.deals.findIndex(x=>x.id===o.id);if(i>=0)S.deals[i]=o;else S.deals.push(o);save();closeSheet();CUR=o.date.slice(0,7);render();
+  if(st){const sA=dm>=S.settings.startMonth&&S.targets[dm]?salary(dm):null;const dp=sA&&sBefore?(sA.provision+sA.planBonus+sA.bigBonus)-(sBefore.provision+sBefore.planBonus+sBefore.bigBonus):0;toast(`Storno ${fmtE(-a,2)} erfasst${dp<-0.005?`, Provision ${fmtE(dp,2)}`:''}`,'ok');return}
+  if(DL.id&&DL.amount==a){toast(`${fmtE(a,2)} gespeichert`,'ok');return}dealMoment(o,before,sBefore,+a>prevMax)}
+function delDeal(){S.deals=S.deals.filter(x=>x.id!==DL.id);save();closeSheet();render();toast(DL.storno?'Storno gelöscht':'Umsatz gelöscht')}
 let LD=null;
 function leadSheet(id){
   const l=id?{...S.leads.find(x=>x.id===id)}:{id:null,date:CUR===ymOf(new Date())?todayK():`${CUR}-01`,count:'',note:''};LD=l;
@@ -2010,7 +2023,7 @@ function records(){const s=series().filter(x=>!x.live);const best=s.reduce((b,x)
   return {best,big,most:most?{m:most[0],n:most[1]}:null}}
 const histBest=()=>Math.max(0,...Object.values(S.heat||{}).map(Number));
 const BADGES=[
- {id:'deal1',e:'🤝',t:'Erster Deal',d:'Ersten Umsatz in der App eingetragen',ok:()=>S.deals.some(d=>!d.retro)},
+ {id:'deal1',e:'🤝',t:'Erster Deal',d:'Ersten Umsatz in der App eingetragen',ok:()=>S.deals.some(d=>!d.retro&&!d.storno)},
  {id:'m70',e:'💸',t:'Provision geknackt',d:'70 % in einem Monat',ok:()=>appMonths().some(m=>rev(m).pct>=70)},
  {id:'m100',e:'🏆',t:'Ziel erreicht',d:'100 % in einem Monat',ok:()=>appMonths().some(m=>rev(m).pct>=100)},
  {id:'m130',e:'🚀',t:'Überflieger',d:'130 % in einem Monat',ok:()=>appMonths().some(m=>rev(m).pct>=130)},
