@@ -823,7 +823,28 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='25';
+const APP_VERSION='26';
+/* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
+let UPD_BUSY=false;
+async function checkUpdate(manual){
+  if(!/^https?:/.test(location.protocol)){if(manual)toast('Update-Prüfung nur online');return}
+  if(UPD_BUSY||!navigator.onLine){if(manual&&!navigator.onLine)toast('Keine Verbindung');return}
+  UPD_BUSY=true;
+  try{
+    const r=await fetch(location.pathname+'?u='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;
+    const m=(await r.text()).match(/const APP_VERSION='(\d+)'/);const nv=m?+m[1]:0;
+    if(nv>+APP_VERSION){
+      let tries=0;try{tries=+(sessionStorage.getItem('upd_'+nv)||0);sessionStorage.setItem('upd_'+nv,tries+1)}catch(e){}
+      if(tries>=2){if(manual)toast('Version '+nv+' ist online, kommt gleich an');return}
+      if(typeof dirty!=='undefined'&&dirty){try{clearTimeout(pushTimer);await pushNow()}catch(e){}}
+      toast('Update auf Version '+nv+' …');
+      setTimeout(()=>location.replace(location.pathname+'?v='+nv+location.hash),800);
+    }else if(manual)toast('Du hast die neueste Version ('+APP_VERSION+')');
+  }catch(e){if(manual)toast('Update-Prüfung fehlgeschlagen')}
+  finally{UPD_BUSY=false}
+}
+setTimeout(()=>checkUpdate(false),1500);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(()=>checkUpdate(false),600)});
 
 /* Zoom sperren (iOS ignoriert user-scalable, daher zusätzlich per Script) */
 document.addEventListener('gesturestart',e=>e.preventDefault());
@@ -1833,7 +1854,7 @@ function vSettings(){
       <p class="hint" style="margin-bottom:0">Hier kommt später die Synchronisierung über GitHub hin, damit iPhone und iPad dieselben Daten sehen.</p>
     </div>
   </div>
-  <p class="hint" style="text-align:center;margin-top:20px">Sales Dashboard, Version ${APP_VERSION}</p>`;
+  <p class="hint" style="text-align:center;margin-top:20px">Sales Dashboard, Version ${APP_VERSION}<br><button class="btn sm" style="margin-top:10px" onclick="checkUpdate(true)">Nach Update suchen</button></p>`;
 }
 function importFile(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>doImport(r.result);r.readAsText(f)}
 function doImport(txt){try{const o=JSON.parse(txt);if(!o.settings||!o.days)throw 0;try{localStorage.setItem(LS_KEY,JSON.stringify(o))}catch(_){} S=o;load();if(!saveOk)S=o;save();closeSheet();render();toast('Backup eingespielt')}catch(e){toast('Das ist keine gültige Backup-Datei')}}
