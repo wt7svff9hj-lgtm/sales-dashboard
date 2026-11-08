@@ -628,6 +628,7 @@ html.prelock .lock{display:block}
 .lk-pad button:active{background:#F9DC4A;color:#111318;transform:scale(.94)}
 .lk-pad button.fn{background:none}
 .lk-pad button svg{width:30px;height:30px}
+.lk-ver{margin-top:14px;font-size:11px;color:rgba(255,255,255,.3)}
 .lk-forgot{margin-top:26px;color:rgba(255,255,255,.55);font-size:14px;font-weight:500}
 .pin-setup{display:flex;flex-direction:column;align-items:center;padding:6px 0 10px}
 .pin-setup .lk-pad button{background:var(--raise);color:var(--ink)}
@@ -821,6 +822,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
+const APP_VERSION='23';
 
 /* Zoom sperren (iOS ignoriert user-scalable, daher zusätzlich per Script) */
 document.addEventListener('gesturestart',e=>e.preventDefault());
@@ -1820,7 +1822,8 @@ function vSettings(){
       </div>
       <p class="hint" style="margin-bottom:0">Hier kommt später die Synchronisierung über GitHub hin, damit iPhone und iPad dieselben Daten sehen.</p>
     </div>
-  </div>`;
+  </div>
+  <p class="hint" style="text-align:center;margin-top:20px">Sales Dashboard, Version ${APP_VERSION}</p>`;
 }
 function importFile(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>doImport(r.result);r.readAsText(f)}
 function doImport(txt){try{const o=JSON.parse(txt);if(!o.settings||!o.days)throw 0;try{localStorage.setItem(LS_KEY,JSON.stringify(o))}catch(_){} S=o;load();if(!saveOk)S=o;save();closeSheet();render();toast('Backup eingespielt')}catch(e){toast('Das ist keine gültige Backup-Datei')}}
@@ -1880,7 +1883,7 @@ let LOCKED=false,PINBUF='',FAILS=0,LOCKUNTIL=0,HIDDEN_AT=0;
 const lockActive=()=>!!SEC().pin;
 function padHtml(fn,face){return `<div class="lk-pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="${fn}('${n}')"><b>${n}</b></button>`).join('')}<button class="fn" onclick="tryFace()" ${face?'':'style="visibility:hidden"'} aria-label="Face ID">${ic('faceid')}</button><button onclick="${fn}('0')"><b>0</b></button><button class="fn" onclick="${fn}('del')" aria-label="Löschen">${ic('del')}</button></div>`}
 function showLock(){if(!lockActive())return;LOCKED=true;PINBUF='';const el=document.getElementById('lock');
-  el.innerHTML=`<div class="lk-in"><div class="lk-logo">${logoSvg(S.settings.logo)}</div><div class="lk-hi">${greet()}${S.settings.name?', '+esc(S.settings.name):''} ${greetEmo()}</div><div class="lk-sub" id="lkSub">PIN eingeben</div><div class="lk-dots" id="lkDots"><i></i><i></i><i></i><i></i></div>${SEC().faceId?`<button class="lk-face" onclick="tryFace()">${ic('faceid')} Mit Face ID entsperren</button>`:''}${padHtml('pinKey',!!SEC().faceId)}<button class="lk-forgot" onclick="forgotPin()">PIN vergessen?</button></div>`;
+  el.innerHTML=`<div class="lk-in"><div class="lk-logo">${logoSvg(S.settings.logo)}</div><div class="lk-hi">${greet()}${S.settings.name?', '+esc(S.settings.name):''} ${greetEmo()}</div><div class="lk-sub" id="lkSub">PIN eingeben</div><div class="lk-dots" id="lkDots"><i></i><i></i><i></i><i></i></div>${SEC().faceId?`<button class="lk-face" onclick="tryFace()">${ic('faceid')} Mit Face ID entsperren</button>`:''}${padHtml('pinKey',!!SEC().faceId)}<button class="lk-forgot" onclick="forgotPin()">PIN vergessen?</button><div class="lk-ver">Version ${APP_VERSION}</div></div>`;
   el.classList.remove('out');el.classList.add('on');document.documentElement.classList.add('islocked');document.documentElement.classList.remove('prelock');}
 function dots(n,err){const d=document.getElementById('lkDots');if(!d)return;[...d.children].forEach((x,i)=>x.classList.toggle('f',i<n));d.classList.toggle('err',!!err);if(err){d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake')}}
 async function pinKey(k){if(Date.now()<LOCKUNTIL)return;if(k==='del'){PINBUF=PINBUF.slice(0,-1);dots(PINBUF.length);return}if(PINBUF.length>=4)return;PINBUF+=k;dots(PINBUF.length);
@@ -2092,7 +2095,7 @@ let _egg=0,_eggT=0;
 function egg(ev){const n=Date.now();_egg=n-_eggT<700?_egg+1:1;_eggT=n;const lg=ev.currentTarget;lg.classList.remove('spin');void lg.offsetWidth;lg.classList.add('spin');if(_egg>=5){_egg=0;confetti();const q=[...QUOTES_WORK,...QUOTES_FREE];toast('🐝 '+q[Math.floor(Math.random()*q.length)])}}
 /* ---------- Touch-Icon ---------- */
 function setTouchIcon(){
-  if((S.settings.logo||'a')==='a'){const l=document.querySelector('link[rel=apple-touch-icon]');if(l)l.href='icon-180.png';return}
+  if((S.settings.logo||'a')==='c'){const l=document.querySelector('link[rel=apple-touch-icon]');if(l)l.href='icon-180.png';return}
   try{const svg=logoSvg(S.settings.logo);const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=c.height=180;const x=c.getContext('2d');x.drawImage(img,0,0,180,180);const url=c.toDataURL('image/png');
     let l=document.querySelector('link[rel=apple-touch-icon]');if(!l){l=document.createElement('link');l.rel='apple-touch-icon';document.head.appendChild(l)}l.href=url;
     };
