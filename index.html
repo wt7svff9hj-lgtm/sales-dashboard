@@ -15,6 +15,16 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
+.oi .st-sel{appearance:none;-webkit-appearance:none;border:0;width:auto;max-width:150px;background:color-mix(in srgb,var(--ink) 7%,transparent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238C91A1' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center/12px;border-radius:8px;padding:3px 22px 3px 8px;font:inherit;font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer;margin-right:2px}
+.oi{flex-wrap:wrap}.oi .t{flex:1;min-width:0}
+.oi-a{display:flex;gap:6px;flex:none;margin-left:8px}
+.oi-a button,.op-acts button{border:0;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;font:inherit;font-weight:700;font-size:13px}
+.oi-a button{width:34px;height:34px}.oi-a svg,.op-acts svg{width:16px;height:16px}
+.oi-a .ok,.op-acts .ok{background:color-mix(in srgb,var(--green) 15%,transparent);color:var(--green)}
+.oi-a .mv,.op-acts .mv{background:color-mix(in srgb,var(--arD) 30%,transparent);color:var(--ink)}
+.oi-a .no,.op-acts .no{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red)}
+.op-acts{display:flex;gap:6px;margin-top:16px}.op-acts button{flex:1;height:42px;padding:0 6px;white-space:nowrap;font-size:12.5px;gap:4px}
+@media (max-width:420px){.oi-a{width:100%;margin:6px 0 0;justify-content:flex-start}.oi-a button{width:auto;padding:0 12px;height:30px}}
 .li .t small:has(.age){white-space:normal;overflow:visible}.age{display:inline-block;white-space:nowrap;font-size:11px;font-weight:700;padding:1px 7px;border-radius:99px;background:var(--soft);color:var(--muted);margin-left:4px;vertical-align:1px}
 .age.old{background:color-mix(in srgb,var(--amber) 18%,transparent);color:#B86E00}.age.old2{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red)}
 html[data-theme="dark"] .age.old{color:#FFB224}
@@ -1066,7 +1076,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='46';const APP_DATE='2026-11-09';
+const APP_VERSION='48';const APP_DATE='2026-11-09';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1523,20 +1533,21 @@ function actCard(){const k=todayK();const wd=actWorkday(k);const a=actOf(k),g=ac
 const WD2=['So','Mo','Di','Mi','Do','Fr','Sa'];
 let OPK=null,OPID=null;
 let OPST='offer';
-function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.find(x=>x.id===id):null;OPST=o?(o.stage||''):'offer';
+function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.find(x=>x.id===id):null;OPST=o?((o.stage==='won'||o.stage==='lost')?'__keep':(o.stage||'')):'offer';
   openSheet(`${sheetHead(id?'Opportunity bearbeiten':'Opportunity geschrieben')}
    <div class="field"><label>Wert der Opportunity in €</label><input class="inp" id="opa" inputmode="decimal" placeholder="z. B. 2.400" value="${o&&o.amount?(+o.amount).toLocaleString('de-DE',{maximumFractionDigits:2}):''}" style="font-size:24px;height:58px;font-weight:600" oninput="opHint()" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('opn').focus()}"></div>
    <div class="grid2" style="margin-top:14px"><div class="field"><label>Kunde</label><input class="inp" id="opn" placeholder="Name des Kunden" value="${o?esc(o.name||''):''}" onkeydown="if(event.key==='Enter'){event.preventDefault();saveOp()}"></div><div class="field"><label>Datum</label><input class="inp" type="date" id="opd" value="${OPK}"></div></div>
-   <div class="field" style="margin-top:14px"><label>Stage im Forecast</label><div class="seg op-stage">${[['offer','Offer created'],['proposal','Proposal sent'],['expected','Expected'],...(id?[['won','✓ Gewonnen'],['lost','✗ Verloren']]:[]),['','Nicht im Forecast']].map(([k2,l2])=>`<button class="${(o?(o.stage||''):'offer')===k2?'on':''}" onclick="OPST='${k2}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on');opHint()">${l2}</button>`).join('')}</div><div class="hint" id="ophint" style="margin-top:6px"></div></div>
+   <div class="field" style="margin-top:14px"><label>Stage im Forecast</label><div class="seg op-stage">${[['offer','Offer created'],['proposal','Proposal sent'],['expected','Expected'],['signed','Signed'],['','Nicht im Forecast']].map(([k2,l2])=>`<button class="${(o?(o.stage||''):'offer')===k2?'on':''}" onclick="OPST='${k2}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on');opHint()">${l2}</button>`).join('')}</div><div class="hint" id="ophint" style="margin-top:6px"></div></div>
 
+   ${id&&o&&OPEN_ST.includes(o.stage)?`<div class="op-acts"><button class="ok" onclick="oppAction('won')">${ic('check')}Gewonnen</button><button class="mv" onclick="oppAction('push')">${ic('right')}Nach ${MONS[pD(addM(o.fm||OPK.slice(0,7),1)).getMonth()]}</button><button class="no" onclick="oppAction('lost')">${ic('x')}Verloren</button></div>`:''}${id&&o&&(o.stage==='won'||o.stage==='lost')?`<p class="hint" style="margin-top:12px">Status: <b>${o.stage==='won'?'✓ Gewonnen':'✗ Verloren'}</b>. Wählst du oben eine Stage, ist sie wieder offen.</p>`:''}
    <div class="row" style="margin-top:18px;gap:8px">${id?`<button class="btn danger" onclick="closeSheet();actOpDel('${OPK}','${id}')" aria-label="Löschen">${ic('trash')}</button>`:''}<button class="btn pri block" onclick="saveOp()">${id?'Speichern':'+1 Opp eintragen'}</button></div>`);
   opHint();if(!id)setTimeout(()=>{const i=document.getElementById('opa');i&&i.focus()},350)}
-function opHint(){const h=document.getElementById('ophint');if(!h)return;const a=Math.abs(numIn((document.getElementById('opa')||{}).value||'')||0);const P=S.fcParams;const rate={offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate}[OPST];
+function opHint(){const h=document.getElementById('ophint');if(!h)return;if(OPST==='__keep'){h.innerHTML='';return}const a=Math.abs(numIn((document.getElementById('opa')||{}).value||'')||0);const P=S.fcParams;const rate={offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:100}[OPST];
   if(OPST==='won'){h.innerHTML='Wird aus dem Forecast genommen. Danach öffnet sich direkt „Umsatz eintragen“ mit Betrag und Kunde.';return}
   if(OPST==='lost'){h.innerHTML='Wird aus dem Forecast genommen und zählt nicht mehr zur Pipeline.';return}
   h.innerHTML=OPST?`Wird im Forecast unter <b>${FCN[OPST]}</b> eingetragen${a?`, zählt ${rate} % = <b>${fmtE(a*rate/100,2)}</b>`:''}.`:'Zählt nur fürs Tagesziel, nicht für den Forecast.'}
 /* ---------- Pipeline: alle Opps, Alter, Übertrag, Rückwärtsrechner ---------- */
-const OPEN_ST=['offer','proposal','expected'];
+const OPEN_ST=['offer','proposal','expected','signed'];
 function allOpps(){const out=[];Object.keys(S.act||{}).forEach(k=>{(S.act[k].ops||[]).forEach(o=>out.push({...o,date:k}))});return out}
 function oppAge(o){const since=o.stageSince||o.date;return Math.max(0,Math.round((pD(todayK())-pD(since))/864e5))}
 function ageCls(d){return d>=30?'old2':d>=14?'old':''}
@@ -1544,12 +1555,12 @@ function ageChip(d){return `<span class="age ${ageCls(d)}">${d===0?'heute':d===1
 function oppFind(id){for(const k in (S.act||{})){const o=(S.act[k].ops||[]).find(x=>x.id===id);if(o)return {o,k}}return null}
 /* Übertrag in den neuen Monat */
 function carryCandidates(cm){const pm=addM(cm,-1);const F=S.forecast[pm];if(!F)return [];const out=[];
-  ['expected','proposal','offer','signed'].forEach(st=>{const it=(F.items||{})[st];if(it&&it.length){it.forEach((x,i)=>{if(x.opp){const f=oppFind(x.opp);if(f&&(!OPEN_ST.includes(f.o.stage)||(f.o.fm&&f.o.fm!==pm)))return}out.push({st,i,n:x.n,v:+x.v,opp:x.opp||null,since:x.since||null,on:st!=='signed'})})}else if(+F[st])out.push({st,i:-1,n:'Summe aus '+MON[pD(pm).getMonth()],v:+F[st],opp:null,on:st!=='signed'})});return out}
+  ['expected','proposal','offer','signed'].forEach(st=>{const it=(F.items||{})[st];if(it&&it.length){it.forEach((x,i)=>{if(x.opp){const f=oppFind(x.opp);if(f&&(!OPEN_ST.includes(f.o.stage)||(f.o.fm&&f.o.fm!==pm)))return}out.push({st,i,n:x.n,v:+x.v,opp:x.opp||null,since:x.since||null,on:true})})}else if(+F[st])out.push({st,i:-1,n:'Summe aus '+MON[pD(pm).getMonth()],v:+F[st],opp:null,on:true})});return out}
 function carryBanner(){const cm=ymOf(new Date());const F=S.forecast[cm]||{};if(F.carried)return '';const c=carryCandidates(cm);if(!c.length)return '';const sum=c.filter(x=>x.on).reduce((a,x)=>a+x.v,0);const pm=addM(cm,-1);
   return `<div class="panel carry"><div class="cr-ic">📦</div><div class="cr-t"><b>${c.length} offene ${c.length===1?'Opp':'Opps'} aus ${MON[pD(pm).getMonth()]}</b><small>${fmtE(sum)} Pipeline. In den ${MON[pD(cm).getMonth()]}-Forecast übernehmen?</small></div><div class="cr-b"><button class="btn sm" onclick="carrySkip()">Nein</button><button class="btn sm pri" onclick="carrySheet()">Übernehmen</button></div></div>`}
 let CARRY=null;
 function carrySheet(){const cm=ymOf(new Date());CARRY=carryCandidates(cm);
-  openSheet(`${sheetHead('Opps übernehmen')}<p class="hint" style="margin:0 0 12px">Abhaken, was weiterläuft. Verlorene einfach abwählen. Signed ist standardmäßig aus, weil das eigentlich schon abgeschlossen sein sollte.</p>
+  openSheet(`${sheetHead('Opps übernehmen')}<p class="hint" style="margin:0 0 12px">Abhaken, was weiterläuft. Verlorene einfach abwählen.</p>
    <div class="cr-list">${CARRY.map((x,i)=>`<label class="cr-row"><input type="checkbox" ${x.on?'checked':''} onchange="CARRY[${i}].on=this.checked;carrySum()"><span class="cr-n">${x.opp?'🎯 ':''}${esc(x.n||'Opp')}<small>${FCN[x.st]}</small></span><b class="num">${fmtE(x.v)}</b></label>`).join('')}</div>
    <div class="fl-sum"><span><small>Übernahme</small><b class="num" id="crsum"></b></span><span class="lbl" id="crcnt"></span></div>
    <button class="btn pri block" style="margin-top:14px" onclick="carryApply()">In den ${MON[pD(cm).getMonth()]} übernehmen</button>`);carrySum()}
@@ -1560,10 +1571,26 @@ function carryApply(){const cm=ymOf(new Date());S.forecast[cm]=S.forecast[cm]||{
   F.carried=true;save();closeSheet();render();toast(`${n} ${n===1?'Opp':'Opps'} übernommen`,'ok')}
 function carrySkip(){const cm=ymOf(new Date());S.forecast[cm]=S.forecast[cm]||{};S.forecast[cm].carried=true;save();render();toast('Okay, Forecast startet leer')}
 /* Opp-Alter-Panel im Forecast */
-function agingPanel(){const op=allOpps().filter(o=>OPEN_ST.includes(o.stage)).map(o=>({...o,age:oppAge(o)})).sort((a,b)=>b.age-a.age);if(!op.length)return '';const stale=op.filter(o=>o.age>=14).length;
-  return `<div class="sh"><h2>Opp-Alter</h2><span class="sp"></span><span class="meta">${stale?`<span class="age old">${stale} seit 14+ Tagen</span>`:'alles frisch'}</span></div>
-  <div class="panel flush"><div class="list">${op.map(o=>`<div class="li" onclick="opSheet('${o.date}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity'}</b><small>${FCN[o.stage]} ${ageChip(o.age)}</small></div><div class="v">${fmtE(o.amount)}</div></div>`).join('')}</div></div>
-  <p class="hint" style="margin-top:8px">Alter = Tage seit dem letzten Stage-Wechsel. Antippen, um die Stage zu ändern oder die Opp als gewonnen oder verloren zu markieren.</p>`}
+function itemAge(x){if(x.opp){const f=oppFind(x.opp);if(f)return oppAge({...f.o,date:f.k})}return x.since?Math.max(0,Math.round((pD(todayK())-pD(x.since))/864e5)):null}
+function openItems(m){const F=S.forecast[m]||{};const out=[];['signed','expected','proposal','offer'].forEach(st=>{((F.items||{})[st]||[]).forEach((x,i)=>out.push({...x,st,i,age:itemAge(x)}))});return out}
+function agingPanel(m){const it=openItems(m);if(!it.length)return '';const nm=MON[pD(addM(m,1)).getMonth()];const stale=it.filter(x=>x.age!=null&&x.age>=14).length;
+  return `<div class="sh"><h2>Offene Opps</h2><span class="sp"></span><span class="meta">${stale?`<span class="age old">${stale} seit 14+ Tagen</span>`:it.length+' im '+MON[pD(m).getMonth()]}</span></div>
+  <div class="panel flush"><div class="list">${it.map(x=>`<div class="li oi"><div class="t" ${x.opp?`onclick="const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')"`:''} style="${x.opp?'cursor:pointer':''}"><b>${x.opp?'🎯 ':''}${esc(x.n||'Opp')}</b><small><select class="st-sel" onclick="event.stopPropagation()" onchange="fcItemStage('${m}','${x.st}',${x.i},this.value)" aria-label="Stage ändern">${['offer','proposal','expected','signed'].map(k=>`<option value="${k}" ${k===x.st?'selected':''}>${FCN[k]}</option>`).join('')}</select>${x.age!=null?' '+ageChip(x.age):''}</small></div><div class="v">${fmtE(x.v)}</div>
+    <div class="oi-a"><button class="ok" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')" aria-label="Gewonnen" title="Gewonnen">${ic('check')}</button><button class="mv" onclick="fcItemAct('${m}','${x.st}',${x.i},'push')" aria-label="In den ${nm} schieben" title="In den ${nm} schieben">${ic('right')}</button><button class="no" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')" aria-label="Verloren" title="Verloren">${ic('x')}</button></div></div>`).join('')}</div></div>
+  <p class="hint" style="margin-top:8px">✓ gewonnen (öffnet „Umsatz eintragen“) · → in den ${nm} schieben · ✕ verloren. Alter = Tage seit dem letzten Stage-Wechsel, orange ab 14, rot ab 30 Tagen.</p>`}
+function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);x.since=todayK();
+  let it=F.items[ns];if(!it||!it.length){it=[];if(+F[ns])it.push({v:+F[ns],n:'Bisheriger Wert'})}it.push(x);F.items[ns]=it;fcRecalc(F,ns);
+  if(x.opp){const f=oppFind(x.opp);if(f){f.o.stage=ns;f.o.stageSince=todayK()}}save();render();toast(`${x.n||'Opp'} → ${FCN[ns]}`,'ok')}
+function fcRecalc(F,st){const it=F.items[st]||[];F[st]=it.reduce((a,y)=>a+(+y.v||0),0);if(!it.length)delete F.items[st]}
+function fcItemAct(m,st,i,act){const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);const f=x.opp?oppFind(x.opp):null;
+  if(act==='push'){const nm=addM(m,1);S.forecast[nm]=S.forecast[nm]||{};const N=S.forecast[nm];N.items=N.items||{};let it=N.items[st];if(!it||!it.length){it=[];if(+N[st])it.push({v:+N[st],n:'Bisheriger Wert'})}it.push(x);N.items[st]=it;fcRecalc(N,st);if(f)f.o.fm=nm;save();render();toast(`${x.n||'Opp'} → ${MON[pD(nm).getMonth()]} verschoben`,'ok');return}
+  if(f){f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK()}
+  save();render();
+  if(act==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');setTimeout(()=>dealSheet(null,false,{amount:x.v,name:x.n&&x.n!=='Bisheriger Wert'?x.n:''}),300)}else toast(`${x.n||'Opp'} als verloren markiert`)}
+function oppAction(act){const f=oppFind(OPID);if(!f)return;const m=f.o.fm||f.k.slice(0,7);const F=S.forecast[m];let st=null,i=-1;if(F&&F.items)Object.keys(F.items).some(k=>{const j=F.items[k].findIndex(x=>x.opp===OPID);if(j>=0){st=k;i=j;return true}});closeSheet();
+  if(st){fcItemAct(m,st,i,act);return}
+  if(act==='push'){toast('Diese Opp steht in keinem Forecast');return}
+  f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK();save();render();if(act==='won')setTimeout(()=>dealSheet(null,false,{amount:f.o.amount,name:f.o.name}),300)}
 /* Rückwärtsrechner */
 function funnelData(){const st=S.settings.startMonth;const cur=ymOf(new Date());let demos=0,opps=0,leads=0;Object.keys(S.act||{}).forEach(k=>{if(k.slice(0,7)<st)return;demos+=+S.act[k].demo||0;opps+=(S.act[k].ops||[]).length});
   (S.leads||[]).forEach(l=>{if(l.date.slice(0,7)>=st)leads+=+l.count||0});
@@ -1590,6 +1617,7 @@ function funnelPanel(m){const cur=ymOf(new Date());if(m!==cur)return '';const r=
 function fcOppUnlink(id,only){Object.keys(S.forecast||{}).forEach(m=>{if(only&&m!==only)return;const F=S.forecast[m];if(!F||!F.items)return;Object.keys(F.items).forEach(st=>{const before=F.items[st].length;F.items[st]=F.items[st].filter(x=>x.opp!==id);if(F.items[st].length!==before){F[st]=F.items[st].reduce((a,x)=>a+(+x.v||0),0);if(!F.items[st].length)delete F.items[st]}})})}
 function fcOppLink(o,date){if(!OPEN_ST.includes(o.stage)||!(+o.amount))return;const m=date.slice(0,7);S.forecast[m]=S.forecast[m]||{};const F=S.forecast[m];F.items=F.items||{};let it=F.items[o.stage];if(!it||!it.length){it=[];if(+F[o.stage])it.push({v:+F[o.stage],n:'Bisheriger Wert'})}it.push({v:+o.amount,n:o.name||'Opp',opp:o.id,since:o.stageSince||date});F.items[o.stage]=it;F[o.stage]=it.reduce((a,x)=>a+(+x.v||0),0)}
 function saveOp(){const amt=Math.abs(numIn(document.getElementById('opa').value)||0);const k=document.getElementById('opd').value||OPK;const name=document.getElementById('opn').value.trim();
+  if(OPST==='__keep'){const f=oppFind(OPID);OPST=f?f.o.stage:'';}
   if(OPEN_ST.includes(OPST)&&!amt){toast('Für den Forecast bitte einen Wert eintragen');document.getElementById('opa').focus();return}
   if(OPID&&k!==OPK)actSet(OPK,a=>{a.ops=a.ops.filter(o=>o.id!==OPID)});
   const prev=OPID?(oppFind(OPID)||{}).o:null;
@@ -2135,7 +2163,7 @@ function vForecast(){
     </div>
   </div>
   ${funnelPanel(CUR)}
-  ${CUR===ymOf(new Date())?agingPanel():''}
+  ${agingPanel(CUR)}
   <div class="sh"><h2>Gewichtung</h2></div>
   <div class="panel">
     <div class="grid3 r">
