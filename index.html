@@ -15,6 +15,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
+.op-stage{flex-wrap:wrap}.op-stage button{flex:1 1 auto}
 .tq-add button{background:color-mix(in srgb,var(--arD) 22%,var(--paper))!important;border-color:transparent!important}
 .tq-own{width:64px;height:34px;border-radius:10px;border:1px solid var(--hair2);background:var(--paper);color:var(--ink);font:inherit;font-weight:600;font-size:14px;text-align:right;padding:0 8px}
 .tq-sum{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);margin:2px 0 6px}.tq-sum b{color:var(--ink)}.tq-sum button{margin-left:auto;border:1px solid var(--hair2);background:var(--paper);border-radius:99px;padding:4px 10px;font:inherit;font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer}
@@ -1033,7 +1034,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='41';const APP_DATE='2026-11-09';
+const APP_VERSION='42';const APP_DATE='2026-11-09';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1191,7 +1192,7 @@ function defaultState(){
     forecast:{},
     heat,
     salary:{base:3600,variable:1400,tiers:[{from:70,rate:0},{from:100,rate:5},{from:130,rate:10}],bigThreshold:2500,bigRate:3,planRate:1,workDaysBase:22,compDays:{},provHist:{'2026-09':1761.49,'2026-10':0}},
-    fcParams:{weekValue:1875,weekRate:20,proposalRate:20,expectedRate:60}
+    fcParams:{weekValue:1875,weekRate:20,offerRate:5,proposalRate:20,expectedRate:60}
   };
 }
 let S;
@@ -1308,11 +1309,12 @@ function remainingWeeks(m){
 function forecast(m){
   const f=S.forecast[m]||{}; const P=S.fcParams; const r=rev(m);
   const weeks=f.weeks!=null&&f.weeks!==''?+f.weeks:remainingWeeks(m);
-  const signed=+f.signed||0, proposal=+f.proposal||0, expected=+f.expected||0;
+  const signed=+f.signed||0, offer=+f.offer||0, proposal=+f.proposal||0, expected=+f.expected||0;
+  const oR=P.offerRate!=null?+P.offerRate:5, wO=offer*oR/100;
   const wP=proposal*P.proposalRate/100, wE=expected*P.expectedRate/100, wN=weeks*P.weekValue*P.weekRate/100;
   const closedAuto=r.tot, closed=closedAuto;
-  const exp=closed+signed+wP+wE+wN;
-  return {f,r,closed,closedAuto,closedManual:false,weeks,autoWeeks:f.weeks==null||f.weeks==='',signed,proposal,expected,wP,wE,wN,exp,target:r.target,pct:r.target?exp/r.target*100:0};
+  const exp=closed+signed+wO+wP+wE+wN;
+  return {f,r,closed,closedAuto,closedManual:false,weeks,autoWeeks:f.weeks==null||f.weeks==='',signed,offer,oR,wO,proposal,expected,wP,wE,wN,exp,target:r.target,pct:r.target?exp/r.target*100:0};
 }
 
 /* ---------- Heatmap-Logik ---------- */
@@ -1462,7 +1464,7 @@ function actMonth(m){const tk=todayK();let demos=0,ops=[],days=0,hits=0;monthDay
 function actSet(k,fn){S.act=S.act||{};const a=actOf(k);const was=actHit(k);fn(a);if(!a.demo&&!a.ops.length)delete S.act[k];else S.act[k]={demo:a.demo,ops:a.ops};save();const now=actHit(k);
   if(!was&&now&&actWorkday(k)){confetti();gong&&gong();toast('🎯 Tagesziel erreicht! Alles weitere ist Bonus.','ok')}return now}
 function actDemo(k,d){k=k||todayK();actSet(k,a=>{a.demo=Math.max(0,a.demo+d)});if(d>0&&!actHit(k))toast(`Demo-Call ${actOf(k).demo} eingetragen`,'ok');actPop('demo');rerenderAct(k)}
-function actOpDel(k,id){actSet(k,a=>{a.ops=id?a.ops.filter(o=>o.id!==id):a.ops.slice(0,-1)});toast('Opportunity entfernt');rerenderAct(k)}
+function actOpDel(k,id){const a0=actOf(k);const del=id?a0.ops.find(o=>o.id===id):a0.ops[a0.ops.length-1];if(del)fcOppUnlink(del.id);actSet(k,a=>{a.ops=id?a.ops.filter(o=>o.id!==id):a.ops.slice(0,-1)});toast('Opportunity entfernt');rerenderAct(k)}
 function rerenderAct(k){if(document.getElementById('actday')&&ACTK===k)actDaySheet(k,true);render()}
 function actPop(w){setTimeout(()=>{document.querySelectorAll('.ar-'+w).forEach(e=>{e.classList.remove('pop');void e.getBBox;e.classList.add('pop')})},30)}
 function actRings(a,g,size=132){const c=size/2,sw=size*.095,r1=c-sw/2-2,r2=r1-sw-3;
@@ -1487,17 +1489,27 @@ function actCard(){const k=todayK();const wd=actWorkday(k);const a=actOf(k),g=ac
   </div>`}
 const WD2=['So','Mo','Di','Mi','Do','Fr','Sa'];
 let OPK=null,OPID=null;
-function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.find(x=>x.id===id):null;
+let OPST='offer';
+function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.find(x=>x.id===id):null;OPST=o?(o.stage||''):'offer';
   openSheet(`${sheetHead(id?'Opportunity bearbeiten':'Opportunity geschrieben')}
-   <p class="hint" style="margin:0 0 14px">Nur für dein Gefühl, wie groß deine Opps sind. Fließt nicht in Forecast oder Gehalt ein.</p>
-   <div class="field"><label>Wert der Opportunity in € (optional)</label><input class="inp" id="opa" inputmode="decimal" placeholder="z. B. 2.400" value="${o&&o.amount?String(o.amount).replace('.',','):''}" style="font-size:24px;height:58px;font-weight:600"></div>
-   <div class="grid2" style="margin-top:14px"><div class="field"><label>Datum</label><input class="inp" type="date" id="opd" value="${OPK}"></div><div class="field"><label>Kunde</label><input class="inp" id="opn" placeholder="Optional" value="${o?esc(o.name||''):''}"></div></div>
+   <div class="field"><label>Wert der Opportunity in €</label><input class="inp" id="opa" inputmode="decimal" placeholder="z. B. 2.400" value="${o&&o.amount?(+o.amount).toLocaleString('de-DE',{maximumFractionDigits:2}):''}" style="font-size:24px;height:58px;font-weight:600" oninput="opHint()" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('opn').focus()}"></div>
+   <div class="grid2" style="margin-top:14px"><div class="field"><label>Kunde</label><input class="inp" id="opn" placeholder="Name des Kunden" value="${o?esc(o.name||''):''}" onkeydown="if(event.key==='Enter'){event.preventDefault();saveOp()}"></div><div class="field"><label>Datum</label><input class="inp" type="date" id="opd" value="${OPK}"></div></div>
+   <div class="field" style="margin-top:14px"><label>Stage im Forecast</label><div class="seg op-stage">${[['offer','Offer created'],['proposal','Proposal sent'],['expected','Expected'],['','Nicht im Forecast']].map(([k2,l2])=>`<button class="${(o?(o.stage||''):'offer')===k2?'on':''}" onclick="OPST='${k2}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on');opHint()">${l2}</button>`).join('')}</div><div class="hint" id="ophint" style="margin-top:6px"></div></div>
+
    <div class="row" style="margin-top:18px;gap:8px">${id?`<button class="btn danger" onclick="closeSheet();actOpDel('${OPK}','${id}')" aria-label="Löschen">${ic('trash')}</button>`:''}<button class="btn pri block" onclick="saveOp()">${id?'Speichern':'+1 Opp eintragen'}</button></div>`);
-  if(!id)setTimeout(()=>{const i=document.getElementById('opa');i&&i.focus()},350)}
+  opHint();if(!id)setTimeout(()=>{const i=document.getElementById('opa');i&&i.focus()},350)}
+function opHint(){const h=document.getElementById('ophint');if(!h)return;const a=Math.abs(numIn((document.getElementById('opa')||{}).value||'')||0);const P=S.fcParams;const rate={offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate}[OPST];
+  h.innerHTML=OPST?`Wird im Forecast unter <b>${FCN[OPST]}</b> eingetragen${a?`, zählt ${rate} % = <b>${fmtE(a*rate/100,2)}</b>`:''}.`:'Zählt nur fürs Tagesziel, nicht für den Forecast.'}
+/* Opp ↔ Forecast-Einzelwerte verknüpfen */
+function fcOppUnlink(id){Object.keys(S.forecast||{}).forEach(m=>{const F=S.forecast[m];if(!F||!F.items)return;Object.keys(F.items).forEach(st=>{const before=F.items[st].length;F.items[st]=F.items[st].filter(x=>x.opp!==id);if(F.items[st].length!==before){F[st]=F.items[st].reduce((a,x)=>a+(+x.v||0),0);if(!F.items[st].length)delete F.items[st]}})})}
+function fcOppLink(o,date){if(!o.stage||!(+o.amount))return;const m=date.slice(0,7);S.forecast[m]=S.forecast[m]||{};const F=S.forecast[m];F.items=F.items||{};let it=F.items[o.stage];if(!it||!it.length){it=[];if(+F[o.stage])it.push({v:+F[o.stage],n:'Bisheriger Wert'})}it.push({v:+o.amount,n:o.name||'Opp',opp:o.id});F.items[o.stage]=it;F[o.stage]=it.reduce((a,x)=>a+(+x.v||0),0)}
 function saveOp(){const amt=Math.abs(numIn(document.getElementById('opa').value)||0);const k=document.getElementById('opd').value||OPK;const name=document.getElementById('opn').value.trim();
+  if(OPST&&!amt){toast('Für den Forecast bitte einen Wert eintragen');document.getElementById('opa').focus();return}
   if(OPID&&k!==OPK)actSet(OPK,a=>{a.ops=a.ops.filter(o=>o.id!==OPID)});
-  actSet(k,a=>{const o={id:OPID||uid(),amount:amt||0,name};const i=a.ops.findIndex(x=>x.id===o.id);if(i>=0)a.ops[i]=o;else a.ops.push(o)});
-  closeSheet();if(!actHit(k)||OPID)toast(OPID?'Opportunity gespeichert':`Opp eingetragen${amt?', '+fmtE(amt):''}`,'ok');actPop('op');render()}
+  const o={id:OPID||uid(),amount:amt||0,name};if(OPST)o.stage=OPST;
+  fcOppUnlink(o.id);fcOppLink(o,k);
+  actSet(k,a=>{const i=a.ops.findIndex(x=>x.id===o.id);if(i>=0)a.ops[i]=o;else a.ops.push(o)});
+  closeSheet();if(!actHit(k)||OPID)toast(`${OPID?'Opp gespeichert':'Opp eingetragen'}${amt?', '+fmtE(amt):''}${OPST?' → '+FCN[OPST]:''}`,'ok');actPop('op');render()}
 let ACTK=null;
 function actDaySheet(k,keep){ACTK=k;const a=actOf(k),g=actGoal(k);const html=`${sheetHead(`${WDN[pD(k).getDay()]}, ${pD(k).getDate()}. ${MONS[pD(k).getMonth()]}`)}
    <div id="actday"><div class="ac-body" style="margin-top:0"><div class="ac-ring">${actRings(a,g)}<div class="ac-mid">${actHit(k)?'<b class="ac-emo">🎯</b>':`<b class="num">${Math.min(a.demo,g.demo)+Math.min(a.ops.length,g.op)}<span>/${g.demo+g.op}</span></b>`}</div></div>
@@ -1519,7 +1531,7 @@ function vAktiv(){const m=CUR,tk=todayK();const am=actMonth(m);const g=S.setting
     <div class="ac-cal"><div class="ac-ch">${['Mo','Di','Mi','Do','Fr','Sa','So'].map(x=>`<span>${x}</span>`).join('')}</div><div class="ac-cg">${'<i></i>'.repeat(lead)}${days.map(x=>{const wd=actWorkday(x.k),a=actOf(x.k),gg=actGoal(x.k);const fut=x.k>tk;return wd?`<button class="ac-cd ${actHit(x.k)?'hit':''} ${x.k===tk?'today':''} ${fut?'fut':''}" onclick="actDaySheet('${x.k}')">${actRings(a,gg,40)}<small>${+x.k.slice(8)}</small>${a.demo||a.ops.length?`<em>${a.demo}·${a.ops.length}</em>`:''}</button>`:`<div class="ac-cd off"><small>${+x.k.slice(8)}</small></div>`}).join('')}</div></div>
     <div class="ac-legend"><span><i class="lg-demo"></i>Demo-Calls (außen)</span><span><i class="lg-op"></i>Opportunities (innen)</span></div></div>
   <div><div class="sh ac-sh"><h2>Opportunities</h2><span class="sp"></span><button class="chip" onclick="opSheet('${m===ymOf(new Date())?tk:m+'-01'}')">${ic('plus')}Opp</button></div>
-  ${am.ops.length?`<div class="panel flush"><div class="list">${[...am.ops].sort((a,b)=>b.date.localeCompare(a.date)).map(o=>`<div class="li" onclick="opSheet('${o.date}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity'}</b><small>${dLabel(o.date)}</small>${mx&&+o.amount?`<div class="ac-bar"><i style="width:${(+o.amount/mx*100).toFixed(1)}%"></i></div>`:''}</div><div class="v">${+o.amount?fmtE(o.amount):'<span class="mut">ohne Wert</span>'}</div></div>`).join('')}</div></div>`:`<div class="panel"><p class="lbl" style="margin:0">Noch keine Opportunities in diesem Monat.</p></div>`}</div></div>
+  ${am.ops.length?`<div class="panel flush"><div class="list">${[...am.ops].sort((a,b)=>b.date.localeCompare(a.date)).map(o=>`<div class="li" onclick="opSheet('${o.date}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity'}</b><small>${dLabel(o.date)}${o.stage?' · '+FCN[o.stage]:''}</small>${mx&&+o.amount?`<div class="ac-bar"><i style="width:${(+o.amount/mx*100).toFixed(1)}%"></i></div>`:''}</div><div class="v">${+o.amount?fmtE(o.amount):'<span class="mut">ohne Wert</span>'}</div></div>`).join('')}</div></div>`:`<div class="panel"><p class="lbl" style="margin:0">Noch keine Opportunities in diesem Monat.</p></div>`}</div></div>
   <div class="panel" style="margin-top:14px"><div class="ptl" style="margin-bottom:12px">${ic('gear','class="pi"')}Dein Tagesziel</div>
     <div class="grid2"><div class="field"><label>Demo-Calls pro Tag</label><input class="inp" inputmode="numeric" value="${g.demo}" onchange="S.settings.actGoal={...(S.settings.actGoal||{demo:2,op:1}),demo:Math.max(1,parseInt(this.value)||2)};save();render();toast('Tagesziel gespeichert','ok')"></div>
     <div class="field"><label>Opportunities pro Tag</label><input class="inp" inputmode="numeric" value="${g.op}" onchange="S.settings.actGoal={...(S.settings.actGoal||{demo:2,op:1}),op:Math.max(1,parseInt(this.value)||1)};save();render();toast('Tagesziel gespeichert','ok')"></div></div>
@@ -1986,19 +1998,19 @@ function yearTargets(y){
 function calcEval(str){let t=String(str||'').replace(/[\s€]/g,'').replace(/−/g,'-').replace(/=+$/,'');if(!t)return null;const body=t.replace(/^[-+]/,'');if(!/[+\-]/.test(body))return null;const terms=t.match(/[+-]?[^+-]+/g);if(!terms)return null;let sum=0;for(const x of terms){const sg=x[0]==='-'?-1:1;const n=numIn(x.replace(/^[+-]/,''));sum+=sg*n}return Math.round(sum*100)/100}
 function fcLive(el,f){const h=document.getElementById('fcc-'+f);if(!h)return;const r=calcEval(el.value);h.textContent=r==null?'':'= '+fmtE(r,2)+'  (Enter oder =)';h.style.display=r==null?'none':'block'}
 function fcKey(e,el,f){if(e.key==='='||e.key==='Enter'){const r=calcEval(el.value);if(r!=null||e.key==='Enter'){e.preventDefault();if(r!=null){el.value=String(r).replace('.',',');fcLive(el,f)}if(e.key==='Enter'){const all=[...document.querySelectorAll('#view .fcf')];const nx=all[all.indexOf(el)+1];if(nx)nx.focus();else el.blur()}}}}
-const FCN={signed:'Signed',proposal:'Proposal sent',expected:'Expected sign up'};
+const FCN={signed:'Signed',offer:'Offer created',proposal:'Proposal sent',expected:'Expected sign up'};
 let FL=null;
 function fcList(f){const F=S.forecast[CUR]||{};const items=((F.items||{})[f]||[]).map(x=>({...x}));FL={f,items:items.length?items:[{v:'',n:''},{v:'',n:''}]};if(!items.length&&+F[f])FL.items=[{v:+F[f],n:'Bisheriger Wert'},{v:'',n:''}];fcListDraw()}
 function fcListDraw(){const sum=FL.items.reduce((a,x)=>a+numIn(String(x.v)),0);const n=FL.items.filter(x=>numIn(String(x.v))).length;
   openSheet(`${sheetHead(FCN[FL.f]+' · Einzelwerte')}
    <p class="hint" style="margin:0 0 12px">Trag jede Opp einzeln ein, die App rechnet die Summe. Tab oder Enter springt ins nächste Feld.</p>
-   <div class="fl-list">${FL.items.map((x,i)=>`<div class="fl-row"><span class="fl-n">${i+1}</span><input class="inp fl-name" placeholder="Kunde (optional)" value="${esc(x.n||'')}" oninput="FL.items[${i}].n=this.value"><input class="inp fl-v num" inputmode="decimal" placeholder="0 €" value="${x.v===''||x.v==null?'':typeof x.v==='number'?x.v.toLocaleString('de-DE',{maximumFractionDigits:2}):esc(x.v)}" oninput="FL.items[${i}].v=this.value;fcListSum()" onkeydown="if(event.key==='Enter'){event.preventDefault();fcListNext(${i})}"><button class="ac-minus" onclick="FL.items.splice(${i},1);if(!FL.items.length)FL.items.push({v:'',n:''});fcListDraw()" aria-label="Zeile löschen">${ic('minus')}</button></div>`).join('')}</div>
+   <div class="fl-list">${FL.items.map((x,i)=>`<div class="fl-row"><span class="fl-n" ${x.opp?'title="aus Tagesziel"':''}>${x.opp?'🎯':i+1}</span><input class="inp fl-name" placeholder="Kunde (optional)" value="${esc(x.n||'')}" oninput="FL.items[${i}].n=this.value"><input class="inp fl-v num" inputmode="decimal" placeholder="0 €" value="${x.v===''||x.v==null?'':typeof x.v==='number'?x.v.toLocaleString('de-DE',{maximumFractionDigits:2}):esc(x.v)}" oninput="FL.items[${i}].v=this.value;fcListSum()" onkeydown="if(event.key==='Enter'){event.preventDefault();fcListNext(${i})}"><button class="ac-minus" onclick="FL.items.splice(${i},1);if(!FL.items.length)FL.items.push({v:'',n:''});fcListDraw()" aria-label="Zeile löschen">${ic('minus')}</button></div>`).join('')}</div>
    <button class="btn sm" style="margin-top:10px" onclick="FL.items.push({v:'',n:''});fcListDraw();setTimeout(()=>{const a=document.querySelectorAll('.fl-v');a[a.length-1].focus()},60)">${ic('plus')}Weitere Opp</button>
    <div class="fl-sum"><span><small>Summe</small><b class="num" id="flsum">${fmtE(sum,2)}</b></span><span class="lbl" id="flcnt">${n} ${n===1?'Opp':'Opps'}</span></div>
    <div class="row" style="gap:8px;margin-top:14px"><button class="btn danger" onclick="fcListClear()" aria-label="Liste entfernen">${ic('trash')}</button><button class="btn pri block" onclick="fcListSave()">Summe übernehmen</button></div>`)}
 function fcListSum(){const sum=FL.items.reduce((a,x)=>a+numIn(String(x.v)),0);const n=FL.items.filter(x=>numIn(String(x.v))).length;const e=document.getElementById('flsum');if(e)e.textContent=fmtE(sum,2);const c=document.getElementById('flcnt');if(c)c.textContent=n+' '+(n===1?'Opp':'Opps')}
 function fcListNext(i){if(i===FL.items.length-1){FL.items.push({v:'',n:''});fcListDraw();const a=document.querySelectorAll('.fl-v');a[a.length-1].focus()}else{document.querySelectorAll('.fl-v')[i+1].focus()}}
-function fcListSave(){const items=FL.items.map(x=>({v:numIn(String(x.v)),n:(x.n||'').trim()})).filter(x=>x.v);S.forecast[CUR]=S.forecast[CUR]||{};const F=S.forecast[CUR];F.items=F.items||{};if(items.length)F.items[FL.f]=items;else delete F.items[FL.f];F[FL.f]=items.reduce((a,x)=>a+x.v,0);save();closeSheet();render();toast(`${FCN[FL.f]}: ${fmtE(F[FL.f],2)} aus ${items.length} ${items.length===1?'Opp':'Opps'}`,'ok')}
+function fcListSave(){const items=FL.items.map(x=>{const o={v:numIn(String(x.v)),n:(x.n||'').trim()};if(x.opp)o.opp=x.opp;return o}).filter(x=>x.v);S.forecast[CUR]=S.forecast[CUR]||{};const F=S.forecast[CUR];F.items=F.items||{};if(items.length)F.items[FL.f]=items;else delete F.items[FL.f];F[FL.f]=items.reduce((a,x)=>a+x.v,0);save();closeSheet();render();toast(`${FCN[FL.f]}: ${fmtE(F[FL.f],2)} aus ${items.length} ${items.length===1?'Opp':'Opps'}`,'ok')}
 function fcListClear(){const F=S.forecast[CUR]||{};if(F.items)delete F.items[FL.f];save();closeSheet();render();toast('Liste entfernt, der Betrag bleibt stehen')}
 function fcField(f,val){const F=S.forecast[CUR]||{};const it=(F.items||{})[f];const vv=val?String(val).replace('.',','):'';
   return it&&it.length?`<div class="fcw"><button class="fcl on" onclick="fcList('${f}')" aria-label="Einzelwerte bearbeiten">${ic('list')}<i>${it.length}</i></button><button class="inp num fcf fcro" onclick="fcList('${f}')">${fmtE(val||0,2)}</button></div>`
@@ -2014,6 +2026,7 @@ function vForecast(){
       <div class="fr"><div><b>Closed Won</b><small>automatisch aus deinen Verträgen</small></div><div class="fixed">${ic('lock','style="width:14px;height:14px;vertical-align:-1px;color:var(--muted);margin-right:6px"')}${fmtE(F.closed,2)}</div></div>
       <div class="fr"><div><b>Signed</b><small>kommt sicher diesen Monat</small></div>${fcField('signed',F.signed)}</div>
       <div class="grp">Offene und neue Opportunities</div>
+      <div class="fr"><div><b>Offer created</b><small>Pipeline-Wert, zählt ${F.oR} %</small></div>${fcField('offer',F.offer)}<div class="w">ergibt ${fmtE(F.wO,2)}</div></div>
       <div class="fr"><div><b>Proposal sent</b><small>Pipeline-Wert, zählt ${P.proposalRate} %</small></div>${fcField('proposal',F.proposal)}<div class="w">ergibt ${fmtE(F.wP,2)}</div></div>
       <div class="fr"><div><b>Expected sign up</b><small>Pipeline-Wert, zählt ${P.expectedRate} %</small></div>${fcField('expected',F.expected)}<div class="w">ergibt ${fmtE(F.wE,2)}</div></div>
       <div class="fr"><div><b>Neue Opps</b><small>1 pro Woche à ${fmtE(P.weekValue)}, zählt ${P.weekRate} %</small></div><input class="inp num fcf" id="fc-weeks" inputmode="decimal" enterkeyhint="done" value="${String(F.weeks).replace('.',',')}" ${set('weeks')} onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"><div class="w">${F.autoWeeks?'Wochen ohne Urlaub, ':'Wochen, '}ergibt ${fmtE(F.wN,2)}</div></div>
@@ -2031,6 +2044,7 @@ function vForecast(){
   <div class="sh"><h2>Gewichtung</h2></div>
   <div class="panel">
     <div class="grid3 r">
+      <div class="field"><label>Offer created in %</label><input class="inp" type="number" value="${F.oR}" onchange="S.fcParams.offerRate=+this.value;save();render()"></div>
       <div class="field"><label>Proposal sent in %</label><input class="inp" type="number" value="${P.proposalRate}" onchange="S.fcParams.proposalRate=+this.value;save();render()"></div>
       <div class="field"><label>Expected sign up in %</label><input class="inp" type="number" value="${P.expectedRate}" onchange="S.fcParams.expectedRate=+this.value;save();render()"></div>
       <div class="field"><label>Wert neue Opp in €</label><input class="inp" type="number" value="${P.weekValue}" onchange="S.fcParams.weekValue=+this.value;save();render()"></div>
