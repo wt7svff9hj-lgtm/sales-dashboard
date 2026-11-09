@@ -15,6 +15,16 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
+.pz-wrap{position:relative}.pz-wrap .inp{padding-right:52px;font-size:20px;font-weight:600}.pz-u{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:600}
+.pz-info{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:13.5px;color:var(--ink2);min-height:0}.pz-info:empty{display:none}.pz-info b{color:var(--ink)}.pz-info em{font-style:normal;color:var(--muted);font-size:12px}
+.pz-info>span{flex:1;min-width:0}.pz-info button{white-space:nowrap;flex:none;border:1px solid var(--hair2)!important;margin-left:auto;display:inline-flex;align-items:center;gap:4px;border:0;background:var(--soft);border-radius:99px;padding:5px 10px;font:inherit;font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer}.pz-info button svg{width:12px;height:12px}
+.pz-add,.pz-set{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px}
+.pz-l{font-size:12px;color:var(--muted);font-weight:600;width:100%}
+.pz-add>button,.pz-set>button{height:34px;min-width:44px;padding:0 10px;border-radius:10px;border:1px solid var(--hair2);background:var(--paper);font:inherit;font-weight:600;font-size:14px;color:var(--ink);cursor:pointer;touch-action:manipulation}
+.pz-add>button{background:color-mix(in srgb,var(--arD) 22%,var(--paper));border-color:transparent}
+.pz-add>button:active,.pz-set>button:active{transform:scale(.94)}
+.pz-own{display:inline-flex;gap:4px;align-items:center}.pz-own .inp{width:72px;height:34px;padding:0 10px;text-align:right;border-radius:10px}
+.pz-go{width:34px;height:34px;border-radius:10px;border:0;background:var(--ink);color:var(--paper);display:grid;place-items:center;cursor:pointer}.pz-go svg{width:16px;height:16px}
 .lk-pad button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}.lk-pad button.pr{transform:scale(.9);filter:brightness(.92)}
 .zo{margin-bottom:14px}
 .zo-top{display:flex;gap:16px;align-items:stretch;flex-wrap:wrap}
@@ -990,7 +1000,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='38';const APP_DATE='2026-11-09';
+const APP_VERSION='40';const APP_DATE='2026-11-09';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1562,7 +1572,7 @@ function vHome(){
       ${free?`<div class="freebox">${ic(TYPES[type].i)}<div><b>${TYPES[type].l}</b><div class="lbl">Zählt neutral im Stundenkonto.</div></div></div>`:`
       <div class="tin">
         <label><span>Beginn</span><input type="time" value="${e.start||''}" onchange="todaySet('start',this.value)"></label>
-        <label><span>Pause (min)</span><input type="number" inputmode="numeric" min="0" placeholder="0" value="${e.pause||''}" onchange="todaySet('pause',this.value)"></label>
+        <label><span>Pause (min)</span><input type="text" inputmode="numeric" autocomplete="off" placeholder="0" value="${e.pause||''}" onchange="todayPause(this.value)" onkeydown="if(event.key==='='||event.key==='Enter'){event.preventDefault();this.blur()}"></label>
         <label><span>Ende</span><input type="time" value="${e.end||''}" onchange="todaySet('end',this.value)"></label>
       </div>
       <div class="tq"><span class="lbl">Pause</span>${[0,15,30,45,60].map(p=>`<button class="${(+e.pause||0)===p&&e.start?'on':''}" onclick="todaySet('pause',${p})">${p}</button>`).join('')}<span class="sp"></span>${prevW?`<button class="cp" onclick="copyPrev()">${ic('copy')} Wie ${WD[prevW.wd]}</button>`:''}</div>
@@ -1587,11 +1597,12 @@ function vHome(){
 }
 const dealName=d=>d.name||(d.retro?(d.channel==='in'?'Inbound gesamt':'Outbound gesamt'):(d.channel==='in'?'Inbound-Vertrag':'Outbound-Vertrag'));
 
+function todayPause(v){const c=calcEval(v);if(c!=null){const terms=String(v).replace(/=+$/,'').split('+').map(x=>Math.round(numIn(x))).filter(Boolean);todaySet('pause',Math.max(0,Math.round(c)));const tk=todayK();if(S.days[tk]&&!/-|−/.test(v)&&terms.length>1){S.days[tk].pauses=terms;save()}toast(`Pause ${Math.round(c)} min${c>=60?' ('+hm(c/60)+')':''}`,'ok')}else{todaySet('pause',v);const tk=todayK();if(S.days[tk])delete S.days[tk].pauses}}
 function copyPrev(){const d=new Date();for(let i=0;i<14;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start&&x.end){const tk=todayK();const t=S.days[tk]&&!isFree(S.days[tk].type)?S.days[tk].type:'arbeit';S.days[tk]={type:t,start:x.start,end:x.end,pause:x.pause||0,note:''};save();render();toast('Zeiten übernommen');return}}}
 function todaySet(f,v){
   const tk=todayK(); let e=S.days[tk]||{type:'arbeit',start:'',end:'',pause:0,note:''};
   if(f==='type'){ if(isFree(v))e={type:v,note:e.note||''}; else e={type:v,start:e.start||'',end:e.end||'',pause:+e.pause||0,note:e.note||''}; }
-  else { if(isFree(e.type))e={type:'arbeit',start:'',end:'',pause:0,note:e.note||''}; e[f]=f==='pause'?(+v||0):v; }
+  else { if(isFree(e.type))e={type:'arbeit',start:'',end:'',pause:0,note:e.note||''}; e[f]=f==='pause'?(+v||0):v; if(f==='pause'&&!String(v).includes('+'))delete e.pauses; }
   S.days[tk]=e; save(); render(); {const w=worked(e);toast(isFree(e.type)?`${TYPES[e.type].l} eingetragen`:w!=null?`Gespeichert: ${hm(w)} heute`:'Gespeichert','ok')}
 }
 
@@ -1655,7 +1666,9 @@ function vZeit(){
   const y=CUR.slice(0,4); const u=urlaubYear(y);
   // nach Kalenderwochen gruppieren
   const weeks=[];st.days.forEach(x=>{const w=isoWeek(x.d);let g=weeks[weeks.length-1];if(!g||g.w!==w){g={w,days:[],sum:0};weeks.push(g)}g.days.push(x);g.sum+=x.w||0});
-  return `${head(`<button class="ibtn" onclick="rangeSheet()" aria-label="Zeitraum eintragen">${ic('range')}</button><button class="ibtn" onclick="exportSheet()" aria-label="Exportieren">${ic('down')}</button>`)}
+  const tk=todayK(),tdi=dayInfo(tk),tE=!!S.days[tk],tFree=!tE&&(tdi.weekend||tdi.hol||tdi.sp);
+  const todayBtn=tFree?`<button class="addbtn" disabled style="opacity:.45;box-shadow:none;cursor:default">${ic('lock')}${tdi.weekend?'Wochenende':tdi.sp||tdi.hol||'Heute frei'}</button>`:`<button class="addbtn" onclick="editDay('${tk}')">${ic(tE?'edit':'plus')}${tE?'Heute bearbeiten':'Zeit erfassen'}</button>`;
+  return `${head(`${todayBtn}<button class="ibtn" onclick="rangeSheet()" aria-label="Zeitraum eintragen">${ic('range')}</button><button class="ibtn" onclick="exportSheet()" aria-label="Exportieren">${ic('down')}</button>`)}
   ${zeitOverview(CUR,st,carry,end)}
   ${calendar(CUR)}
   <div class="panel" style="margin-top:14px;display:none">
@@ -1676,7 +1689,7 @@ function dayRow(x,u){
     const T=TYPES[e.type]; t1=`${ic(T.i)}${T.l}`;
     if(isFree(e.type)){t2=e.type==='urlaub'&&u.idx[x.k]?`Urlaubstag ${one(u.idx[x.k])} von ${u.total}`:(x.hol||'');rv=`<small class="mut">neutral</small>`}
     else{
-      t2=e.start?`${e.start} bis ${e.end||'jetzt'}, ${e.pause||0} min Pause`:'Noch keine Zeiten';
+      t2=e.start?`${e.start} bis ${e.end||'jetzt'}, ${e.pauses&&e.pauses.length>1?e.pauses.join('+')+' = ':''}${e.pause||0} min Pause`:'Noch keine Zeiten';
       if(e.type==='halb'&&u.idx[x.k])t2+=`, Urlaubstag ${one(u.idx[x.k])}`;
       rv=x.w!=null?`<b>${hm(x.w)}</b><small class="${x.ist-x.soll>=0?'pos':'neg'}">${sgn(x.ist-x.soll)}</small>`:(x.missing?`<b class="neg">fehlt</b>`:`<small class="mut">Soll ${fmtN(x.soll)} h</small>`);
     }
@@ -1703,21 +1716,34 @@ function drawDaySheet(){
      <div class="field"><label>Beginn</label><input class="inp" type="time" value="${e.start||''}" oninput="ED.e.start=this.value;updDay()"></div>
      <div class="field"><label>Ende</label><input class="inp" type="time" value="${e.end||''}" oninput="ED.e.end=this.value;updDay()"></div>
    </div>
-   <div class="field" style="margin-top:14px"><label>Pause in Minuten</label><input class="inp" id="pz" type="number" inputmode="numeric" min="0" value="${e.pause||0}" oninput="ED.e.pause=+this.value||0;updDay()">
-     <div class="quick">${[0,15,30,45,60,90].map(p=>`<button onclick="ED.e.pause=${p};document.getElementById('pz').value=${p};updDay()">${p} min</button>`).join('')}</div></div>`}
+   <div class="field" style="margin-top:14px"><label>Pause gesamt</label>
+     <div class="pz-wrap"><input class="inp num" id="pz" type="text" inputmode="numeric" autocomplete="off" value="${e.pause||0}" oninput="pzType(this)" onkeydown="if(event.key==='='||event.key==='Enter'){event.preventDefault();pzCommit(this)}" onblur="pzCommit(this)"><span class="pz-u">min</span></div>
+     <div id="pzinfo" class="pz-info"></div>
+     <div class="pz-add"><span class="pz-l">Teilpause dazu</span>${[5,10,15,20,30,45].map(p=>`<button onclick="pzAdd(${p})">+${p}</button>`).join('')}
+       <span class="pz-own"><input class="inp num" id="pzo" type="text" inputmode="numeric" placeholder="Min." onkeydown="if(event.key==='Enter'){event.preventDefault();pzAdd(this.value);this.value=''}"><button class="pz-go" onclick="const i=document.getElementById('pzo');pzAdd(i.value);i.value='';i.focus()" aria-label="Teilpause hinzufügen">${ic('plus')}</button></span></div>
+     <div class="pz-set"><span class="pz-l">Oder fest</span>${[0,15,30,45,60].map(p=>`<button onclick="pzSet(${p})">${p}</button>`).join('')}</div></div>`}
    <div class="field" style="margin-top:14px"><label>Notiz</label><input class="inp" value="${esc(e.note||'')}" placeholder="Optional, z. B. Sales Training" oninput="ED.e.note=this.value"></div>
    <div id="dsum" style="margin-top:16px;background:var(--raise);border-radius:14px;padding:14px"></div>
    <div class="row" style="margin-top:16px;gap:8px">
      ${S.days[k]?`<button class="btn danger" onclick="delDay()" aria-label="Eintrag löschen">${ic('trash')}</button>`:''}
      <button class="btn pri block" onclick="saveDay()">Speichern</button>
    </div>`);
-  updDay();
+  updDay();pzInfo();
 }
+function pzPieces(){const e=ED.e;return e.pauses&&e.pauses.length?e.pauses.slice():(+e.pause?[+e.pause]:[])}
+function pzInfo(){const el=document.getElementById('pzinfo');if(!el)return;const e=ED.e;const pc=e.pauses||[];const t=+e.pause||0;
+  el.innerHTML=pc.length>1?`<span>${pc.join(' + ')} = <b>${t} min</b>${t>=60?' · '+hm(t/60):''}</span><button onclick="pzUndo()">${ic('storno')}Rückgängig</button>`:(t>=60?`<span>= <b>${hm(t/60)}</b></span>`:'')}
+function pzShow(){const i=document.getElementById('pz');if(i&&document.activeElement!==i)i.value=ED.e.pause||0;pzInfo();updDay()}
+function pzAdd(v){const n=Math.round(Math.abs(numIn(String(v))));if(!n)return;const pc=pzPieces();pc.push(n);ED.e.pauses=pc;ED.e.pause=pc.reduce((a,b)=>a+b,0);const i=document.getElementById('pz');if(i)i.value=ED.e.pause;pzInfo();updDay()}
+function pzUndo(){const pc=pzPieces();pc.pop();ED.e.pauses=pc.length>1?pc:null;ED.e.pause=pc.reduce((a,b)=>a+b,0);document.getElementById('pz').value=ED.e.pause;pzInfo();updDay()}
+function pzSet(n){ED.e.pause=n;ED.e.pauses=null;document.getElementById('pz').value=n;pzInfo();updDay()}
+function pzType(el){const c=calcEval(el.value);const info=document.getElementById('pzinfo');if(c!=null){info.innerHTML=`<span>= <b>${Math.round(c)} min</b>${c>=60?' · '+hm(c/60):''} <em>(Enter oder =)</em></span>`;return}ED.e.pause=Math.round(numIn(el.value))||0;ED.e.pauses=null;pzInfo();updDay()}
+function pzCommit(el){const c=calcEval(el.value);if(c==null)return;const terms=String(el.value).replace(/=+$/,'').split('+').map(x=>Math.round(numIn(x))).filter(Boolean);ED.e.pause=Math.max(0,Math.round(c));ED.e.pauses=!/-|−/.test(el.value)&&terms.length>1?terms:null;el.value=ED.e.pause;pzInfo();updDay()}
 function updDay(){const {k,e}=ED;const x=dayInfo(k);const w=worked(e);const el=document.getElementById('dsum');if(!el)return;
   if(isFree(e.type)){el.innerHTML=`<b>${TYPES[e.type].l}</b> <span class="mut">zählt neutral, Soll 0 h</span>`;return}
   const soll=(x.weekend||x.hol||x.sp)?0:(e.type==='halb'?+S.settings.sollHalb:+S.settings.sollTag);
   el.innerHTML=w!=null?`<div class="row"><span class="mut">Arbeitszeit</span><span class="sp"></span><b class="num">${hm(w)} (${dec2(w)} h)</b></div><div class="row" style="margin-top:6px"><span class="mut">Saldo bei ${fmtN(soll,1)} h Soll</span><span class="sp"></span><b class="num ${w-soll>=0?'pos':'neg'}">${sgn(w-soll)} h</b></div>${w>10?`<div class="chip r" style="margin-top:10px">${ic('alert')} Mehr als 10 Stunden</div>`:''}`:`<span class="mut">Beginn und Ende eintragen. Soll ${fmtN(soll,1)} h.</span>`}
-function saveDay(){const {k,e}=ED;FLASH=k;setTimeout(()=>FLASH=null,50);if(isFree(e.type)){S.days[k]={type:e.type,note:e.note||''}}else S.days[k]={type:e.type,start:e.start||'',end:e.end||'',pause:+e.pause||0,note:e.note||''};save();closeSheet();render();const w=worked(S.days[k]);toast(isFree(S.days[k].type)?`${TYPES[S.days[k].type].l} eingetragen`:w!=null?`Gespeichert: ${hm(w)} am ${dLabel(k)}`:'Gespeichert','ok')}
+function saveDay(){const {k,e}=ED;FLASH=k;setTimeout(()=>FLASH=null,50);if(isFree(e.type)){S.days[k]={type:e.type,note:e.note||''}}else{S.days[k]={type:e.type,start:e.start||'',end:e.end||'',pause:+e.pause||0,note:e.note||''};if(e.pauses&&e.pauses.length>1)S.days[k].pauses=e.pauses}save();closeSheet();render();const w=worked(S.days[k]);toast(isFree(S.days[k].type)?`${TYPES[S.days[k].type].l} eingetragen`:w!=null?`Gespeichert: ${hm(w)} am ${dLabel(k)}`:'Gespeichert','ok')}
 function delDay(){delete S.days[ED.k];save();closeSheet();render();toast('Eintrag gelöscht')}
 let RG={type:'urlaub'};
 function rangeSheet(){
