@@ -15,6 +15,20 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
+.fr:has(.fcw){grid-template-columns:1fr 176px}
+.fcw{display:flex;gap:6px;align-items:center}
+.fcw .inp{flex:1;min-width:0}
+.fcl{flex:none;width:38px;height:44px;border-radius:12px;border:1px solid var(--hair2);background:var(--paper);color:var(--muted);display:grid;place-items:center;position:relative;cursor:pointer}
+.fcl svg{width:17px;height:17px}.fcl.on{background:color-mix(in srgb,var(--arD) 30%,var(--paper));color:var(--ink);border-color:transparent}
+.fcl i{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;border-radius:9px;background:var(--ink);color:var(--paper);font-size:10.5px;font-style:normal;font-weight:700;display:grid;place-items:center;padding:0 4px}
+.fcro{text-align:right;font:inherit;font-weight:600;cursor:pointer;color:var(--ink)}
+.fcc{grid-column:2;display:none;text-align:right;font-size:12.5px;font-weight:600;color:var(--green)}
+.fl-list{display:flex;flex-direction:column;gap:8px;max-height:46vh;overflow:auto;padding:2px}
+.fl-row{display:grid;grid-template-columns:22px minmax(0,1fr) 120px 34px;gap:8px;align-items:center}
+.fl-n{font-size:12px;color:var(--muted);font-weight:700;text-align:center}.fl-row .inp{height:44px}.fl-v{text-align:right}
+.fl-sum{display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;padding:14px 16px;border-radius:16px;background:var(--soft)}
+.fl-sum small{display:block;font-size:12px;color:var(--muted)}.fl-sum b{font-family:'SD Display','SD Text',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.02em}
+@media (max-width:420px){.fr:has(.fcw){grid-template-columns:1fr 158px}.fl-row{grid-template-columns:18px minmax(0,1fr) 100px 32px;gap:6px}}
 @media (min-width:760px){.ac-cols{align-items:start}.ac-sh{margin-top:0!important}.ac-cd{aspect-ratio:auto;height:84px;min-width:0;overflow:hidden}.ac-cd>svg{width:min(44px,72%);max-width:none}.ac-cg{gap:8px}}
 @media (min-width:760px) and (max-width:999px){.cols.two.ac-cols{grid-template-columns:1fr}}
 .bcol{display:contents}.bento .bcol>*{grid-column:1/-1}
@@ -947,7 +961,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='34';
+const APP_VERSION='35';
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
 async function checkUpdate(manual){
@@ -996,6 +1010,7 @@ const I={
  city:'<path d="M3 20.5h18M5 20.5V8.5l6-3v15M11 20.5V10h8v10.5M14 13.5h2M14 16.5h2"/>',
  play:'<path d="M8 5.5v13l10-6.5z" fill="currentColor"/>', stop:'<rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/>',
  coffee:'<path d="M5 9.5h11v4.5a4.5 4.5 0 0 1-4.5 4.5h-2A4.5 4.5 0 0 1 5 14z"/><path d="M16 11h1.5a2.2 2.2 0 0 1 0 4.4H16M8.5 4v2.5M12 4v2.5"/>',
+ list:'<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
  video:'<rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="m16 10.5 5-3v9l-5-3"/>',
  doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
  minus:'<path d="M5 12h14"/>',
@@ -1284,12 +1299,15 @@ function countUp(root){if(RM())return;
     const d=900,t0=performance.now();tn.nodeValue=f(0);
     const step=now=>{const k=Math.min(1,(now-t0)/d),e=1-Math.pow(1-k,3);tn.nodeValue=k<1?f(num*e):t;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
 function render(){
+  if(window.event&&window.event.type==='change'&&!render._d){render._d=1;setTimeout(()=>{render._d=0;render()},0);return}
+  const _ae=document.activeElement,_fl=[...document.querySelectorAll('#view input,#view select,#view textarea')];const _fi=_fl.indexOf(_ae);const _sel=_fi>=0&&_ae.select?[_ae.selectionStart,_ae.selectionEnd]:null;
   renderChrome();
   document.getElementById('view').innerHTML=({home:vHome,zeit:vZeit,umsatz:vUmsatz,forecast:vForecast,gehalt:vGehalt,verlauf:vVerlauf,einstellungen:vSettings,aktiv:vAktiv}[VIEW])();
   bindTips();
   clearTimeout(window._cb);window._cb=setTimeout(checkBadges,800);
   const hx=document.querySelector('.hmx');if(hx)hx.scrollLeft=hx.scrollWidth;
   const vw=document.getElementById('view');
+  if(_fi>=0){const nl=[...document.querySelectorAll('#view input,#view select,#view textarea')];const n=nl[_fi];if(n&&document.activeElement!==n){n.focus({preventScroll:true});try{if(_sel&&n.value&&n.type!=='date')n.select()}catch(e){}}}
   if(ANIM_PENDING&&!LOCKED){ANIM_PENDING=false;vw.classList.remove('enter');void vw.offsetWidth;vw.classList.add('enter');countUp(vw);clearTimeout(window._en);window._en=setTimeout(()=>vw.classList.remove('enter'),1800)}
 }
 
@@ -1825,6 +1843,29 @@ function yearTargets(y){
 /* ============================================================
    Forecast
    ============================================================ */
+
+/* ---------- Rechnen im Feld (1428+2247=) & Einzelwert-Liste ---------- */
+function calcEval(str){let t=String(str||'').replace(/[\s€]/g,'').replace(/−/g,'-').replace(/=+$/,'');if(!t)return null;const body=t.replace(/^[-+]/,'');if(!/[+\-]/.test(body))return null;const terms=t.match(/[+-]?[^+-]+/g);if(!terms)return null;let sum=0;for(const x of terms){const sg=x[0]==='-'?-1:1;const n=numIn(x.replace(/^[+-]/,''));sum+=sg*n}return Math.round(sum*100)/100}
+function fcLive(el,f){const h=document.getElementById('fcc-'+f);if(!h)return;const r=calcEval(el.value);h.textContent=r==null?'':'= '+fmtE(r,2)+'  (Enter oder =)';h.style.display=r==null?'none':'block'}
+function fcKey(e,el,f){if(e.key==='='||e.key==='Enter'){const r=calcEval(el.value);if(r!=null||e.key==='Enter'){e.preventDefault();if(r!=null){el.value=String(r).replace('.',',');fcLive(el,f)}if(e.key==='Enter'){const all=[...document.querySelectorAll('#view .fcf')];const nx=all[all.indexOf(el)+1];if(nx)nx.focus();else el.blur()}}}}
+const FCN={signed:'Signed',proposal:'Proposal sent',expected:'Expected sign up'};
+let FL=null;
+function fcList(f){const F=S.forecast[CUR]||{};const items=((F.items||{})[f]||[]).map(x=>({...x}));FL={f,items:items.length?items:[{v:'',n:''},{v:'',n:''}]};if(!items.length&&+F[f])FL.items=[{v:+F[f],n:'Bisheriger Wert'},{v:'',n:''}];fcListDraw()}
+function fcListDraw(){const sum=FL.items.reduce((a,x)=>a+numIn(String(x.v)),0);const n=FL.items.filter(x=>numIn(String(x.v))).length;
+  openSheet(`${sheetHead(FCN[FL.f]+' · Einzelwerte')}
+   <p class="hint" style="margin:0 0 12px">Trag jede Opp einzeln ein, die App rechnet die Summe. Tab oder Enter springt ins nächste Feld.</p>
+   <div class="fl-list">${FL.items.map((x,i)=>`<div class="fl-row"><span class="fl-n">${i+1}</span><input class="inp fl-name" placeholder="Kunde (optional)" value="${esc(x.n||'')}" oninput="FL.items[${i}].n=this.value"><input class="inp fl-v num" inputmode="decimal" placeholder="0 €" value="${x.v===''||x.v==null?'':typeof x.v==='number'?x.v.toLocaleString('de-DE',{maximumFractionDigits:2}):esc(x.v)}" oninput="FL.items[${i}].v=this.value;fcListSum()" onkeydown="if(event.key==='Enter'){event.preventDefault();fcListNext(${i})}"><button class="ac-minus" onclick="FL.items.splice(${i},1);if(!FL.items.length)FL.items.push({v:'',n:''});fcListDraw()" aria-label="Zeile löschen">${ic('minus')}</button></div>`).join('')}</div>
+   <button class="btn sm" style="margin-top:10px" onclick="FL.items.push({v:'',n:''});fcListDraw();setTimeout(()=>{const a=document.querySelectorAll('.fl-v');a[a.length-1].focus()},60)">${ic('plus')}Weitere Opp</button>
+   <div class="fl-sum"><span><small>Summe</small><b class="num" id="flsum">${fmtE(sum,2)}</b></span><span class="lbl" id="flcnt">${n} ${n===1?'Opp':'Opps'}</span></div>
+   <div class="row" style="gap:8px;margin-top:14px"><button class="btn danger" onclick="fcListClear()" aria-label="Liste entfernen">${ic('trash')}</button><button class="btn pri block" onclick="fcListSave()">Summe übernehmen</button></div>`)}
+function fcListSum(){const sum=FL.items.reduce((a,x)=>a+numIn(String(x.v)),0);const n=FL.items.filter(x=>numIn(String(x.v))).length;const e=document.getElementById('flsum');if(e)e.textContent=fmtE(sum,2);const c=document.getElementById('flcnt');if(c)c.textContent=n+' '+(n===1?'Opp':'Opps')}
+function fcListNext(i){if(i===FL.items.length-1){FL.items.push({v:'',n:''});fcListDraw();const a=document.querySelectorAll('.fl-v');a[a.length-1].focus()}else{document.querySelectorAll('.fl-v')[i+1].focus()}}
+function fcListSave(){const items=FL.items.map(x=>({v:numIn(String(x.v)),n:(x.n||'').trim()})).filter(x=>x.v);S.forecast[CUR]=S.forecast[CUR]||{};const F=S.forecast[CUR];F.items=F.items||{};if(items.length)F.items[FL.f]=items;else delete F.items[FL.f];F[FL.f]=items.reduce((a,x)=>a+x.v,0);save();closeSheet();render();toast(`${FCN[FL.f]}: ${fmtE(F[FL.f],2)} aus ${items.length} ${items.length===1?'Opp':'Opps'}`,'ok')}
+function fcListClear(){const F=S.forecast[CUR]||{};if(F.items)delete F.items[FL.f];save();closeSheet();render();toast('Liste entfernt, der Betrag bleibt stehen')}
+function fcField(f,val){const F=S.forecast[CUR]||{};const it=(F.items||{})[f];const vv=val?String(val).replace('.',','):'';
+  return it&&it.length?`<div class="fcw"><button class="fcl on" onclick="fcList('${f}')" aria-label="Einzelwerte bearbeiten">${ic('list')}<i>${it.length}</i></button><button class="inp num fcf fcro" onclick="fcList('${f}')">${fmtE(val||0,2)}</button></div>`
+  :`<div class="fcw"><button class="fcl" onclick="fcList('${f}')" aria-label="Einzelwerte eintragen" tabindex="-1">${ic('list')}</button><input class="inp num fcf" id="fc-${f}" inputmode="decimal" enterkeyhint="next" value="${vv}" placeholder="0 €" onchange="fcSet('${f}',this.value)" oninput="fcLive(this,'${f}')" onkeydown="fcKey(event,this,'${f}')"></div><div class="fcc" id="fcc-${f}"></div>`}
+
 function vForecast(){
   const F=forecast(CUR); const P=S.fcParams; const sal=salaryWith(CUR,F.exp);
   const set=f=>`onchange="fcSet('${f}',this.value)"`; const v=n=>n?String(n).replace('.',','):'';
@@ -1833,11 +1874,11 @@ function vForecast(){
     <div class="panel">
       <div class="grp">Bereits gesichert</div>
       <div class="fr"><div><b>Closed Won</b><small>automatisch aus deinen Verträgen</small></div><div class="fixed">${ic('lock','style="width:14px;height:14px;vertical-align:-1px;color:var(--muted);margin-right:6px"')}${fmtE(F.closed,2)}</div></div>
-      <div class="fr"><div><b>Signed</b><small>kommt sicher diesen Monat</small></div><input class="inp num" inputmode="decimal" value="${v(F.signed)}" placeholder="0 €" ${set('signed')}></div>
+      <div class="fr"><div><b>Signed</b><small>kommt sicher diesen Monat</small></div>${fcField('signed',F.signed)}</div>
       <div class="grp">Offene und neue Opportunities</div>
-      <div class="fr"><div><b>Proposal sent</b><small>Pipeline-Wert, zählt ${P.proposalRate} %</small></div><input class="inp num" inputmode="decimal" value="${v(F.proposal)}" placeholder="0 €" ${set('proposal')}><div class="w">ergibt ${fmtE(F.wP,2)}</div></div>
-      <div class="fr"><div><b>Expected sign up</b><small>Pipeline-Wert, zählt ${P.expectedRate} %</small></div><input class="inp num" inputmode="decimal" value="${v(F.expected)}" placeholder="0 €" ${set('expected')}><div class="w">ergibt ${fmtE(F.wE,2)}</div></div>
-      <div class="fr"><div><b>Neue Opps</b><small>1 pro Woche à ${fmtE(P.weekValue)}, zählt ${P.weekRate} %</small></div><input class="inp num" inputmode="decimal" value="${String(F.weeks).replace('.',',')}" ${set('weeks')}><div class="w">${F.autoWeeks?'Wochen ohne Urlaub, ':'Wochen, '}ergibt ${fmtE(F.wN,2)}</div></div>
+      <div class="fr"><div><b>Proposal sent</b><small>Pipeline-Wert, zählt ${P.proposalRate} %</small></div>${fcField('proposal',F.proposal)}<div class="w">ergibt ${fmtE(F.wP,2)}</div></div>
+      <div class="fr"><div><b>Expected sign up</b><small>Pipeline-Wert, zählt ${P.expectedRate} %</small></div>${fcField('expected',F.expected)}<div class="w">ergibt ${fmtE(F.wE,2)}</div></div>
+      <div class="fr"><div><b>Neue Opps</b><small>1 pro Woche à ${fmtE(P.weekValue)}, zählt ${P.weekRate} %</small></div><input class="inp num fcf" id="fc-weeks" inputmode="decimal" enterkeyhint="done" value="${String(F.weeks).replace('.',',')}" ${set('weeks')} onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"><div class="w">${F.autoWeeks?'Wochen ohne Urlaub, ':'Wochen, '}ergibt ${fmtE(F.wN,2)}</div></div>
     </div>
     <div class="stack" style="gap:14px">
       <div class="res">
@@ -1860,7 +1901,7 @@ function vForecast(){
     ${F.autoWeeks?'':`<button class="btn sm" style="margin-top:12px" onclick="delete S.forecast['${CUR}'].weeks;save();render()">Wochen wieder automatisch rechnen</button>`}
   </div>`;
 }
-function fcSet(f,v){S.forecast[CUR]=S.forecast[CUR]||{};S.forecast[CUR][f]=v===''?(f==='weeks'?null:0):numIn(v);if((f==='weeks'||f==='closed')&&v==='')delete S.forecast[CUR][f];save();render()}
+function fcSet(f,v){const cv=calcEval(v);if(cv!=null)v=String(cv);S.forecast[CUR]=S.forecast[CUR]||{};S.forecast[CUR][f]=v===''?(f==='weeks'?null:0):numIn(v);if((f==='weeks'||f==='closed')&&v==='')delete S.forecast[CUR][f];save();render()}
 function salaryWith(m,amount){const backup=S.deals;const extra=amount-rev(m).tot;S.deals=[...backup,{id:'tmp',date:`${m}-28`,amount:Math.max(0,extra),channel:'in',name:''}];const s=salary(m);S.deals=backup;return s}
 
 /* ============================================================
