@@ -15,6 +15,50 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
+.bento>.act{grid-column:1/-1}@media (min-width:760px){.bento>.act{grid-column:span 2}}
+:root{--arD:#F2CC2E;--arDo:#C99E00;--arO:#16181F;--arOo:#5B6070;--arTr:rgba(20,22,30,.07)}
+html[data-theme="dark"]{--arD:#F9DC4A;--arDo:#FFF1A6;--arO:#F3F4F8;--arOo:#9AA0B4;--arTr:rgba(255,255,255,.08)}
+.arings{display:block;width:100%;height:100%;overflow:visible;transform:rotate(-90deg)}
+.ar-tr{fill:none;stroke:var(--arTr)}.ar-fg{fill:none;stroke-linecap:round}
+.ar-demo{stroke:var(--arD)}.ar-op{stroke:var(--arO)}
+.ar-demo.ar-over{stroke:var(--arDo);filter:drop-shadow(0 0 3px rgba(0,0,0,.25))}.ar-op.ar-over{stroke:var(--arOo);filter:drop-shadow(0 0 3px rgba(0,0,0,.25))}
+@keyframes arPop{0%{stroke-width:inherit}40%{filter:brightness(1.15) drop-shadow(0 0 6px var(--arD))}100%{}}
+.ar-fg.pop{animation:arPop .6s ease}
+.ac-body{display:grid;grid-template-columns:132px minmax(0,1fr);gap:18px;align-items:center;margin-top:14px}
+.ac-ring{position:relative;width:132px;height:132px}
+.ac-mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.ac-mid b{font-family:'SD Display','SD Text',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.03em;line-height:1}.ac-mid b span{font-size:.55em;color:var(--muted);font-weight:700}
+.ac-mid b.ac-emo{font-size:34px}.ac-mid small{font-size:11px;color:var(--muted);margin-top:3px;font-weight:500}
+.ac-rows{display:flex;flex-direction:column;gap:14px;min-width:0}
+.ac-row{min-width:0}
+.ac-lb{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--ink2)}
+.ac-ic{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;flex:none}.ac-ic svg{width:14px;height:14px}
+.ac-ic.demo,.ico.demo{background:color-mix(in srgb,var(--arD) 30%,transparent);color:var(--ink)}.ac-ic.op,.ico.op{background:color-mix(in srgb,var(--arO) 10%,transparent);color:var(--ink)}
+.ac-line{display:flex;align-items:center;gap:8px;margin-top:4px}.ac-line .sp{flex:1}
+.ac-line b{font-family:'SD Display','SD Text',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.03em;line-height:1}.ac-line b span{font-size:.55em;color:var(--muted);font-weight:700}
+.ac-line em{font-style:normal;font-size:11.5px;font-weight:600;color:var(--muted);white-space:nowrap}.ac-line em.ok{color:var(--green)}
+.ac-minus{width:34px;height:34px;border-radius:50%;border:1px solid var(--hair2);background:var(--paper);color:var(--ink2);display:grid;place-items:center;cursor:pointer}.ac-minus svg{width:16px;height:16px}.ac-minus:disabled{opacity:.35}
+.ac-plus{height:40px;padding:0 14px 0 10px;border-radius:99px;border:0;font:inherit;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:5px;cursor:pointer;transition:transform .15s}
+.ac-plus svg{width:17px;height:17px}.ac-plus:active,.ac-minus:active{transform:scale(.92)}
+.ac-plus.demo{background:linear-gradient(135deg,#FBE36B,#F6C700);color:#111318;box-shadow:0 4px 14px rgba(246,199,0,.35)}
+.ac-plus.op{background:var(--arO);color:var(--paper)}
+.ac-msg{margin-top:14px;padding:10px 14px;border-radius:14px;background:color-mix(in srgb,var(--arD) 22%,transparent);font-weight:600;font-size:14px;text-align:center}
+.act.done{box-shadow:var(--shadow),0 0 0 2px color-mix(in srgb,var(--arD) 70%,transparent)}
+.ac-free{display:flex;gap:12px;align-items:center;margin-top:14px;padding:14px;border-radius:16px;background:var(--soft)}.ac-free svg{width:22px;height:22px;color:var(--muted)}.ac-free b{display:block}.ac-free small{color:var(--muted);font-size:12.5px}
+.ac-week{display:flex;align-items:flex-end;gap:6px;margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)}
+.ac-wd{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:4px 2px;border-radius:12px;cursor:pointer;font:inherit;color:inherit;width:42px}
+.ac-wd>svg{width:34px;height:34px}.ac-wd small{font-size:11px;color:var(--muted);font-weight:600}.ac-wd.today small{color:var(--ink);font-weight:800}
+.ac-wd.today{background:var(--soft)}.ac-wd.off{cursor:default}.ac-offdot{width:34px;height:34px;display:block;border-radius:50%;border:2px dashed var(--hair2)}
+.ac-avg{margin-left:auto;text-align:right}.ac-avg small{display:block;font-size:11px;color:var(--muted)}.ac-avg b{font-family:'SD Display','SD Text',sans-serif;font-size:18px;font-weight:800}
+.chip.sm{height:28px;font-size:12.5px;padding:0 10px}.chip.sm svg{width:13px;height:13px}
+.ac-cal{margin-top:12px}.ac-ch,.ac-cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.ac-ch span{text-align:center;font-size:11px;color:var(--muted);font-weight:600;padding-bottom:4px}
+.ac-cd{position:relative;aspect-ratio:1/1.15;border-radius:14px;background:var(--soft);border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:inherit;color:inherit;cursor:pointer;padding:4px}
+.ac-cd>svg{width:62%;max-width:44px;height:auto}.ac-cd small{font-size:11px;font-weight:700;color:var(--ink2)}.ac-cd em{position:absolute;top:4px;right:6px;font-style:normal;font-size:9.5px;color:var(--muted);font-weight:600}
+.ac-cd.off{background:repeating-linear-gradient(135deg,transparent 0 5px,var(--hair) 5px 6px);cursor:default}.ac-cd.off small{color:var(--muted);font-weight:500}
+.ac-cd.hit{background:color-mix(in srgb,var(--arD) 22%,var(--paper))}.ac-cd.today{box-shadow:0 0 0 2px var(--ink) inset}.ac-cd.fut{opacity:.55}
+.ac-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--ink2)}.ac-legend span{display:flex;align-items:center;gap:6px}.ac-legend i{width:12px;height:12px;border-radius:50%;border:3px solid}.lg-demo{border-color:var(--arD)!important}.lg-op{border-color:var(--arO)!important}
+.ac-bar{height:4px;border-radius:4px;background:var(--hair);margin-top:6px;overflow:hidden;max-width:180px}.ac-bar i{display:block;height:100%;background:var(--arD);border-radius:4px}
+@media (max-width:420px){.ac-body{grid-template-columns:104px minmax(0,1fr);gap:14px}.ac-ring{width:104px;height:104px}.ac-mid b{font-size:22px}.ac-plus{padding:0 11px 0 8px;font-size:13px;height:36px}.ac-minus{width:30px;height:30px}.ac-line b{font-size:24px}.ac-line{gap:6px}}
 .dv{border-radius:18px;padding:14px 16px;background:color-mix(in srgb,var(--green) 10%,var(--paper));border:1px solid color-mix(in srgb,var(--green) 28%,transparent)}
 .dv.neg{background:color-mix(in srgb,var(--red) 9%,var(--paper));border-color:color-mix(in srgb,var(--red) 28%,transparent)}
 .dv.ghost{background:var(--soft);border:1px dashed var(--hair2);color:var(--muted);text-align:center}
@@ -886,7 +930,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='31';
+const APP_VERSION='32';
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
 async function checkUpdate(manual){
@@ -935,6 +979,9 @@ const I={
  city:'<path d="M3 20.5h18M5 20.5V8.5l6-3v15M11 20.5V10h8v10.5M14 13.5h2M14 16.5h2"/>',
  play:'<path d="M8 5.5v13l10-6.5z" fill="currentColor"/>', stop:'<rect x="7" y="7" width="10" height="10" rx="2" fill="currentColor"/>',
  coffee:'<path d="M5 9.5h11v4.5a4.5 4.5 0 0 1-4.5 4.5h-2A4.5 4.5 0 0 1 5 14z"/><path d="M16 11h1.5a2.2 2.2 0 0 1 0 4.4H16M8.5 4v2.5M12 4v2.5"/>',
+ video:'<rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="m16 10.5 5-3v9l-5-3"/>',
+ doc:'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/>',
+ minus:'<path d="M5 12h14"/>',
  storno:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
  trash:'<path d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9.5 7V4.5h5V7"/>',
  down:'<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 20h14"/>', up:'<path d="M12 20V9M7.5 13.5 12 9l4.5 4.5M5 4h14"/>',
@@ -1005,7 +1052,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const num=v=>{if(v===''||v==null)return 0;const n=parseFloat(String(v).replace(/\./g,'').replace(',','.'));return isNaN(n)?0:n};
 const numIn=v=>{ // accepts "1.611,50" or "1611.5"
   if(v===''||v==null)return 0; let s=String(v).trim();
-  if(s.includes(','))s=s.replace(/\./g,'').replace(',','.'); const n=parseFloat(s); return isNaN(n)?0:n};
+  s=s.replace(/[€\s]/g,'');
+  if(s.includes(','))s=s.replace(/\./g,'').replace(',','.'); else if(/^-?\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,''); const n=parseFloat(s); return isNaN(n)?0:n};
 
 /* ---------- Default state (übernommen aus deinen Excel-Screenshots) ---------- */
 function defaultState(){
@@ -1186,10 +1234,10 @@ const one=n=>fmtN(n,1).replace(',0','');
 /* ---------- Routing ---------- */
 let VIEW='home'; let CUR=ymOf(new Date());
 const NAV=[['home','Home','home'],['zeit','Zeit','clock'],['umsatz','Umsatz','target'],['forecast','Forecast','scope'],['gehalt','Gehalt','wallet'],['verlauf','Verlauf','grid']];
-const TITLES={home:'Home',zeit:'Arbeitszeit',umsatz:'Umsatz',forecast:'Forecast',gehalt:'Gehalt',verlauf:'Verlauf',einstellungen:'Einstellungen'};
-let PREV='home';const vIdx=v=>v==='einstellungen'?99:NAV.findIndex(n=>n[0]===v);
-function route(){ANIM_PENDING=true;const h=(location.hash||'').replace('#','');const old=VIEW;VIEW=[...NAV.map(n=>n[0]),'einstellungen'].includes(h)?h:'home';if(VIEW==='einstellungen'&&old!=='einstellungen')PREV=old;closeSheet();render();window.scrollTo(0,0);const v=document.getElementById('view');v.classList.remove('fade');void v.offsetWidth;v.classList.add('fade')}
-function goBack(){go(PREV&&PREV!=='einstellungen'?PREV:'home')}
+const TITLES={aktiv:'Aktivität',home:'Home',zeit:'Arbeitszeit',umsatz:'Umsatz',forecast:'Forecast',gehalt:'Gehalt',verlauf:'Verlauf',einstellungen:'Einstellungen'};
+let PREV='home';const vIdx=v=>v==='einstellungen'||v==='aktiv'?99:NAV.findIndex(n=>n[0]===v);
+function route(){ANIM_PENDING=true;const h=(location.hash||'').replace('#','');const old=VIEW;VIEW=[...NAV.map(n=>n[0]),'einstellungen','aktiv'].includes(h)?h:'home';if((VIEW==='einstellungen'||VIEW==='aktiv')&&old!==VIEW)PREV=old;closeSheet();render();window.scrollTo(0,0);const v=document.getElementById('view');v.classList.remove('fade');void v.offsetWidth;v.classList.add('fade')}
+function goBack(){go(PREV&&PREV!=='einstellungen'&&PREV!=='aktiv'?PREV:'home')}
 window.addEventListener('hashchange',route);
 function go(v){if(location.hash==='#'+v){window.scrollTo({top:0,behavior:'smooth'})}else location.hash=v}
 function shiftMonth(n){CUR=addM(CUR,n);render()}
@@ -1201,9 +1249,9 @@ function renderChrome(){
   document.getElementById('bar').innerHTML=`${mk()}<div class="sp"></div><button class="ibtn" onclick="cycleTheme()" aria-label="Design wechseln" title="Design: ${({auto:'Automatisch',light:'Hell',dark:'Dunkel'})[S.settings.theme||'auto']}">${ic(({auto:'auto',light:'sun',dark:'moon'})[S.settings.theme||'auto'])}</button><button class="ibtn ${VIEW==='einstellungen'?'acc':''}" onclick="VIEW==='einstellungen'?goBack():go('einstellungen')" aria-label="${VIEW==='einstellungen'?'Einstellungen schließen':'Einstellungen'}">${ic(VIEW==='einstellungen'?'x':'gear')}</button>`;
 }
 function head(extra=''){
-  const monthViews=['zeit','umsatz','forecast','gehalt'];
+  const monthViews=['zeit','umsatz','forecast','gehalt','aktiv'];
   const m=monthViews.includes(VIEW)?`<div class="month"><button onclick="shiftMonth(-1)" aria-label="Vormonat">${ic('left')}</button><span>${mLabel(CUR)}</span><button onclick="shiftMonth(1)" aria-label="Nächster Monat">${ic('right')}</button></div>`:'';
-  const back=VIEW==='einstellungen'?`<button class="backbtn" onclick="goBack()">${ic('left')}Zurück</button>`:'';
+  const back=VIEW==='einstellungen'||VIEW==='aktiv'?`<button class="backbtn" onclick="goBack()">${ic('left')}Zurück</button>`:'';
   return `${back}<div class="title"><h1>${TITLES[VIEW]}</h1><div class="sp"></div>${m}${extra}</div>`;
 }
 let ANIM_PENDING=true;
@@ -1220,7 +1268,7 @@ function countUp(root){if(RM())return;
     const step=now=>{const k=Math.min(1,(now-t0)/d),e=1-Math.pow(1-k,3);tn.nodeValue=k<1?f(num*e):t;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
 function render(){
   renderChrome();
-  document.getElementById('view').innerHTML=({home:vHome,zeit:vZeit,umsatz:vUmsatz,forecast:vForecast,gehalt:vGehalt,verlauf:vVerlauf,einstellungen:vSettings}[VIEW])();
+  document.getElementById('view').innerHTML=({home:vHome,zeit:vZeit,umsatz:vUmsatz,forecast:vForecast,gehalt:vGehalt,verlauf:vVerlauf,einstellungen:vSettings,aktiv:vAktiv}[VIEW])();
   bindTips();
   clearTimeout(window._cb);window._cb=setTimeout(checkBadges,800);
   const hx=document.querySelector('.hmx');if(hx)hx.scrollLeft=hx.scrollWidth;
@@ -1287,6 +1335,79 @@ function dayTile(){
     ${isFinal?`<div class="finalbar">${ic('flag')}<div><b>Finaltag</b><span>Letzter Tag für Umsatz im ${MON[d0.getMonth()]}. Alles, was heute unterschrieben wird, zählt noch.</span></div></div>`:`<div class="dq">„${quote}“</div>`}
   </div>`;
 }
+/* ---------- Aktivität: Demo-Calls & Opportunities (Tagesziel) ---------- */
+function actGoal(k){const g=S.settings.actGoal||{demo:2,op:1};const di=dayInfo(k);const half=di.e&&di.e.type==='halb';return {demo:half?Math.ceil(g.demo/2):+g.demo,op:half?Math.ceil(g.op/2):+g.op}}
+function actWorkday(k){const di=dayInfo(k);if(di.weekend||di.hol||di.sp)return false;if(di.e&&isFree(di.e.type))return false;return true}
+function actOf(k){const a=(S.act||{})[k]||{};return {demo:+a.demo||0,ops:a.ops||[]}}
+function actHit(k){const a=actOf(k),g=actGoal(k);return a.demo>=g.demo&&a.ops.length>=g.op}
+function actStreak(){let n=0;const d=new Date();if(!actHit(todayK()))d.setDate(d.getDate()-1);for(let i=0;i<400;i++){const k=ymd(d);if(k<S.settings.startMonth+'-01')break;if(actWorkday(k)){if(actHit(k))n++;else break}d.setDate(d.getDate()-1)}return n}
+function actMonth(m){const tk=todayK();let demos=0,ops=[],days=0,hits=0;monthDays(m).forEach(x=>{const a=actOf(x.k);demos+=a.demo;ops=ops.concat(a.ops.map(o=>({...o,date:x.k})));if(x.k<=tk&&actWorkday(x.k)){days++;if(actHit(x.k))hits++}});const vals=ops.filter(o=>+o.amount>0);return {demos,ops,days,hits,avg:vals.length?vals.reduce((s,o)=>s+ +o.amount,0)/vals.length:0,sum:vals.reduce((s,o)=>s+ +o.amount,0)}}
+function actSet(k,fn){S.act=S.act||{};const a=actOf(k);const was=actHit(k);fn(a);if(!a.demo&&!a.ops.length)delete S.act[k];else S.act[k]={demo:a.demo,ops:a.ops};save();const now=actHit(k);
+  if(!was&&now&&actWorkday(k)){confetti();gong&&gong();toast('🎯 Tagesziel erreicht! Alles weitere ist Bonus.','ok')}return now}
+function actDemo(k,d){k=k||todayK();actSet(k,a=>{a.demo=Math.max(0,a.demo+d)});if(d>0&&!actHit(k))toast(`Demo-Call ${actOf(k).demo} eingetragen`,'ok');actPop('demo');rerenderAct(k)}
+function actOpDel(k,id){actSet(k,a=>{a.ops=id?a.ops.filter(o=>o.id!==id):a.ops.slice(0,-1)});toast('Opportunity entfernt');rerenderAct(k)}
+function rerenderAct(k){if(document.getElementById('actday')&&ACTK===k)actDaySheet(k,true);render()}
+function actPop(w){setTimeout(()=>{document.querySelectorAll('.ar-'+w).forEach(e=>{e.classList.remove('pop');void e.getBBox;e.classList.add('pop')})},30)}
+function actRings(a,g,size=132){const c=size/2,sw=size*.095,r1=c-sw/2-2,r2=r1-sw-3;
+  const arc=(r,f,cls)=>{const C=2*Math.PI*r;const f1=Math.min(1,f),f2=Math.max(0,Math.min(1,f-1));return `<circle cx="${c}" cy="${c}" r="${r}" class="ar-tr ${cls}-tr" stroke-width="${sw}"/>
+    ${f1>0?`<circle cx="${c}" cy="${c}" r="${r}" class="ar-fg ${cls} rarc" stroke-width="${sw}" stroke-dasharray="${C*f1} ${C}" style="--C:${C}"/>`:''}
+    ${f2>0?`<circle cx="${c}" cy="${c}" r="${r}" class="ar-fg ${cls} ar-over" stroke-width="${sw}" stroke-dasharray="${C*f2} ${C}" transform="rotate(-90 ${c} ${c})"/>`:''}`};
+  const fd=g.demo?a.demo/g.demo:0,fo=g.op?a.ops.length/g.op:0;
+  return `<svg viewBox="0 0 ${size} ${size}" class="arings" aria-label="Demo-Calls ${a.demo} von ${g.demo}, Opportunities ${a.ops.length} von ${g.op}">${arc(r1,fd,'ar-demo')}${arc(r2,fo,'ar-op')}</svg>`}
+function actCard(){const k=todayK();const wd=actWorkday(k);const a=actOf(k),g=actGoal(k);const hit=actHit(k);const st=actStreak();const am=actMonth(ymOf(new Date()));
+  const over=Math.max(0,a.demo-g.demo)+Math.max(0,a.ops.length-g.op);
+  const mon=new Date();mon.setDate(mon.getDate()-((mon.getDay()+6)%7));const wk=[...Array(5)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);const kk=ymd(d);return {k:kk,wd:actWorkday(kk),a:actOf(kk),g:actGoal(kk),hit:actHit(kk),today:kk===k,fut:kk>k}});
+  const row=(kind,lbl,icon,n,goal,plus)=>`<div class="ac-row"><div class="ac-lb"><span class="ac-ic ${kind}">${ic(icon)}</span>${lbl}</div><div class="ac-line"><b class="num">${n}<span>/${goal}</span></b><em class="${n>=goal?'ok':''}">${n>=goal?(n>goal?`+${n-goal} 🚀`:'✓'):`noch ${goal-n}`}</em><span class="sp"></span>
+    <button class="ac-minus" onclick="${kind==='demo'?`actDemo(null,-1)`:`actOpDel('${k}')`}" ${n?'':'disabled'} aria-label="${lbl} minus 1">${ic('minus')}</button><button class="ac-plus ${kind}" onclick="${plus}">${ic('plus')}${kind==='demo'?'Demo':'Op'}</button></div></div>`;
+  return `<div class="panel act ${hit?'done':''}">
+    <div class="row"><div class="ptl">${ic('target','class="pi"')}Tagesziel</div><span class="sp"></span>${st?`<span class="chip sm">🔥 ${st} ${st===1?'Tag':'Tage'}</span>`:''}<a class="chip sm" href="#aktiv">Details ${ic('right')}</a></div>
+    ${wd?`<div class="ac-body"><div class="ac-ring">${actRings(a,g)}<div class="ac-mid">${hit?'<b class="ac-emo">🎯</b>':`<b class="num">${Math.min(a.demo,g.demo)+Math.min(a.ops.length,g.op)}<span>/${g.demo+g.op}</span></b><small>heute</small>`}</div></div>
+      <div class="ac-rows">${row('demo','Demo-Calls','video',a.demo,g.demo,"actDemo(null,1)")}${row('op','Opportunities','doc',a.ops.length,g.op,`opSheet('${k}')`)}</div></div>
+      ${hit?`<div class="ac-msg">${over?`Stark, ${over} über Ziel. Weiter so! 🚀`:'Nice, Tagesziel erreicht! Alles weitere ist Bonus. 💪'}</div>`:''}`
+    :`<div class="ac-free">${ic('sun')}<div><b>Heute frei</b><small>An freien Tagen und am Wochenende gibt es kein Tagesziel.</small></div></div>`}
+    <div class="ac-week">${wk.map(x=>`<button class="ac-wd ${x.today?'today':''} ${x.wd?'':'off'} ${x.hit?'hit':''}" onclick="${x.wd?`actDaySheet('${x.k}')`:''}" ${x.fut||!x.wd?'tabindex="-1"':''}>${x.wd?actRings(x.a,x.g,34):'<i class="ac-offdot"></i>'}<small>${WD2[pD(x.k).getDay()]}</small></button>`).join('')}
+      <div class="ac-avg"><small>Ø Op-Wert ${MONS[new Date().getMonth()]}</small><b class="num">${am.avg?fmtE(am.avg):'–'}</b><small>${am.ops.length} ${am.ops.length===1?'Op':'Ops'}, ${am.demos} Demos</small></div></div>
+  </div>`}
+const WD2=['So','Mo','Di','Mi','Do','Fr','Sa'];
+let OPK=null,OPID=null;
+function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.find(x=>x.id===id):null;
+  openSheet(`${sheetHead(id?'Opportunity bearbeiten':'Opportunity geschrieben')}
+   <p class="hint" style="margin:0 0 14px">Nur für dein Gefühl, wie groß deine Ops sind. Fließt nicht in Forecast oder Gehalt ein.</p>
+   <div class="field"><label>Wert der Opportunity in € (optional)</label><input class="inp" id="opa" inputmode="decimal" placeholder="z. B. 2.400" value="${o&&o.amount?String(o.amount).replace('.',','):''}" style="font-size:24px;height:58px;font-weight:600"></div>
+   <div class="grid2" style="margin-top:14px"><div class="field"><label>Datum</label><input class="inp" type="date" id="opd" value="${OPK}"></div><div class="field"><label>Kunde</label><input class="inp" id="opn" placeholder="Optional" value="${o?esc(o.name||''):''}"></div></div>
+   <div class="row" style="margin-top:18px;gap:8px">${id?`<button class="btn danger" onclick="closeSheet();actOpDel('${OPK}','${id}')" aria-label="Löschen">${ic('trash')}</button>`:''}<button class="btn pri block" onclick="saveOp()">${id?'Speichern':'+1 Op eintragen'}</button></div>`);
+  if(!id)setTimeout(()=>{const i=document.getElementById('opa');i&&i.focus()},350)}
+function saveOp(){const amt=Math.abs(numIn(document.getElementById('opa').value)||0);const k=document.getElementById('opd').value||OPK;const name=document.getElementById('opn').value.trim();
+  if(OPID&&k!==OPK)actSet(OPK,a=>{a.ops=a.ops.filter(o=>o.id!==OPID)});
+  actSet(k,a=>{const o={id:OPID||uid(),amount:amt||0,name};const i=a.ops.findIndex(x=>x.id===o.id);if(i>=0)a.ops[i]=o;else a.ops.push(o)});
+  closeSheet();if(!actHit(k)||OPID)toast(OPID?'Opportunity gespeichert':`Op eingetragen${amt?', '+fmtE(amt):''}`,'ok');actPop('op');render()}
+let ACTK=null;
+function actDaySheet(k,keep){ACTK=k;const a=actOf(k),g=actGoal(k);const html=`${sheetHead(`${WDN[pD(k).getDay()]}, ${pD(k).getDate()}. ${MONS[pD(k).getMonth()]}`)}
+   <div id="actday"><div class="ac-body" style="margin-top:0"><div class="ac-ring">${actRings(a,g)}<div class="ac-mid">${actHit(k)?'<b class="ac-emo">🎯</b>':`<b class="num">${Math.min(a.demo,g.demo)+Math.min(a.ops.length,g.op)}<span>/${g.demo+g.op}</span></b>`}</div></div>
+   <div class="ac-rows"><div class="ac-row"><div class="ac-lb"><span class="ac-ic demo">${ic('video')}</span>Demo-Calls</div><div class="ac-line"><b class="num">${a.demo}<span>/${g.demo}</span></b><span class="sp"></span><button class="ac-minus" onclick="actDemo('${k}',-1)" ${a.demo?'':'disabled'}>${ic('minus')}</button><button class="ac-plus demo" onclick="actDemo('${k}',1)">${ic('plus')}Demo</button></div></div>
+   <div class="ac-row"><div class="ac-lb"><span class="ac-ic op">${ic('doc')}</span>Opportunities</div><div class="ac-line"><b class="num">${a.ops.length}<span>/${g.op}</span></b><span class="sp"></span><button class="ac-plus op" onclick="opSheet('${k}')">${ic('plus')}Op</button></div></div></div></div>
+   ${a.ops.length?`<div class="list" style="margin-top:14px">${a.ops.map((o,i)=>`<div class="li" onclick="opSheet('${k}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity '+(i+1)}</b><small>antippen zum Bearbeiten</small></div><div class="v">${+o.amount?fmtE(o.amount):'<span class="mut">ohne Wert</span>'}</div></div>`).join('')}</div>`:''}</div>`;
+  openSheet(html)}
+const WDN=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+function vAktiv(){const m=CUR,tk=todayK();const am=actMonth(m);const g=S.settings.actGoal||{demo:2,op:1};const days=monthDays(m);const lead=(pD(m+'-01').getDay()+6)%7;
+  const vals=am.ops.filter(o=>+o.amount>0).map(o=>+o.amount);const mx=vals.length?Math.max(...vals):0;
+  return `${head()}
+  <div class="vtiles" style="margin-bottom:14px">
+    <div class="tile"><div class="ti" style="--tc:#C99E00">${ic('video')}</div><div class="tl">Demo-Calls</div><div class="tv">${am.demos}</div><div class="ts">Ø ${am.days?fmtN(am.demos/am.days,1):'0'} pro Arbeitstag</div></div>
+    <div class="tile"><div class="ti" style="--tc:#C99E00">${ic('doc')}</div><div class="tl">Opportunities</div><div class="tv">${am.ops.length}</div><div class="ts">Ø ${am.days?fmtN(am.ops.length/am.days,1):'0'} pro Arbeitstag</div></div>
+    <div class="tile"><div class="ti" style="--tc:#C99E00">${ic('wallet')}</div><div class="tl">Ø Op-Wert</div><div class="tv">${am.avg?fmtE(am.avg):'–'}</div><div class="ts">${am.sum?'Summe '+fmtE(am.sum):'noch keine Werte'}</div></div>
+    <div class="tile"><div class="ti" style="--tc:#C99E00">${ic('scope')}</div><div class="tl">Zieltage</div><div class="tv">${am.hits}<span style="font-size:.5em;color:var(--muted);font-weight:600"> von ${am.days}</span></div><div class="ts">${actStreak()?'🔥 Serie: '+actStreak()+' Tage':'bisherige Arbeitstage'}</div></div>
+  </div>
+  <div class="panel"><div class="row"><div class="ptl">${ic('grid','class="pi"')}Tage im ${MON[pD(m).getMonth()]}</div><span class="sp"></span><span class="lbl">Ziel: ${g.demo} Demos + ${g.op} Op</span></div>
+    <div class="ac-cal"><div class="ac-ch">${['Mo','Di','Mi','Do','Fr','Sa','So'].map(x=>`<span>${x}</span>`).join('')}</div><div class="ac-cg">${'<i></i>'.repeat(lead)}${days.map(x=>{const wd=actWorkday(x.k),a=actOf(x.k),gg=actGoal(x.k);const fut=x.k>tk;return wd?`<button class="ac-cd ${actHit(x.k)?'hit':''} ${x.k===tk?'today':''} ${fut?'fut':''}" onclick="actDaySheet('${x.k}')">${actRings(a,gg,40)}<small>${+x.k.slice(8)}</small>${a.demo||a.ops.length?`<em>${a.demo}·${a.ops.length}</em>`:''}</button>`:`<div class="ac-cd off"><small>${+x.k.slice(8)}</small></div>`}).join('')}</div></div>
+    <div class="ac-legend"><span><i class="lg-demo"></i>Demo-Calls (außen)</span><span><i class="lg-op"></i>Opportunities (innen)</span></div></div>
+  <div class="sh"><h2>Opportunities</h2><span class="sp"></span><button class="chip" onclick="opSheet('${m===ymOf(new Date())?tk:m+'-01'}')">${ic('plus')}Op</button></div>
+  ${am.ops.length?`<div class="panel flush"><div class="list">${[...am.ops].sort((a,b)=>b.date.localeCompare(a.date)).map(o=>`<div class="li" onclick="opSheet('${o.date}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity'}</b><small>${dLabel(o.date)}</small>${mx&&+o.amount?`<div class="ac-bar"><i style="width:${(+o.amount/mx*100).toFixed(1)}%"></i></div>`:''}</div><div class="v">${+o.amount?fmtE(o.amount):'<span class="mut">ohne Wert</span>'}</div></div>`).join('')}</div></div>`:`<div class="panel"><p class="lbl" style="margin:0">Noch keine Opportunities in diesem Monat.</p></div>`}
+  <div class="panel" style="margin-top:14px"><div class="ptl" style="margin-bottom:12px">${ic('gear','class="pi"')}Dein Tagesziel</div>
+    <div class="grid2"><div class="field"><label>Demo-Calls pro Tag</label><input class="inp" inputmode="numeric" value="${g.demo}" onchange="S.settings.actGoal={...(S.settings.actGoal||{demo:2,op:1}),demo:Math.max(1,parseInt(this.value)||2)};save();render();toast('Tagesziel gespeichert','ok')"></div>
+    <div class="field"><label>Opportunities pro Tag</label><input class="inp" inputmode="numeric" value="${g.op}" onchange="S.settings.actGoal={...(S.settings.actGoal||{demo:2,op:1}),op:Math.max(1,parseInt(this.value)||1)};save();render();toast('Tagesziel gespeichert','ok')"></div></div>
+    <p class="hint" style="margin-top:10px">Gilt an Arbeits- und Office-Tagen. An halben Urlaubstagen halbiert sich das Ziel (aufgerundet). Wochenenden, Feiertage, Urlaub und Krankheit sind ausgenommen.</p></div>`}
+
 function vHome(){
   const tk=todayK(), m=ymOf(new Date()), d0=new Date(); const di=dayInfo(tk); const e=S.days[tk]||{};
   const st=monthStats(m); const carry=carryIn(m); const total=(carry??0)+st.saldo;
@@ -1328,6 +1449,7 @@ function vHome(){
       ${rail(r.pct,[70,100],true)}
       <div class="hsplit"><span><i style="background:#F9DC4A"></i>Inbound ${fmtE(r.inb)}</span><span><i style="background:#fff"></i>Outbound ${fmtE(r.out)}</span>${perDayNeed?`<span>${fmtE(perDayNeed)} pro Arbeitstag bis 70 %</span>`:''}</div>
     </a>
+    ${actCard()}
     <div class="qa">
       <button onclick="dealSheet()"><span>${ic('target')}</span>Umsatz</button>
       <button onclick="leadSheet()"><span>${ic('users')}</span>Leads</button>
