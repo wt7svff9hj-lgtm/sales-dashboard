@@ -15,6 +15,34 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
+.zo{margin-bottom:14px}
+.zo-top{display:flex;gap:16px;align-items:stretch;flex-wrap:wrap}
+.zo-main{flex:1 1 240px;min-width:0}
+.zo-pill{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:99px;font-size:13px;font-weight:700}
+.zo-pill svg{width:15px;height:15px}
+.zo-plus .zo-pill{background:color-mix(in srgb,var(--green) 14%,transparent);color:var(--green)}
+.zo-minus .zo-pill{background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red)}
+.zo-eq .zo-pill{background:var(--soft);color:var(--ink2)}
+.zo-big{font-family:'SD Display','SD Text',sans-serif;font-size:52px;font-weight:800;letter-spacing:-.035em;line-height:1.05;margin-top:10px}
+.zo-plus .zo-big{color:var(--green)}.zo-minus .zo-big{color:var(--red)}
+.zo-sub{color:var(--muted);font-size:14px;margin-top:4px}
+.zo-miss{flex:1 1 240px;text-align:left;font:inherit;color:inherit;border:0;cursor:pointer;border-radius:18px;padding:14px 16px;background:color-mix(in srgb,var(--amber) 14%,var(--paper));border:1px solid color-mix(in srgb,var(--amber) 35%,transparent);display:flex;flex-direction:column;gap:4px}
+.zo-miss>b{font-size:15px}.zo-miss span{font-size:13px;color:var(--ink2);line-height:1.4}.zo-miss em{font-style:normal;font-weight:700;font-size:13px;margin-top:auto;padding-top:6px;display:flex;align-items:center;gap:4px}.zo-miss em svg{width:14px;height:14px}
+.zo-calc{display:flex;align-items:center;gap:10px;margin-top:18px;padding:12px 14px;border-radius:16px;background:var(--soft)}
+.zo-calc>div{flex:1;min-width:0}.zo-calc small{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zo-calc b{font-family:'SD Display','SD Text',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.02em}
+.zo-calc i{font-style:normal;font-weight:700;color:var(--muted);font-size:18px}
+.zo-res{text-align:right}
+.zo-bar-h,.zo-bar-f{display:flex;font-size:12.5px;color:var(--muted);margin-top:18px}.zo-bar-h b{color:var(--ink);font-weight:700}
+.zo-bar-f{margin-top:6px;font-size:11.5px}.zo-bar-h .sp,.zo-bar-f .sp{flex:1}.zo-calc{border:1px solid var(--hair)}
+.zo-bar{position:relative;height:12px;border-radius:99px;background:var(--hair);margin-top:8px}
+.zo-bar .ist{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#FBE36B,#F2C300)}
+.zo-bar .mk{position:absolute;top:-5px;bottom:-5px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--ink)}
+.enter .zo-bar .ist{animation:growX .9s cubic-bezier(.2,.8,.2,1) both;transform-origin:left center}
+.zo-facts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--hair)}
+.zo-facts small{display:block;font-size:12px;color:var(--muted)}.zo-facts b{display:block;font-family:'SD Display','SD Text',sans-serif;font-size:21px;font-weight:800;letter-spacing:-.02em;margin:2px 0}.zo-facts span{font-size:12px;color:var(--muted)}
+#sheet{overscroll-behavior:contain}
+@media (max-width:420px){.zo-big{font-size:44px}.zo-calc{gap:6px;padding:10px 12px}.zo-calc b{font-size:16px}.zo-calc i{font-size:15px}}
 .fr:has(.fcw){grid-template-columns:1fr 176px}
 .fcw{display:flex;gap:6px;align-items:center}
 .fcw .inp{flex:1;min-width:0}
@@ -961,7 +989,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='36';
+const APP_VERSION='37';
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
 async function checkUpdate(manual){
@@ -1324,8 +1352,11 @@ function rail(p,gates=[70,100],dark=false){
 }
 function toast(t,kind){const el=document.getElementById('toast');const ok=kind==='ok'||(!kind&&/gespeichert|eingetragen|übernommen|eingespielt|gelöscht/i.test(t));el.className='toast'+(ok?' ok':'');el.innerHTML=(ok?`<span class="tk">${ic(/gelöscht/i.test(t)?'trash':'check')}</span>`:'')+esc(t);void el.offsetWidth;el.classList.add('on');if(ok&&navigator.vibrate)try{navigator.vibrate(12)}catch(e){}clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('on'),2300)}
 let FLASH=null;
-function openSheet(html){const sh=document.getElementById('sheet');sh.innerHTML='<div class="grab"></div>'+html;sh.scrollTop=0;sh.classList.add('on');document.getElementById('scrim').classList.add('on')}
-function closeSheet(){document.getElementById('sheet').classList.remove('on');document.getElementById('scrim').classList.remove('on')}
+let _lockY=null;
+function lockScroll(){if(_lockY!=null)return;_lockY=window.scrollY;const b=document.body.style;b.position='fixed';b.top=(-_lockY)+'px';b.left='0';b.right='0';b.width='100%';b.overflow='hidden'}
+function unlockScroll(){if(_lockY==null)return;const b=document.body.style;b.position='';b.top='';b.left='';b.right='';b.width='';b.overflow='';window.scrollTo(0,_lockY);_lockY=null}
+function openSheet(html){const sh=document.getElementById('sheet');sh.innerHTML='<div class="grab"></div>'+html;sh.scrollTop=0;sh.classList.add('on');document.getElementById('scrim').classList.add('on');lockScroll()}
+function closeSheet(){document.getElementById('sheet').classList.remove('on');document.getElementById('scrim').classList.remove('on');unlockScroll()}
 const sheetHead=t=>`<h2>${t}<span class="sp"></span><button class="ibtn" onclick="closeSheet()" aria-label="Schließen">${ic('x')}</button></h2>`;
 function bindTips(){
   const tip=document.getElementById('tip');
@@ -1582,14 +1613,50 @@ function calendar(m){
   return `<div class="panel cal"><div class="cw">${['Mo','Di','Mi','Do','Fr','Sa','So'].map(d=>`<span>${d}</span>`).join('')}</div><div class="cg">${cells.join('')}</div>
   <div class="legend" style="margin-top:14px"><span><i style="background:var(--accFill)"></i>Gearbeitet</span><span><i style="background:var(--k)"></i>Office</span><span><i style="background:var(--u)"></i>Urlaub</span><span><i style="background:var(--h)"></i>½ Urlaub</span><span><i style="background:var(--s)"></i>Krank</span><span><i style="background:var(--w)"></i>Wochenende, Feiertag</span><span><i style="background:var(--red)"></i>Fehlt</span></div></div>`;
 }
+
+/* ---------- Arbeitszeit-Überblick: Wo stehe ich? ---------- */
+function hmS(h){const a=Math.abs(h)<1/120;return (a?'±':h>0?'+':'−')+hm(Math.abs(h))}
+function zeitOverview(m,st,carry,end){
+  if(carry==null)return `<div class="panel zo"><p class="lbl" style="margin:0">Für Monate vor dem App-Start (${mLabel(S.settings.startMonth)}) wird kein Stundenkonto geführt.</p></div>`;
+  const tk=todayK(),cur=ymOf(new Date());const isCur=m===cur,isPast=m<cur;
+  const miss=st.days.filter(x=>x.missing);const missH=miss.reduce((a,x)=>a+x.soll,0);
+  const rest=st.days.filter(x=>!x.counted&&x.soll>0&&!x.missing&&x.k>=tk);const restH=rest.reduce((a,x)=>a+x.soll,0);
+  const state=Math.abs(end)<1/120?'eq':end>0?'plus':'minus';
+  const head={plus:['Überstunden','Du hast mehr gearbeitet als nötig.'],minus:['Minusstunden','So viel fehlt dir aktuell auf deinem Konto.'],eq:['Ausgeglichen','Dein Stundenkonto steht genau auf null.']}[state];
+  const endWoMiss=end+missH;
+  const prevM=addM(m,-1);
+  // Balken: gearbeitet vs. Soll bis heute vs. Monatssoll
+  const max=Math.max(st.sollAll,st.ist,1);const pI=Math.min(100,st.ist/max*100),pS=Math.min(100,st.soll/max*100);
+  const base=miss.length?endWoMiss:end;const need=isCur&&base<0&&rest.length?(restH-base)/rest.length:null;
+  return `<div class="panel zo zo-${state}">
+    <div class="zo-top"><div class="zo-main"><div class="zo-pill">${state==='plus'?ic('trend'):state==='minus'?ic('clock'):ic('check')}${head[0]}</div>
+      <div class="zo-big num">${hmS(end)}</div><div class="zo-sub">${head[1]}${isCur?' Stand heute.':''}</div></div>
+      ${miss.length?`<button class="zo-miss" onclick="editDay('${miss[0].k}')"><b>${miss.length} ${miss.length===1?'Tag':'Tage'} ohne Eintrag</b><span>zählen mit ${hmS(-missH)}. Nachgetragen stündest du bei <b class="${endWoMiss>=0?'pos':'neg'}">${hmS(endWoMiss)}</b>.</span><em>Jetzt nachtragen ${ic('right')}</em></button>`:''}
+    </div>
+    <div class="zo-calc">
+      <div><small>Übertrag ${MONS[pD(prevM).getMonth()]}</small><b class="num ${carry>=0?'pos':'neg'}">${hmS(carry)}</b></div>
+      <i>+</i>
+      <div><small>${MONS[pD(m).getMonth()]}${isCur?' bisher':''}</small><b class="num ${st.saldo>=0?'pos':'neg'}">${hmS(st.saldo)}</b></div>
+      <i>=</i>
+      <div class="zo-res"><small>Konto</small><b class="num ${end>=0?'pos':'neg'}">${hmS(end)}</b></div>
+    </div>
+    <div class="zo-bar-h"><span>Gearbeitet <b>${hm(st.ist)}</b></span><span class="sp"></span><span>Soll ${isCur?'bis heute':''} <b>${hm(st.soll)}</b></span></div>
+    <div class="zo-bar"><i class="ist ${st.ist>=st.soll?'ok':''}" style="width:${pI}%"></i>${isCur?`<em class="mk" style="left:${pS}%"></em>`:''}</div>
+    <div class="zo-bar-f"><span>0 h</span><span class="sp"></span><span>Monat gesamt ${hm(st.sollAll)}</span></div>
+    ${isCur?`<div class="zo-facts">
+      <div><small>Noch zu arbeiten</small><b class="num">${hm(restH)}</b><span>${rest.length} ${rest.length===1?'Arbeitstag':'Arbeitstage'} inkl. heute</span></div>
+      <div><small>${need!=null?'Zum Ausgleichen':'Pro Tag'}</small><b class="num">${need!=null?hm(need):hm(+S.settings.sollTag)}</b><span>${need!=null?'pro Tag bis Monatsende'+(miss.length?', nach dem Nachtragen':''):(miss.length?'reicht nach dem Nachtragen für ein ausgeglichenes Konto':'reicht für ein ausgeglichenes Konto')}</span></div>
+    </div>`:''}
+  </div>`}
 function vZeit(){
   const st=monthStats(CUR); const carry=carryIn(CUR); const end=carry!=null?carry+st.saldo:null;
   const y=CUR.slice(0,4); const u=urlaubYear(y);
   // nach Kalenderwochen gruppieren
   const weeks=[];st.days.forEach(x=>{const w=isoWeek(x.d);let g=weeks[weeks.length-1];if(!g||g.w!==w){g={w,days:[],sum:0};weeks.push(g)}g.days.push(x);g.sum+=x.w||0});
   return `${head(`<button class="ibtn" onclick="rangeSheet()" aria-label="Zeitraum eintragen">${ic('range')}</button><button class="ibtn" onclick="exportSheet()" aria-label="Exportieren">${ic('down')}</button>`)}
+  ${zeitOverview(CUR,st,carry,end)}
   ${calendar(CUR)}
-  <div class="panel" style="margin-top:14px">
+  <div class="panel" style="margin-top:14px;display:none">
     <div class="figs wrap4" style="--n:4">
       <div><div class="lbl">Gearbeitet</div><div class="v">${hm(st.ist)}</div><div class="s">${dec2(st.ist)} h dezimal</div></div>
       <div><div class="lbl">Soll bis heute</div><div class="v">${fmtN(st.soll,1)} h</div><div class="s">Monat gesamt ${fmtN(st.sollAll,1)} h</div></div>
