@@ -15,7 +15,24 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
-.bento>.act{grid-column:1/-1}@media (min-width:760px){.bento>.act{grid-column:span 2}}
+@media (min-width:760px){.ac-cols{align-items:start}.ac-sh{margin-top:0!important}.ac-cd{aspect-ratio:auto;height:84px;min-width:0;overflow:hidden}.ac-cd>svg{width:min(44px,72%);max-width:none}.ac-cg{gap:8px}}
+@media (min-width:760px) and (max-width:999px){.cols.two.ac-cols{grid-template-columns:1fr}}
+.bcol{display:contents}.bento .bcol>*{grid-column:1/-1}
+@media (max-width:759px){.bento .dream,.bento>.today,.bento .week,.bento .strip{order:1}.bento .deals{order:2}}
+@media (min-width:760px){
+ .bcol{display:flex;flex-direction:column;gap:14px;grid-column:span 2;min-width:0}
+ .bcol>*{min-width:0}.bcol-md>.deals{flex:1}
+ .bcol-ws>.strip{flex:1}
+ .bento>.act{grid-column:1/-1}
+ .act .ac-body{grid-template-columns:150px minmax(0,1fr);gap:26px}
+ .act .ac-ring{width:150px;height:150px}.act .ac-mid b{font-size:30px}
+ .act .ac-rows{display:grid;grid-template-columns:1fr 1fr;gap:12px 22px}
+ .act .ac-row{background:var(--soft);border-radius:18px;padding:14px 14px 12px}
+ .act .ac-line b{font-size:34px}
+ .act .ac-week{gap:10px}.act .ac-wd{width:48px}.act .ac-wd>svg{width:38px;height:38px}
+ .act .ac-msg{margin-top:16px}
+}
+.bento>.act{grid-column:1/-1}
 :root{--arD:#F2CC2E;--arDo:#C99E00;--arO:#16181F;--arOo:#5B6070;--arTr:rgba(20,22,30,.07)}
 html[data-theme="dark"]{--arD:#F9DC4A;--arDo:#FFF1A6;--arO:#F3F4F8;--arOo:#9AA0B4;--arTr:rgba(255,255,255,.08)}
 .arings{display:block;width:100%;height:100%;overflow:visible;transform:rotate(-90deg)}
@@ -52,7 +69,7 @@ html[data-theme="dark"]{--arD:#F9DC4A;--arDo:#FFF1A6;--arO:#F3F4F8;--arOo:#9AA0B
 .ac-avg{margin-left:auto;text-align:right}.ac-avg small{display:block;font-size:11px;color:var(--muted)}.ac-avg b{font-family:'SD Display','SD Text',sans-serif;font-size:18px;font-weight:800}
 .chip.sm{height:28px;font-size:12.5px;padding:0 10px}.chip.sm svg{width:13px;height:13px}
 .ac-cal{margin-top:12px}.ac-ch,.ac-cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.ac-ch span{text-align:center;font-size:11px;color:var(--muted);font-weight:600;padding-bottom:4px}
-.ac-cd{position:relative;aspect-ratio:1/1.15;border-radius:14px;background:var(--soft);border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:inherit;color:inherit;cursor:pointer;padding:4px}
+.ac-cd{position:relative;width:100%;min-width:0;box-sizing:border-box;aspect-ratio:1/1.15;border-radius:14px;background:var(--soft);border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:inherit;color:inherit;cursor:pointer;padding:4px}
 .ac-cd>svg{width:62%;max-width:44px;height:auto}.ac-cd small{font-size:11px;font-weight:700;color:var(--ink2)}.ac-cd em{position:absolute;top:4px;right:6px;font-style:normal;font-size:9.5px;color:var(--muted);font-weight:600}
 .ac-cd.off{background:repeating-linear-gradient(135deg,transparent 0 5px,var(--hair) 5px 6px);cursor:default}.ac-cd.off small{color:var(--muted);font-weight:500}
 .ac-cd.hit{background:color-mix(in srgb,var(--arD) 22%,var(--paper))}.ac-cd.today{box-shadow:0 0 0 2px var(--ink) inset}.ac-cd.fut{opacity:.55}
@@ -930,7 +947,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='32';
+const APP_VERSION='33';
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
 async function checkUpdate(manual){
@@ -1398,11 +1415,11 @@ function vAktiv(){const m=CUR,tk=todayK();const am=actMonth(m);const g=S.setting
     <div class="tile"><div class="ti" style="--tc:#C99E00">${ic('wallet')}</div><div class="tl">Ø Op-Wert</div><div class="tv">${am.avg?fmtE(am.avg):'–'}</div><div class="ts">${am.sum?'Summe '+fmtE(am.sum):'noch keine Werte'}</div></div>
     <div class="tile"><div class="ti" style="--tc:#C99E00">${ic('scope')}</div><div class="tl">Zieltage</div><div class="tv">${am.hits}<span style="font-size:.5em;color:var(--muted);font-weight:600"> von ${am.days}</span></div><div class="ts">${actStreak()?'🔥 Serie: '+actStreak()+' Tage':'bisherige Arbeitstage'}</div></div>
   </div>
-  <div class="panel"><div class="row"><div class="ptl">${ic('grid','class="pi"')}Tage im ${MON[pD(m).getMonth()]}</div><span class="sp"></span><span class="lbl">Ziel: ${g.demo} Demos + ${g.op} Op</span></div>
+  <div class="cols two ac-cols"><div class="panel"><div class="row"><div class="ptl">${ic('grid','class="pi"')}Kalender</div><span class="sp"></span><span class="lbl">Ziel: ${g.demo} Demos + ${g.op} Op</span></div>
     <div class="ac-cal"><div class="ac-ch">${['Mo','Di','Mi','Do','Fr','Sa','So'].map(x=>`<span>${x}</span>`).join('')}</div><div class="ac-cg">${'<i></i>'.repeat(lead)}${days.map(x=>{const wd=actWorkday(x.k),a=actOf(x.k),gg=actGoal(x.k);const fut=x.k>tk;return wd?`<button class="ac-cd ${actHit(x.k)?'hit':''} ${x.k===tk?'today':''} ${fut?'fut':''}" onclick="actDaySheet('${x.k}')">${actRings(a,gg,40)}<small>${+x.k.slice(8)}</small>${a.demo||a.ops.length?`<em>${a.demo}·${a.ops.length}</em>`:''}</button>`:`<div class="ac-cd off"><small>${+x.k.slice(8)}</small></div>`}).join('')}</div></div>
     <div class="ac-legend"><span><i class="lg-demo"></i>Demo-Calls (außen)</span><span><i class="lg-op"></i>Opportunities (innen)</span></div></div>
-  <div class="sh"><h2>Opportunities</h2><span class="sp"></span><button class="chip" onclick="opSheet('${m===ymOf(new Date())?tk:m+'-01'}')">${ic('plus')}Op</button></div>
-  ${am.ops.length?`<div class="panel flush"><div class="list">${[...am.ops].sort((a,b)=>b.date.localeCompare(a.date)).map(o=>`<div class="li" onclick="opSheet('${o.date}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity'}</b><small>${dLabel(o.date)}</small>${mx&&+o.amount?`<div class="ac-bar"><i style="width:${(+o.amount/mx*100).toFixed(1)}%"></i></div>`:''}</div><div class="v">${+o.amount?fmtE(o.amount):'<span class="mut">ohne Wert</span>'}</div></div>`).join('')}</div></div>`:`<div class="panel"><p class="lbl" style="margin:0">Noch keine Opportunities in diesem Monat.</p></div>`}
+  <div><div class="sh ac-sh"><h2>Opportunities</h2><span class="sp"></span><button class="chip" onclick="opSheet('${m===ymOf(new Date())?tk:m+'-01'}')">${ic('plus')}Op</button></div>
+  ${am.ops.length?`<div class="panel flush"><div class="list">${[...am.ops].sort((a,b)=>b.date.localeCompare(a.date)).map(o=>`<div class="li" onclick="opSheet('${o.date}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity'}</b><small>${dLabel(o.date)}</small>${mx&&+o.amount?`<div class="ac-bar"><i style="width:${(+o.amount/mx*100).toFixed(1)}%"></i></div>`:''}</div><div class="v">${+o.amount?fmtE(o.amount):'<span class="mut">ohne Wert</span>'}</div></div>`).join('')}</div></div>`:`<div class="panel"><p class="lbl" style="margin:0">Noch keine Opportunities in diesem Monat.</p></div>`}</div></div>
   <div class="panel" style="margin-top:14px"><div class="ptl" style="margin-bottom:12px">${ic('gear','class="pi"')}Dein Tagesziel</div>
     <div class="grid2"><div class="field"><label>Demo-Calls pro Tag</label><input class="inp" inputmode="numeric" value="${g.demo}" onchange="S.settings.actGoal={...(S.settings.actGoal||{demo:2,op:1}),demo:Math.max(1,parseInt(this.value)||2)};save();render();toast('Tagesziel gespeichert','ok')"></div>
     <div class="field"><label>Opportunities pro Tag</label><input class="inp" inputmode="numeric" value="${g.op}" onchange="S.settings.actGoal={...(S.settings.actGoal||{demo:2,op:1}),op:Math.max(1,parseInt(this.value)||1)};save();render();toast('Tagesziel gespeichert','ok')"></div></div>
@@ -1463,7 +1480,14 @@ function vHome(){
       ${paceChart(m)}${paceSummary()}
       ${WG.goal?`<div class="wg"><div class="row"><span class="lbl">Wochenziel</span><span class="sp"></span><b class="num">${fmtE(WG.got)} <span class="mut" style="font-weight:500">von ${fmtE(WG.goal)}</span></b></div><div class="wgb"><i style="width:${Math.min(100,WG.got/WG.goal*100)}%"></i></div><div class="lbl" style="margin-top:6px">${WG.got>=WG.goal?'Wochenziel geschafft 🎉':`noch ${fmtE(WG.goal-WG.got)} diese Woche`}</div></div>`:''}
     </div>
+    <div class="bcol bcol-md">
     ${workday?`<div class="panel mission"><div class="row"><div class="ptl">${ic('target','class="pi"')}Mission heute</div><span class="sp"></span><span class="lbl">${mst.filter(Boolean).length}/3${miSt?` · 🔥 ${miSt}`:''}</span></div>${msn.map((t,i)=>`<label class="mi ${mst[i]?'on':''}"><input type="checkbox" ${mst[i]?'checked':''} onchange="toggleMission(${i})"><span>${t}</span></label>`).join('')}</div>`:''}
+    <button class="panel dream" onclick="dreamSheet()">${S.dream?`<div class="row"><div class="dr-e">${S.dream.e||'🎯'}</div><div style="flex:1;min-width:0;text-align:left"><div class="lbl">Traumziel</div><div class="ptl" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(S.dream.name)}</div></div><div style="text-align:right"><b class="num" style="font-size:18px">${fmtN(Math.min(100,dSaved/S.dream.amount*100))} %</b></div></div><div class="wgb" style="margin-top:12px"><i style="width:${Math.min(100,dSaved/S.dream.amount*100)}%"></i></div><div class="lbl" style="margin-top:6px;text-align:left">${fmtE(dSaved)} von ${fmtE(S.dream.amount)}${dSaved>=S.dream.amount?' – geschafft! 🎉':`, noch ${fmtE(S.dream.amount-dSaved)}`}</div>`:`<div class="row"><div class="dr-e">🎯</div><div style="text-align:left"><div class="ptl">Traumziel festlegen</div><div class="lbl">Wofür arbeitest du? Deine Provision zahlt darauf ein.</div></div><span class="sp"></span>${ic('right','class="chev"')}</div>`}</button>
+    <div class="panel deals">
+      <div class="row"><div class="ptl">${ic('brief','class="pi"')}Letzte Verträge</div><span class="sp"></span><button class="chip acc" onclick="dealSheet()">${ic('plus')} Umsatz</button></div>
+      ${deals.length?deals.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${esc(dealName(d))}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount)}</div></div>`).join(''):`<div class="empty">Noch keine Verträge.</div>`}
+    </div>
+    </div>
     <a class="tile" href="#zeit"><div class="ti" style="--tc:${total>=0?'var(--green)':'var(--red)'}">${ic('clock')}</div><div class="tl">Stundenkonto</div><div class="tv ${total>=0?'pos':'neg'}">${sgn(total)}<small> h</small></div><div class="ts">${st.missing?`<span class="neg">${st.missing} Tag(e) offen</span>`:`Monat ${sgn(st.saldo)} h`}</div></a>
     <a class="tile" href="#forecast"><div class="ti" style="--tc:var(--tY)">${ic('scope')}</div><div class="tl">Forecast</div><div class="tv">${fmtN(fc.pct)}<small> %</small></div><div class="ts">${fmtE(fc.exp)} erwartet</div></a>
     <a class="tile" href="#gehalt"><div class="ti" style="--tc:var(--amber)">${ic('wallet')}</div><div class="tl">Auszahlung ${MONS[pD(addM(m,1)).getMonth()]}</div><div class="tv">${fmtE(sal.total)}</div><div class="ts">variabel ${fmtE(sal.total-sal.base)}</div></a>
@@ -1472,7 +1496,7 @@ function vHome(){
     <a class="tile" href="#umsatz"><div class="ti" style="--tc:var(--k)">${ic('brief')}</div><div class="tl">Abschlüsse</div><div class="tv">${r.ds.length}</div><div class="ts">${r.ds.length?`Ø ${fmtE(r.tot/r.ds.length)} je Vertrag`:'noch keiner im Monat'}</div></a>
     <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--s)">${ic('coffee')}</div><div class="tl">Ø Arbeitstag</div><div class="tv">${hm(avgDay)}</div><div class="ts">${workedDays.length} Tage erfasst</div></a>
     <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--h)">${ic('cal')}</div><div class="tl">Arbeitstage übrig</div><div class="tv">${one(left)}</div><div class="ts">inklusive heute</div></a>
-    <button class="panel dream" onclick="dreamSheet()">${S.dream?`<div class="row"><div class="dr-e">${S.dream.e||'🎯'}</div><div style="flex:1;min-width:0;text-align:left"><div class="lbl">Traumziel</div><div class="ptl" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(S.dream.name)}</div></div><div style="text-align:right"><b class="num" style="font-size:18px">${fmtN(Math.min(100,dSaved/S.dream.amount*100))} %</b></div></div><div class="wgb" style="margin-top:12px"><i style="width:${Math.min(100,dSaved/S.dream.amount*100)}%"></i></div><div class="lbl" style="margin-top:6px;text-align:left">${fmtE(dSaved)} von ${fmtE(S.dream.amount)}${dSaved>=S.dream.amount?' – geschafft! 🎉':`, noch ${fmtE(S.dream.amount-dSaved)}`}</div>`:`<div class="row"><div class="dr-e">🎯</div><div style="text-align:left"><div class="ptl">Traumziel festlegen</div><div class="lbl">Wofür arbeitest du? Deine Provision zahlt darauf ein.</div></div><span class="sp"></span>${ic('right','class="chev"')}</div>`}</button>
+
 
     <div class="panel today">
       <div class="row"><div><div class="ptl">${ic(locked?'lock':'edit','class="pi"')}${locked?'Heute':'Heute eintragen'}</div><div class="lbl">${locked?'Heute ist frei':'Soll '+fmtN(soll)+' Stunden'}</div></div><span class="sp"></span>${locked?'':`<button class="chip" onclick="editDay('${tk}')">Details</button>`}</div>
@@ -1488,6 +1512,7 @@ function vHome(){
       <div class="tres"><div><small>Gearbeitet</small><b>${w!=null?hm(w):'–'}</b></div><div><small>Saldo heute</small><b class="${w!=null?(w-soll>=0?'pos':'neg'):''}">${w!=null?sgn(w-soll)+' h':'–'}</b></div><div><small>5 Arbeitstage</small><b>${hm(weekSum)}</b></div></div>`}`}
     </div>
 
+    <div class="bcol bcol-ws">
     <div class="panel week">
       <div class="row"><div class="ptl">${ic('trend','class="pi"')}Letzte 5 Arbeitstage</div><span class="sp"></span><span class="lbl">Soll ${fmtN(S.settings.sollTag)} h</span></div>
       <div class="wk"><div class="goal" style="bottom:${(+S.settings.sollTag/maxH)*112+19}px"></div>
@@ -1499,11 +1524,8 @@ function vHome(){
       <div class="row"><div class="ptl">${ic('grid','class="pi"')}Zielerreichung ${y}</div><span class="sp"></span><span class="lbl">Verlauf ${ic('right','style="width:14px;height:14px;vertical-align:-2px"')}</span></div>
       <div class="sg">${strip.map(h=>`<div class="sc ${h.v==null?'e':heatCls(h.v)} ${h.live?'live':''}"><b>${h.v==null?'':Math.round(h.v)+'<small> %</small>'}</b><span>${MONS[h.i]}</span></div>`).join('')}</div>
     </a>
-
-    <div class="panel deals">
-      <div class="row"><div class="ptl">${ic('brief','class="pi"')}Letzte Verträge</div><span class="sp"></span><button class="chip acc" onclick="dealSheet()">${ic('plus')} Umsatz</button></div>
-      ${deals.length?deals.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${esc(dealName(d))}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount)}</div></div>`).join(''):`<div class="empty">Noch keine Verträge.</div>`}
     </div>
+
   </div>`;
 }
 const dealName=d=>d.name||(d.retro?(d.channel==='in'?'Inbound gesamt':'Outbound gesamt'):(d.channel==='in'?'Inbound-Vertrag':'Outbound-Vertrag'));
