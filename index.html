@@ -961,7 +961,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='35';
+const APP_VERSION='36';
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
 async function checkUpdate(manual){
@@ -1258,7 +1258,13 @@ function applyTheme(){const t=S.settings.theme||'auto';const d=t==='dark'||(t===
 mq.addEventListener?mq.addEventListener('change',()=>{applyTheme()}):mq.addListener(()=>applyTheme());
 function setTheme(t){S.settings.theme=t;save();applyTheme();render();toast(t==='auto'?'Design folgt dem System':t==='dark'?'Dunkles Design':'Helles Design')}
 function cycleTheme(){const o=['auto','light','dark'];setTheme(o[(o.indexOf(S.settings.theme||'auto')+1)%3])}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet();
+  /* Tab-Sprung in Fenstern selbst steuern (iPad-Safari springt in Sheets sonst nicht zuverlässig) */
+  if(e.key==='Tab'&&!e.altKey&&!e.metaKey&&!e.ctrlKey){const sh=document.getElementById('sheet');const t=e.target;if(!sh||!sh.classList.contains('on')||!sh.contains(t))return;
+    const f=[...sh.querySelectorAll('input:not([type=hidden]):not([disabled]),select:not([disabled]),textarea:not([disabled])')].filter(x=>x.offsetParent!==null);const i=f.indexOf(t);if(i<0)return;
+    if(!e.shiftKey&&i===f.length-1&&t.classList.contains('fl-v')&&FL){e.preventDefault();FL.items.push({v:'',n:''});fcListDraw();const a=document.querySelectorAll('.fl-name');a[a.length-1].focus();return}
+    const n=f[e.shiftKey?i-1:i+1];if(n){e.preventDefault();n.focus();try{n.select()}catch(_){}}}
+});
 /* ---------- Extras ---------- */
 function isoWeek(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);const y=new Date(Date.UTC(t.getUTCFullYear(),0,1));return Math.ceil(((t-y)/864e5+1)/7)}
 const one=n=>fmtN(n,1).replace(',0','');
