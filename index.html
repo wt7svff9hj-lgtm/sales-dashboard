@@ -7,10 +7,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Sales Dashboard">
-<meta name="theme-color" content="#F2F3F5">
+<meta name="theme-color" content="#EEF0F5">
 <meta name="format-detection" content="telephone=no">
 <title>Sales Dashboard – Zeit, Umsatz &amp; Provision</title>
-<script>try{var t=(JSON.parse(localStorage.getItem("quota_v1")||"{}").settings||{}).theme||"auto";var d=t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";var sc=(JSON.parse(localStorage.getItem("quota_v1")||"{}").security||{});if(sc.pin)document.documentElement.classList.add("prelock")}catch(e){}</script>
+<script>try{var t=(JSON.parse(localStorage.getItem("quota_v1")||"{}").settings||{}).theme||"auto";var d=t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";var sc=(JSON.parse(localStorage.getItem("quota_v1")||"{}").security||{});if(sc.pin)document.documentElement.classList.add("prelock");var tm=document.querySelector("meta[name=theme-color]");if(tm)tm.setAttribute("content",sc.pin?"#0B0C10":d?"#06070B":"#EEF0F5")}catch(e){}</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -1174,7 +1174,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='56';const APP_DATE='2026-11-10';
+const APP_VERSION='57';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1472,7 +1472,11 @@ const heatCls=v=>v<50?'c0':v<70?'c1':v<100?'c2':'c3';
 
 /* ---------- Theme ---------- */
 const mq=matchMedia('(prefers-color-scheme: dark)');
-function applyTheme(){const t=S.settings.theme||'auto';const d=t==='dark'||(t==='auto'&&mq.matches);document.documentElement.dataset.theme=d?'dark':'light';const m=document.querySelector('meta[name=theme-color]');if(m)m.content=d?'#06070B':'#EEF0F5'}
+function applyTheme(){const t=S.settings.theme||'auto';const d=t==='dark'||(t==='auto'&&mq.matches);document.documentElement.dataset.theme=d?'dark':'light';barSync()}
+let _barC=null;function barSync(){const d=document.documentElement.dataset.theme==='dark';const dark=document.documentElement.classList.contains('prelock')||['lock','kick','eod','moment'].some(id=>{const e=document.getElementById(id);return e&&e.classList.contains('on')&&!e.classList.contains('out')});const c=dark?'#0B0C10':d?'#06070B':'#EEF0F5';if(c===_barC)return;_barC=c;const o=document.querySelector('meta[name=theme-color]');const n=document.createElement('meta');n.name='theme-color';n.content=c;if(o)o.replaceWith(n);else document.head.appendChild(n)}
+function barWatch(){const mo=new MutationObserver(()=>barSync());mo.observe(document.documentElement,{attributes:true,attributeFilter:['class','data-theme']});['lock','kick','eod','moment'].forEach(id=>{const e=document.getElementById(id);if(e)mo.observe(e,{attributes:true,attributeFilter:['class']})});barSync()}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){_barC=null;barSync()}});
+if(document.readyState!=='loading')setTimeout(barWatch,0);else document.addEventListener('DOMContentLoaded',barWatch);
 mq.addEventListener?mq.addEventListener('change',()=>{applyTheme()}):mq.addListener(()=>applyTheme());
 function setTheme(t){S.settings.theme=t;save();applyTheme();render();toast(t==='auto'?'Design folgt dem System':t==='dark'?'Dunkles Design':'Helles Design')}
 function cycleTheme(){const o=['auto','light','dark'];setTheme(o[(o.indexOf(S.settings.theme||'auto')+1)%3])}
