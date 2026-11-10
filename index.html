@@ -1008,6 +1008,34 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.vac{position:relative;overflow:hidden}
+.vac-fly{position:absolute;left:0;top:14px;z-index:2;font-size:30px;line-height:1;pointer-events:none;animation:vacx 2.6s cubic-bezier(.45,.05,.4,1) .5s both}
+.vac-fly i{position:absolute;right:100%;top:55%;height:2px;width:0;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(39,118,201,.55));animation:vact 2.6s ease .5s both}
+.vac-flyov{position:fixed;z-index:40;pointer-events:none;overflow:hidden}
+@keyframes vacx{0%{transform:translate(-50px,30px) rotate(-8deg);opacity:0}10%{opacity:1}55%{transform:translate(calc(var(--w)*.55),-6px) rotate(-14deg)}100%{transform:translate(calc(var(--w) + 40px),-40px) rotate(-18deg);opacity:1}}
+@keyframes vact{0%{width:0;opacity:0}20%{opacity:1}70%{width:220px;opacity:.9}100%{width:260px;opacity:0}}
+.vac.flying .vac-e{animation:vacland 3.4s ease both}
+@keyframes vacland{0%,70%{opacity:0;transform:translate(-30px,-14px) rotate(-12deg)}90%{opacity:1;transform:translate(3px,1px) rotate(4deg)}100%{transform:none}}
+.vw-hd{display:flex;gap:14px;align-items:flex-start;margin:4px 0 8px}.vw-hd>span{font-size:38px;line-height:1;animation:bounce .9s cubic-bezier(.3,1.6,.5,1) both}
+.vw-hd h2{margin:0;font-size:22px;font-weight:700;font-stretch:var(--cond);line-height:1.15}.vw-hd p{margin:6px 0 0;color:var(--ink2);font-size:14.5px;line-height:1.4}
+.vw-l{margin-bottom:14px}.vw-l label:not(.on) span{font-weight:600}
+
+.vac{grid-column:1/-1;border-radius:22px;padding:14px 16px;background:linear-gradient(135deg,rgba(51,179,232,.20),rgba(39,118,201,.10));border:1.5px solid rgba(51,150,232,.45)}
+.vac.ok{background:var(--card);border-color:var(--line)}
+.vac-hd{display:flex;align-items:center;gap:12px;cursor:pointer}
+.vac-e{font-size:26px;line-height:1;flex:none}.vac:not(.ok) .vac-e{animation:vacfly 3.2s ease-in-out infinite}
+@keyframes vacfly{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(4px,-3px) rotate(-6deg)}}
+.vac-t{flex:1;min-width:0}.vac-t b{display:block;font-size:16px;font-weight:700;color:var(--ink)}.vac-t small{display:block;font-size:13px;color:var(--ink2);margin-top:2px}
+.vac-n{flex:none;font-size:13px;font-weight:700;padding:4px 10px;border-radius:99px;background:rgba(39,118,201,.15);color:#2776C9;font-variant-numeric:tabular-nums}
+html[data-theme=dark] .vac-n{color:#7CC8F2;background:rgba(124,200,242,.14)}
+.vac-fu{margin-top:12px;padding:9px 12px;border-radius:12px;background:rgba(39,118,201,.12);font-size:14px;color:var(--ink)}
+.vac-lh{margin-top:12px;font-size:12.5px;font-weight:700;color:var(--ink2)}
+.vac-l{margin-top:4px;display:flex;flex-direction:column}
+.vac-l label{display:flex;align-items:center;gap:10px;padding:8px 2px;font-size:14.5px;color:var(--ink);cursor:pointer}
+.vac-l input{width:20px;height:20px;accent-color:#2776C9;flex:none}
+.vac-l label.on span{color:var(--ink3,var(--ink2));text-decoration:line-through}
+.vac-cp{margin-top:10px;display:inline-flex;align-items:center;gap:6px;border:0;border-radius:99px;padding:8px 14px;background:#2776C9;color:#fff;font:inherit;font-size:13.5px;font-weight:650;cursor:pointer}.vac-cp svg{width:15px;height:15px}
+
 html.xmon body{background:radial-gradient(800px 460px at 90% -8%,rgba(214,40,60,.07),transparent 60%),radial-gradient(700px 460px at -8% 40%,rgba(30,140,90,.06),transparent 60%),var(--canvas)}
 html.xmon[data-theme=dark] body{background:radial-gradient(800px 460px at 90% -8%,rgba(214,40,60,.12),transparent 60%),radial-gradient(700px 460px at -8% 40%,rgba(40,170,110,.08),transparent 60%),var(--canvas)}
 html.xmon.rest body{background:radial-gradient(900px 520px at 80% -12%,rgba(120,110,255,.14),transparent 62%),radial-gradient(700px 460px at -8% 40%,rgba(214,40,60,.06),transparent 60%),var(--canvas)}
@@ -1232,7 +1260,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='63';const APP_DATE='2026-11-10';
+const APP_VERSION='66';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1682,7 +1710,7 @@ function actRings(a,g,size=132){const c=size/2,sw=size*.095,r1=c-sw/2-2,r2=r1-sw
 function restState(now){now=now||new Date();const tk=ymd(now);const di=dayInfo(tk);const nm=now.getHours()*60+now.getMinutes();
   if(di.e&&di.e.type==='urlaub')return{t:'urlaub',di};if(di.e&&di.e.type==='krank')return{t:'krank',di};
   if(di.weekend)return{t:'we',di};if(di.hol)return{t:'hol',di};if(di.sp)return{t:'sp',di};
-  if(di.e&&!isFree(di.e.type)&&di.e.end&&worked(di.e)!=null&&nm>=toMin(di.e.end)){const nx=eodNextWork(tk);const wkEnd=nx&&(pD(nx.k)-pD(tk))/864e5>1;return{t:wkEnd?'wkend':'eve',di,nx}}
+  if(di.e&&!isFree(di.e.type)&&di.e.end&&worked(di.e)!=null&&nm>=toMin(di.e.end)){const nx=eodNextWork(tk);const wkEnd=nx&&(pD(nx.k)-pD(tk))/864e5>1;const v=vacAhead(tk);if(v&&v.wd===1)return{t:'vacgo',di,nx,v};return{t:wkEnd?'wkend':'eve',di,nx}}
   return null}
 function restSync(){const r=restState();const h=document.documentElement;{const md=todayK().slice(5);const on=md>='12-01'&&md<='12-26'&&S.settings.season!==false;h.classList.toggle('xmon',on);if(on&&!document.getElementById('xsnow')&&!RM()){const z=document.createElement('div');z.id='xsnow';z.innerHTML=[...Array(16)].map((_,i)=>`<i style="left:${(i*61)%100}%;animation-duration:${14+(i*7)%12}s;animation-delay:-${(i*5)%14}s;width:${2+(i%3)}px;height:${2+(i%3)}px"></i>`).join('');document.body.appendChild(z)}else if(!on){document.getElementById('xsnow')?.remove()}}h.classList.toggle('rest',!!r);h.dataset.rest=r?r.t:''}
 function weekRecap(k){const d=pD(k);const mon=new Date(d);mon.setDate(d.getDate()-((d.getDay()+6)%7));let hrs=0,demo=0,ops=0,rv=0,days=0;
@@ -1700,6 +1728,7 @@ function restCard(){const r=restState();if(!r)return '';const now=new Date();con
     emo='🌙';kick='Feierabend';head=`Seit ${e.end} Uhr frei`;sub=`<span id="restClock">${restDur(free)}</span> Feierabend`;
     body=`<div class="rs-figs">${fig('Gearbeitet',hm(worked(e)))}${fig('Demos',a.demo)}${fig('Opps',a.ops.length)}</div>`;
     foot=`${ns?`<div class="rs-next">☀️ Weiter ${nxL}${ns?' ab '+ns.st:''}: zuerst ⚡ High-Prios</div>`:''}<div class="rs-act"><button onclick="eodShow()">Tagesbilanz</button></div>`}
+  else if(r.t==='vacgo'){cls='urlaub';emo='✈️';kick='Urlaub beginnt';head='Ab in den Urlaub';sub=`${r.v.n} ${r.v.n===1?'Urlaubstag':'Urlaubstage'} · zurück ${WDL[pD(r.v.back).getDay()]}, ${dmy(r.v.back)}`;foot=`<div class="rs-act"><button onclick="eodShow()">Tagesbilanz</button></div>`}
   else if(r.t==='we'||r.t==='wkend'){const wr=weekRecap(tk);emo=r.t==='wkend'?'🎉':'🏖️';kick=r.t==='wkend'?'Wochenende beginnt':'Wochenende';
     head=r.t==='wkend'?'Ab ins Wochenende':(now.getDay()===6?'Akku laden':'Genieß den Sonntag');sub=until!=null?`Noch <span id="restClock">${restDur(until)}</span> bis ${WDL[nx.wd]}`:'';
     body=`<div class="rs-lbl">Deine KW ${wr.kw}</div><div class="rs-figs four">${fig('Stunden',hm(wr.hrs))}${fig('Demos',wr.demo)}${fig('Opps',wr.ops)}${fig('Umsatz',wr.rv?fmtE(wr.rv):'–')}</div>`;
@@ -1709,7 +1738,7 @@ function restCard(){const r=restState();if(!r)return '';const now=new Date();con
   else if(r.t==='urlaub'){let n=0;const d=new Date();for(let i=0;i<40;i++){const x=dayInfo(ymd(d));if(x.e&&x.e.type==='urlaub')n++;else if(!(x.weekend||x.hol))break;d.setDate(d.getDate()+1)}
     emo='✈️';kick='Urlaub';head='Abschalten erlaubt';sub=`Noch ${n} ${n===1?'Urlaubstag':'Urlaubstage'} am Stück`;foot=nx?`<div class="rs-next">Zurück am ${WDL[nx.wd]}, ${pD(nx.k).toLocaleDateString('de-DE',{day:'numeric',month:'long'})}</div>`:''}
   else if(r.t==='krank'){emo='🫖';kick='Krank gemeldet';head='Gute Besserung'+nm;sub='Heute zählt nur, dass du wieder fit wirst.'}
-  const fe=festOf();if(fe){if(fe.id==='nye'){sub=`Noch <span id="restClock">${restDur(nyeLeft())}</span> bis ${now.getFullYear()+1} 🎆`;cls+=' rs-nye'}else if(fe.m==='xmas')cls+=' rs-xmas';else if(fe.m==='kamelle')cls+=' rs-kar';else if(fe.id==='ny')cls+=' rs-nye';else if(fe.id==='bday')cls+=' rs-bday';if(fe.id==='nye'||r.t!=='eve'){head=fe.t;kick=fe.s}emo=`<span onclick="festPlay(true)" style="cursor:pointer">${fe.emo}</span>`}
+  const fe=festOf();if(fe){if(fe.id==='nye'){sub=`Noch <span id="restClock">${restDur(nyeLeft())}</span> bis ${now.getFullYear()+1} 🎆`;cls+=' rs-nye'}else if(fe.m==='xmas')cls+=' rs-xmas';else if(fe.m==='kamelle')cls+=' rs-kar';else if(fe.id==='ny')cls+=' rs-nye';else if(fe.id==='bday')cls+=' rs-bday';if(fe.id==='nye'||(r.t!=='eve'&&r.t!=='vacgo')){head=fe.t;kick=fe.s}emo=`<span onclick="festPlay(true)" style="cursor:pointer">${fe.emo}</span>`}
   return `<div class="rest-card rs-${cls}"><div class="rs-sky"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="rs-top"><span class="rs-emo">${emo}</span><div><div class="rs-kick">${kick}</div><h2 class="rs-h">${head}</h2>${sub?`<div class="rs-sub">${sub}</div>`:''}</div></div>
     ${body}${foot}<div class="rs-note">Alles bleibt eintragbar, falls doch noch was reinkommt.</div></div>`}
@@ -1785,6 +1814,47 @@ function festMaybe(n){n=n||0;const f=festOf();if(!f||VIEW!=='home')return;if(fes
 setTimeout(()=>{const k=document.getElementById('kick');if(!(k&&k.classList.contains('on'))&&!LOCKED)festMaybe()},1600);
 let _festDay=todayK();setInterval(()=>{const k=todayK();if(k!==_festDay){_festDay=k;if(k.slice(5)==='01-01'&&!document.hidden){try{localStorage.setItem('fest_'+k,'1')}catch(e){}festPlay(true)}render()}},15000);
 function nyeLeft(){const n=new Date();const t=new Date(n.getFullYear()+1,0,1);return (t-n)/6e4}
+/* ---------- Urlaubs-Vorwarnung ---------- */
+function vacAhead(k){k=k||todayK();const t=dayInfo(k);if(t.e&&isFree(t.e.type))return null;const d=pD(k);let wd=(!t.weekend&&!t.hol)?1:0;
+  for(let i=0;i<30;i++){d.setDate(d.getDate()+1);const x=dayInfo(ymd(d));
+    if(x.e&&x.e.type==='urlaub'){if(wd>5||wd===0)return null;const start=ymd(d);let end=start,n=0;const z=new Date(d);
+      for(let j=0;j<60;j++){const y=dayInfo(ymd(z));if(y.e&&y.e.type==='urlaub'){end=ymd(z);n++}else if(!(y.weekend||y.hol||y.sp))break;z.setDate(z.getDate()+1)}
+      return{start,end,n,back:ymd(z),wd}}
+    if(x.weekend||x.hol)continue;if(x.e&&isFree(x.e.type))continue;wd++;if(wd>5)return null}
+  return null}
+const VAC_TASKS=[['fu','Keine Follow-ups in den Urlaub legen'],['kd','Kunden im Gespräch auf den Urlaub hinweisen'],['ml','Hinweis in Mails & Angeboten aufnehmen'],['vt','Urlaubsübergabe an die Vertretung machen'],['oof','Abwesenheitsnotiz in Mail & Kalender eintragen']];
+const dmy=k=>{const d=pD(k);return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}).replace(/\.?$/,'.')};
+function vacText(v){return `Kurzer Hinweis vorab: Ich bin vom ${dmy(v.start)} bis einschließlich ${dmy(v.end)} im Urlaub und ab ${WDL[pD(v.back).getDay()]}, dem ${dmy(v.back)}, wieder für Sie da. Wenn vorher noch etwas zu klären ist, sprechen Sie mich gerne bis dahin an.`}
+async function vacCopy(){const v=vacAhead();if(!v)return;const t=vacText(v);try{await navigator.clipboard.writeText(t);toast('Hinweis kopiert, z. B. für die nächste Mail','ok')}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Hinweis kopiert','ok')}catch(_){toast('Kopieren nicht möglich')}ta.remove()}}
+function vacTick(id){const v=vacAhead();if(!v)return;S.vacPrep=S.vacPrep||{};const c=S.vacPrep[v.start]=S.vacPrep[v.start]||{};c[id]=!c[id];save();render()}
+function vacOpen(){VAC_OPEN=!VAC_OPEN;render()}
+let VAC_OPEN=false,VAC_FLOWN=false,_vacT=null;
+function vacFlyMaybe(){_vacT=null;if(VAC_FLOWN)return;const el=document.querySelector('.vac');if(!el||VIEW!=='home')return;
+  const r=el.getBoundingClientRect();if(festBusy()||document.hidden||r.bottom<60||r.top>innerHeight-40){_vacT=setTimeout(vacFlyMaybe,1200);return}
+  VAC_FLOWN=true;const o=document.createElement('div');o.className='vac-flyov';o.style.cssText=`left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;border-radius:22px`;
+  o.innerHTML='<span class="vac-fly"><i></i>✈️</span>';o.style.setProperty('--w',r.width+'px');document.body.appendChild(o);el.classList.add('flying');
+  const sc=()=>{o.remove();el.classList.remove('flying');removeEventListener('scroll',sc)};addEventListener('scroll',sc,{passive:true});setTimeout(sc,3600)}
+function vacCard(){if(S.settings.vacWarn===false)return '';const v=vacAhead();if(!v)return '';const c=(S.vacPrep||{})[v.start]||{};const last=v.wd===1;const done=VAC_TASKS.filter(([id])=>c[id]).length;const all=last&&done===VAC_TASKS.length;
+  const range=v.start===v.end?`${WDL[pD(v.start).getDay()]}, ${dmy(v.start)}`:`${dmy(v.start)}–${dmy(v.end)}`;
+  const when=v.wd===1?'Letzter Arbeitstag vor dem Urlaub':`Noch ${v.wd} Arbeitstage bis zum Urlaub`;
+  const open=VAC_OPEN||!all;
+  if(!VAC_FLOWN&&!RM()&&!_vacT)_vacT=setTimeout(vacFlyMaybe,700);
+  return `<div class="vac ${all?'ok':''}"><div class="vac-hd" onclick="vacOpen()"><span class="vac-e">${all?'✅':'✈️'}</span><div class="vac-t"><b>${when}</b><small>${range} · ${v.n} ${v.n===1?'Urlaubstag':'Urlaubstage'} · zurück ${WDL[pD(v.back).getDay()]}, ${dmy(v.back)}</small></div>${last?`<span class="vac-n">${done}/${VAC_TASKS.length}</span>`:''}</div>
+  ${open?`<div class="vac-fu">📅 Follow-ups erst ab <b>${WDL[pD(v.back).getDay()]}, ${dmy(v.back)}</b> planen</div>
+  ${last?`<div class="vac-lh">Checkliste für heute</div><div class="vac-l">${VAC_TASKS.map(([id,l])=>`<label class="${c[id]?'on':''}"><input type="checkbox" ${c[id]?'checked':''} onchange="vacTick('${id}')"><span>${l}</span></label>`).join('')}</div>`:''}
+  <button class="vac-cp" onclick="vacCopy()">${ic('copy')} Hinweis-Text für Kunden kopieren</button>`:''}</div>`}
+function vacMissing(v){const c=(S.vacPrep||{})[v.start]||{};return VAC_TASKS.filter(([id])=>!c[id])}
+function vacEndFlow(k){const v=vacAhead(k);if(!v)return;if(vacMissing(v).length)vacWarnSheet();else vacBye(k)}
+function vacWarnSheet(){const v=vacAhead();if(!v)return;const c=(S.vacPrep||{})[v.start]||{};const miss=vacMissing(v);
+  openSheet(`<div class="vw-hd"><span>${miss.length?'⚠️':'✅'}</span><div><h2>${miss.length?'Moment, noch nicht alles erledigt':'Perfekt, alles erledigt'}</h2><p>${miss.length?`Ab morgen bist du im Urlaub. ${miss.length===1?'Ein Punkt ist':miss.length+' Punkte sind'} noch offen:`:'Ab morgen Urlaub. Du kannst entspannt abschalten.'}</p></div></div>
+  <div class="vac-l vw-l">${VAC_TASKS.map(([id,l])=>`<label class="${c[id]?'on':''}"><input type="checkbox" ${c[id]?'checked':''} onchange="vacTickW('${id}')"><span>${l}</span></label>`).join('')}</div>
+  <button class="btn primary block" ${miss.length?'disabled style="opacity:.45"':''} onclick="closeSheet();vacBye()">${miss.length?`Noch ${miss.length} offen`:'Alles erledigt, ab in den Urlaub ✈️'}</button>
+  <button class="btn block" style="margin-top:10px" onclick="closeSheet();if(eodOn())setTimeout(()=>eodShow(),300)">Trotzdem Feierabend</button>`)}
+function vacTickW(id){const v=vacAhead();if(!v)return;S.vacPrep=S.vacPrep||{};const c=S.vacPrep[v.start]=S.vacPrep[v.start]||{};c[id]=!c[id];save();render();const sh=document.getElementById('sheet');const st=sh.scrollTop;vacWarnSheet();sh.scrollTop=st;if(!vacMissing(v).length)toast('Alles erledigt ✓','ok')}
+function vacBye(k){k=k||todayK();const F=fxStage();const ch=['✈️','🏖️','🌴','🍹','☀️','🧳'];
+  if(eodOn())eodShow(k);
+  setTimeout(()=>{if(!RM()){for(let i=0;i<5;i++)fxAdd({ch:'✈️',sz:46,x:-60,y:F.H*(.15+i*.14),vx:520+Math.random()*160,vy:-30,g:0,tv:0,drag:1,flut:0,vr:0,delay:i*.25,ttl:4,flip:false});for(let i=0;i<34;i++)fxAdd({ch:pick(ch),sz:28+Math.random()*10,x:Math.random()*F.W,y:-40-Math.random()*100,vx:(Math.random()-.5)*60,vy:70,g:200,tv:180,drag:.995,flut:110,delay:.5+Math.random()*1.5,ttl:6})}
+    if(!eodOn())fxLayer('fx-fest',`<span class="fe">🏖️</span><b>Schönen Urlaub!</b><small>Alles erledigt. Jetzt wird abgeschaltet</small>`,2800)},eodOn()?500:0)}
 /* ---------- High-Prio zuerst ---------- */
 const hpOn=()=>S.settings.hiprio!==false;
 function hpDone(k){return !!((S.hiprio||{})[k||todayK()])}
@@ -2001,7 +2071,7 @@ function vHome(){
 
   const prevW=(()=>{const d=new Date(d0);for(let i=0;i<14;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start&&x.end)return dayInfo(ymd(d))}return null})();
   return `
-  <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={bday:'Happy Birthday',nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();if(document.documentElement.classList.contains('xmon')&&(!rs||rs.t==='eve'||rs.t==='we'))return rs&&rs.t==='eve'?'🌙':'🎄';return rs?({eve:'🌙',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
+  <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={bday:'Happy Birthday',nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',vacgo:'Schönen Urlaub',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();if(document.documentElement.classList.contains('xmon')&&(!rs||rs.t==='eve'||rs.t==='we'))return rs&&rs.t==='eve'?'🌙':'🎄';return rs?({eve:'🌙',vacgo:'🏖️',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
   ${saveOk?'':`<div class="warn" style="margin-bottom:14px">${ic('alert')} Daten können hier nicht gespeichert werden. Bitte Backup nutzen.</div>`}
   <div class="streaks">${mSt?`<span>🔥 ${mSt} ${mSt===1?'Monat':'Monate'} über 70 %</span>`:''}${tSt?`<span>⏱️ ${tSt} ${tSt===1?'Tag':'Tage'} erfasst</span>`:''}${miSt?`<span>✅ ${miSt} ${miSt===1?'Tag':'Tage'} Missionen</span>`:''}<a href="#verlauf" onclick="setTimeout(()=>document.getElementById('badges')?.scrollIntoView({behavior:'smooth'}),400)">🏅 ${earnedBadges().length}/${BADGES.length} Abzeichen</a></div>
   ${restCard()}
@@ -2021,6 +2091,7 @@ function vHome(){
       <div class="hsplit"><span><i style="background:#F9DC4A"></i>Inbound ${fmtE(r.inb)}</span><span><i style="background:#fff"></i>Outbound ${fmtE(r.out)}</span>${perDayNeed?`<span>${fmtE(perDayNeed)} pro Arbeitstag bis 70 %</span>`:''}</div>
     </a>
     ${carryBanner()}
+    ${vacCard()}
     ${hpCard()}
     ${actCard()}
     <div class="qa">
@@ -2827,6 +2898,7 @@ function vSettings(){
       <button class="btn pri block" onclick="maybeKickoff(true)">Jetzt ansehen 🚀</button>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Geburtstag 🎂</b><div class="lbl">Für eine kleine Überraschung</div></div><span class="sp"></span><input class="inp" style="width:96px;text-align:center" inputmode="numeric" placeholder="TT.MM." value="${(()=>{const b=S.settings.bday||'02-28';return b.slice(3)+'.'+b.slice(0,2)+'.'})()}" onchange="{const m=this.value.match(/(\d{1,2})\D+(\d{1,2})/);if(m){S.settings.bday=String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');save();toast('Geburtstag gespeichert','ok')}else toast('Bitte als TT.MM. eingeben')}"></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Im Unternehmen seit 🏅</b><div class="lbl">TT.MM. oder TT.MM.JJJJ für die Jahreszahl</div></div><span class="sp"></span><input class="inp" style="width:120px;text-align:center" inputmode="numeric" placeholder="01.09.2024" value="${(()=>{const j=S.settings.jobStart||'2020-09-01';const md=j.slice(-5);return md.slice(3)+'.'+md.slice(0,2)+'.'+(j.length>5?j.slice(0,4):'')})()}" onchange="{const m=this.value.match(/(\d{1,2})\D+(\d{1,2})(?:\D+(\d{4}))?/);if(m){S.settings.jobStart=(m[3]?m[3]+'-':'')+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');save();toast('Gespeichert','ok')}else toast('Bitte als TT.MM.JJJJ eingeben')}"></div>
+      <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Urlaubs-Vorwarnung ✈️</b><div class="lbl">5 Arbeitstage vor dem Urlaub auf Home</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.vacWarn!==false?'on':''}" onclick="S.settings.vacWarn=true;save();render()">An</button><button class="${S.settings.vacWarn!==false?'':'on'}" onclick="S.settings.vacWarn=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">High-Prio-Erinnerung ⚡</b><div class="lbl">Bleibt auf Home stehen, bis du sie abhakst</div></div><span class="sp"></span><div class="seg pill"><button class="${hpOn()?'on':''}" onclick="S.settings.hiprio=true;save();render()">An</button><button class="${hpOn()?'':'on'}" onclick="S.settings.hiprio=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Feierabend-Bilanz 🌙</b><div class="lbl">Zusammenfassung, sobald du das Ende für heute einträgst</div></div><span class="sp"></span><div class="seg pill"><button class="${eodOn()?'on':''}" onclick="S.settings.eod=true;save();render()">An</button><button class="${eodOn()?'':'on'}" onclick="S.settings.eod=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Saison-Motive</b><div class="lbl">Dezente Deko zu Advent, Silvester, Karneval, Ostern & Co.</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.season!==false?'on':''}" onclick="S.settings.season=true;save();render()">An</button><button class="${S.settings.season===false?'on':''}" onclick="S.settings.season=false;save();render()">Aus</button></div></div>
@@ -3115,6 +3187,7 @@ function showKickoff(){
     </div>
     <div class="kk-bar"><i id="kkBar" style="width:0"></i><span style="left:${70/Math.max(130,r.pct)*100}%"></span><span style="left:${100/Math.max(130,r.pct)*100}%"></span></div>
     ${yRev?`<div class="kk-y">${ic('trend')} Letzter Arbeitstag: <b>+${fmtE(yRev)}</b> Umsatz</div>`:''}
+    ${(()=>{const v=S.settings.vacWarn!==false&&vacAhead(tk);return v?`<div class="kk-mis"><div class="kk-lbl">✈️ ${v.wd===1?'Morgen Urlaub':'In '+v.wd+' Arbeitstagen Urlaub'}</div><div class="eod-tip" style="padding:4px 0">Follow-ups erst ab ${WDL[pD(v.back).getDay()]}, ${dmy(v.back)} legen und Kunden heute schon Bescheid geben.</div></div>`:''})()}
     ${hpOn()?`<div class="kk-mis kk-hp"><div class="kk-lbl">⚡ Zuerst</div><label><input type="checkbox" ${hpDone(tk)?'checked':''} onchange="this.checked?hpCheck('kick'):hpUndo()"><span>High-Prio-Aufgaben abarbeiten</span></label></div>`:''}
     ${misKickHtml(tk)}`}
     <div class="kk-q">„${q}“</div>
@@ -3133,14 +3206,15 @@ function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worke
   const deals=S.deals.filter(x=>x.date===k&&!x.retro&&!x.storno);const dSum=deals.reduce((s,x)=>s+ +x.amount,0);
   const r=rev(m);const fc=forecast(m);const saldo=w-di.soll;const bal=balanceNow();
   const mst=missionState(k);const mDone=mst.filter(Boolean).length;
-  const nx=eodNextWork(k);const stale=openItems(ymOf(new Date())).filter(x=>x.age!=null&&x.age>=14);
-  let emo,head,msg;
+  let nx=eodNextWork(k);const stale=openItems(ymOf(new Date())).filter(x=>x.age!=null&&x.age>=14);
+  let emo,head,msg;const vacB=S.settings.vacWarn!==false&&vacAhead(k);
   if(dSum>0){emo='🏆';head='Was für ein Tag';msg=`${deals.length===1?'Ein Abschluss':deals.length+' Abschlüsse'} über <b>${fmtE(dSum)}</b>. Damit stehst du bei <b>${fmtN(r.pct)} %</b>.`}
   else if(hit&&(a.demo>g.demo||ops.length>g.op)){emo='🔥';head='Mehr als geplant';msg='Tagesziel nicht nur geschafft, sondern übertroffen. So füllt sich die Pipeline.'}
   else if(hit){emo='🎯';head='Tagesziel geschafft';msg=`${a.demo} ${a.demo===1?'Demo':'Demos'} und ${ops.length} ${ops.length===1?'Opp':'Opps'}. Genau so baut sich der nächste Monat auf.`}
   else if(a.demo||ops.length){emo='💪';head='Feierabend';msg='Nicht jeder Tag ist ein Volltreffer. Was heute angestoßen wurde, zahlt später ein.'}
   else{emo='🌙';head='Feierabend';msg='Heute ohne Demo und Opp. Morgen ist ein neuer Tag für die Pipeline.'}
-  const tips=[];
+  if(vacB&&vacB.wd===1){const ok=!vacMissing(vacB).length;emo='🏖️';head='Schönen Urlaub!';msg=ok?`Alles erledigt und übergeben. Bis ${WDL[pD(vacB.back).getDay()]}, ${dmy(vacB.back)} Jetzt wird abgeschaltet.`:`${vacMissing(vacB).length} Punkte auf der Urlaubs-Checkliste sind noch offen. Zurück am ${WDL[pD(vacB.back).getDay()]}, ${dmy(vacB.back)}`}
+  const tips=[];if(vacB&&vacB.wd===1)nx=null;
   if(nx&&nx.wd===1&&fcDue())tips.push(`📋 Montag bis 12 Uhr: Forecast KW ${kwOf(nx.k)} abgeben`);
   if(stale.length)tips.push(`⏳ ${stale.length} ${stale.length===1?'Opp wartet':'Opps warten'} seit 14+ Tagen, ${stale.length===1?'nachfassen':'nachfassen'}: ${stale.slice(0,2).map(x=>esc(x.n||'Opp')).join(', ')}${stale.length>2?' …':''}`);
   if(r.target&&r.pct<70&&nx){const left=workdaysLeft(m,nx.k);if(left)tips.push(`🎯 Bis 70 % fehlen ${fmtE(r.target*.7-r.tot)}, noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'}`)}
@@ -3168,11 +3242,13 @@ function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worke
       <div><small>Quote</small><b>${fmtN(r.pct)} %</b></div>
       <div><small>Erwartung</small><b>${fmtN(fc.pct)} %</b></div></div></div>
     ${tips.length?`<div class="kk-mis"><div class="kk-lbl">Für ${nx?(nx.k===ymd(new Date(d0.getTime()+864e5))?'morgen':WDL[nx.wd]):'die nächsten Tage'}</div>${tips.map(t=>`<div class="eod-tip">${t}</div>`).join('')}</div>`:''}
-    <button class="kk-go" onclick="closeEod()">Schönen Feierabend 🌙</button>
+    <button class="kk-go" onclick="closeEod()">${vacB&&vacB.wd===1?'Schönen Urlaub 🏖️':'Schönen Feierabend 🌙'}</button>
   </div>`;
   el.classList.remove('out');el.classList.add('on');lockScroll();if(hit||dSum)setTimeout(confetti,250)}
 function closeEod(){const el=document.getElementById('eod');el.classList.add('out');unlockScroll();setTimeout(()=>{el.classList.remove('on','out');el.innerHTML=''},380)}
-function eodMaybe(k,prevEnd){if(!eodOn()||k!==todayK()||prevEnd)return;const e=S.days[k];if(!e||isFree(e.type)||worked(e)==null)return;setTimeout(()=>eodShow(k),450)}
+function eodMaybe(k,prevEnd){if(k!==todayK()||prevEnd)return;const e=S.days[k];if(!e||isFree(e.type)||worked(e)==null)return;
+  const v=S.settings.vacWarn!==false&&vacAhead(k);if(v&&v.wd===1){setTimeout(()=>vacEndFlow(k),450);return}
+  if(!eodOn())return;setTimeout(()=>eodShow(k),450)}
 
 function closeKick(){const el=document.getElementById('kick');el.classList.add('out');setTimeout(()=>{el.classList.remove('on','out');el.innerHTML='';festMaybe()},380)}
 
