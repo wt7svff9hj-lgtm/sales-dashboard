@@ -15,6 +15,19 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
+.wk-chip{width:100%;display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;border-radius:14px;border:1px solid var(--hair2);background:var(--paper);font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;text-align:left}
+.wk-chip span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wk-chip b{white-space:nowrap;color:var(--ink)}.wk-chip.up b{color:var(--green)}.wk-chip.dn b{color:var(--red)}.wk-chip svg{width:16px;height:16px;color:var(--muted);flex:none}
+.wk-card{margin-bottom:14px;border:2px solid color-mix(in srgb,var(--arD) 70%,transparent)}
+.chip.late{background:color-mix(in srgb,var(--red) 14%,transparent);color:var(--red)}
+.wk-cmp{display:flex;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;border-radius:16px;background:var(--soft);flex-wrap:wrap}
+.wk-cmp small{display:block;font-size:11.5px;color:var(--muted)}.wk-cmp b{font-family:'SD Display','SD Text',sans-serif;font-size:20px;font-weight:800}
+.wk-ar{color:var(--muted);font-weight:700}.wk-d{margin-left:auto}.wk-d b{font-size:22px}.wk-d.pos b{color:var(--green)}.wk-d.neg b{color:var(--red)}
+.fd-h{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin:14px 0 6px}
+.fd-rows{display:flex;flex-direction:column;margin-top:8px}
+.fd-r{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:7px 0;border-top:1px solid var(--hair);font-size:13.5px}
+.fd-r:first-child{border-top:0}.fd-r i{font-style:normal;text-align:center;font-weight:800;color:var(--muted)}.fd-r b{white-space:nowrap}
+.fd-r span{color:var(--ink)}.fd-r.fp b,.fd-r.fp i{color:var(--green)}.fd-r.fn b,.fd-r.fn i{color:var(--red)}.fd-r.info2 b{color:var(--muted)}
+.wk-btns{display:flex;gap:8px;margin-top:14px}.wk-btns .btn{flex:1;white-space:nowrap;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;gap:6px}.wk-btns svg{width:16px;height:16px}
 .fx-lostcard .lc{background:var(--paper);border-radius:22px;padding:22px 30px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.35);min-width:220px;animation:lcAway 1s cubic-bezier(.5,0,.75,0) forwards}
 .fx-lostcard .lc small{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--red);text-transform:uppercase}.fx-lostcard .lc b{display:block;font-size:22px;margin:4px 0}.fx-lostcard .lc span{color:var(--muted);font-weight:700}
 @keyframes lcAway{0%{transform:scale(.6);opacity:0}25%{transform:scale(1);opacity:1}55%{transform:scale(1) rotate(0)}100%{transform:translate(-140vw,-10vh) rotate(-28deg);opacity:.9}}
@@ -1126,7 +1139,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='51';const APP_DATE='2026-11-10';
+const APP_VERSION='52';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1201,6 +1214,8 @@ const I={
  building:'<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M9 7.5h1.5M13.5 7.5H15M9 11h1.5M13.5 11H15M9 14.5h1.5M13.5 14.5H15M10.5 20.5v-3h3v3"/>',
  crown:'<path d="M4 8.5l4 3.5 4-6.5 4 6.5 4-3.5-1.8 9.5H5.8z"/>',
  flame:'<path d="M12 21c-3.8 0-6.5-2.6-6.5-6 0-3.4 2.7-5.3 3.4-8.8 1.9 1 3.1 3 3.1 5 1-.8 1.6-2 1.6-3.2 2.6 2 4.4 4.4 4.4 7 0 3.4-2.4 6-6 6z"/>',
+ info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+ share:'<path d="M12 3v13M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',
  refresh:'<path d="M20 11a8 8 0 0 0-14.5-4.5L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.5 4.5L20 16"/><path d="M20 21v-5h-5"/>',
  zap:'<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>',
  faceid:'<path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 9.5v1M15 9.5v1M12 9.5V13h-1M9.5 15.5a3.5 3.5 0 0 0 5 0"/>',
@@ -1633,7 +1648,7 @@ function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!
   if(x.opp){const f=oppFind(x.opp);if(f){f.o.stage=ns;f.o.stageSince=todayK()}}save();render();toast(`${x.n||'Opp'} → ${FCN[ns]}`,'ok')}
 function fcRecalc(F,st){const it=F.items[st]||[];F[st]=it.reduce((a,y)=>a+(+y.v||0),0);if(!it.length)delete F.items[st]}
 /* ---------- Closed Won / Closed Lost protokollieren + Motivations-Effekt ---------- */
-function closedLog(res,x,m,st){S.closed=S.closed||[];const e={id:uid(),res,date:todayK(),m,n:x.n||x.name||'Opp',v:+x.v||+x.amount||0,st:st||x.stage||'',opp:x.opp||x.id||null};S.closed.push(e);return e}
+function closedLog(res,x,m,st){S.closed=S.closed||[];const e={id:uid(),res,date:todayK(),m,n:x.n||x.name||'Opp',v:+x.v||+x.amount||0,st:st||x.stage||'',opp:x.opp||x.id||null,iid:x.iid||null};S.closed.push(e);return e}
 function closedStats(){const c=S.closed||[];const won=c.filter(x=>x.res==='won').length,lost=c.filter(x=>x.res==='lost').length;const cm=ymOf(new Date());const lm=c.filter(x=>x.res==='lost'&&x.date.slice(0,7)===cm);
   const reasons={};c.filter(x=>x.res==='lost'&&x.reason).forEach(x=>reasons[x.reason]=(reasons[x.reason]||0)+1);
   return {won,lost,rate:won+lost?won/(won+lost)*100:null,lostM:lm.length,lostMV:lm.reduce((a,x)=>a+x.v,0),reasons:Object.entries(reasons).sort((a,b)=>b[1]-a[1])}}
@@ -2209,11 +2224,74 @@ function fcField(f,val){const F=S.forecast[CUR]||{};const it=(F.items||{})[f];co
   return it&&it.length?`<div class="fcw"><button class="fcl on" onclick="fcList('${f}')" aria-label="Einzelwerte bearbeiten">${ic('list')}<i>${it.length}</i></button><button class="inp num fcf fcro" onclick="fcList('${f}')">${fmtE(val||0,2)}</button></div>`
   :`<div class="fcw"><button class="fcl" onclick="fcList('${f}')" aria-label="Einzelwerte eintragen" tabindex="-1">${ic('list')}</button><input class="inp num fcf" id="fc-${f}" inputmode="decimal" enterkeyhint="next" value="${val?fmtE(val,2):''}" placeholder="0,00 €" onfocus="this.value=this.value?(+numIn(this.value)).toLocaleString('de-DE',{maximumFractionDigits:2}):'';try{this.select()}catch(e){}" onblur="const el=this;setTimeout(()=>{if(el.isConnected&&document.activeElement!==el&&el.value&&calcEval(el.value)==null)el.value=fmtE(numIn(el.value),2)},0)" onchange="fcSet('${f}',this.value)" oninput="fcLive(this,'${f}')" onkeydown="fcKey(event,this,'${f}')"></div><div class="fcc" id="fcc-${f}"></div>`}
 
+/* ============================================================
+   Forecast abgeben (Montag) + Veränderung seit Abgabe
+   ============================================================ */
+function fcRates(F){const P=S.fcParams;return {signed:1,offer:(F?F.oR:(P.offerRate!=null?+P.offerRate:5))/100,proposal:+P.proposalRate/100,expected:+P.expectedRate/100}}
+function itemKey(x,st){return x.opp?'o:'+x.opp:(x.iid?'i:'+x.iid:null)}
+function ensureIids(m){const F=S.forecast[m];let ch=false;if(F&&F.items)Object.keys(F.items).forEach(st=>F.items[st].forEach(x=>{if(!x.opp&&!x.iid){x.iid=uid();ch=true}}));return ch}
+function fcSnapshot(m){ensureIids(m);const F=forecast(m);const f=S.forecast[m]||{};const items=[];['signed','offer','proposal','expected'].forEach(st=>((f.items||{})[st]||[]).forEach(x=>items.push({k:itemKey(x,st),n:x.n||'Opp',st,v:+x.v||0})));
+  const bare={};['signed','offer','proposal','expected'].forEach(st=>{if(!((f.items||{})[st]||[]).length)bare[st]=+f[st]||0});
+  return {ts:Date.now(),date:todayK(),m,exp:F.exp,pct:F.pct,target:F.target,closed:F.closed,wN:F.wN,weeks:F.weeks,signed:F.signed,offer:F.offer,proposal:F.proposal,expected:F.expected,wO:F.wO,wP:F.wP,wE:F.wE,items,bare,deals:rev(m).ds.filter(d=>!d.retro).map(d=>d.id)}}
+function weekStart(k){const d=pD(k);d.setDate(d.getDate()-((d.getDay()+6)%7));return ymd(d)}
+function prevSub(m){const ws=weekStart(todayK());const L=(S.fcSubs||[]).filter(x=>x.m===m&&x.date<ws);return L.length?L[L.length-1]:null}
+function lastSub(m){const L=(S.fcSubs||[]).filter(x=>x.m===m);return L.length?L[L.length-1]:null}
+function subThisWeek(){const ws=weekStart(todayK());return (S.fcSubs||[]).filter(x=>x.date>=ws).slice(-1)[0]||null}
+function fcSubmit(){const m=ymOf(new Date());S.fcSubs=S.fcSubs||[];const ws=weekStart(todayK());S.fcSubs=S.fcSubs.filter(x=>!(x.m===m&&x.date>=ws));const snap=fcSnapshot(m);S.fcSubs.push(snap);if(S.fcSubs.length>80)S.fcSubs=S.fcSubs.slice(-80);save();closeSheet();render();toast(`✓ Forecast abgegeben: ${fmtE(snap.exp)} eingefroren`,'ok')}
+function fcUnsubmit(){const s=subThisWeek();if(!s)return;S.fcSubs=S.fcSubs.filter(x=>x!==s);save();closeSheet();render();toast('Abgabe zurückgenommen')}
+/* Unterschiede mit Gründen, gewichtet, Summe = Differenz */
+function fcDiff(m,base){const now=fcSnapshot(m);const R=fcRates(forecast(m));const out=[];const add=(icon,txt,delta,cls)=>{if(Math.abs(delta)>=.5||cls==='info')out.push({icon,txt,delta,cls})};
+  // Closed Won
+  const newDeals=rev(m).ds.filter(d=>!d.retro&&!base.deals.includes(d.id));newDeals.forEach(d=>add(d.storno?'↩︎':'💰',d.storno?`Storno ${esc(d.name||'')}`:`Abschluss ${esc(d.name||'Deal')}`,+d.amount,d.storno?'neg':'pos'));
+  const goneDeals=base.deals.filter(id=>!rev(m).ds.some(d=>d.id===id)).length;
+  let accClosed=newDeals.reduce((a,d)=>a+ +d.amount,0);if(Math.abs(now.closed-base.closed-accClosed)>=.5)add('💰','Closed Won geändert',now.closed-base.closed-accClosed);
+  // Items
+  const bm=new Map(base.items.filter(x=>x.k).map(x=>[x.k,x])),nm=new Map(now.items.filter(x=>x.k).map(x=>[x.k,x]));const closedAfter=(S.closed||[]).filter(c=>c.date>=base.date);
+  bm.forEach((b,k)=>{const n=nm.get(k);const wb=b.v*R[b.st];if(!n){const id=k.slice(2);const c=closedAfter.find(c=>c.opp===id||c.iid===id||(!c.opp&&c.n===b.n&&Math.round(c.v)===Math.round(b.v)));
+      const nextHas=(()=>{const F2=S.forecast[addM(m,1)];return F2&&F2.items&&Object.values(F2.items).some(a=>a.some(x=>itemKey(x)===k))})();
+      if(c&&c.res==='lost')add('✕',`Closed Lost: ${esc(b.n)} (${fmtE(b.v)}${c.reason?', '+c.reason:''})`,-wb,'neg');
+      else if(c&&c.res==='won')add('✓',`Gewonnen: ${esc(b.n)}, zählt jetzt als Closed Won`,-wb,'info2');
+      else if(nextHas)add('→',`Verschoben in den ${MON[pD(addM(m,1)).getMonth()]}: ${esc(b.n)} (${fmtE(b.v)}, ${FCN[b.st]})`,-wb,'neg');
+      else add('−',`Entfernt: ${esc(b.n)} (${FCN[b.st]})`,-wb,'neg');return}
+    if(n.st!==b.st)add(R[n.st]>R[b.st]?'↗':'↘',`${esc(n.n)}: ${FCN[b.st]} → ${FCN[n.st]}`,n.v*R[n.st]-wb,R[n.st]>R[b.st]?'pos':'neg');
+    else if(Math.abs(n.v-b.v)>=.5)add('±',`${esc(n.n)}: Wert ${fmtE(b.v)} → ${fmtE(n.v)}`,(n.v-b.v)*R[n.st],n.v>b.v?'pos':'neg')});
+  const fresh=[...nm.values()].filter(n=>!bm.has(n.k)&&!(n.n==='Bisheriger Wert'));
+  if(fresh.length){const tot=fresh.reduce((a,n)=>a+n.v*R[n.st],0);add('＋',`Neu: ${fresh.length} ${fresh.length===1?'Opp':'Opps'} (${fresh.map(n=>esc(n.n)+' '+fmtE(n.v)).join(', ')})`,tot,'pos')}
+  // bare stage values
+  ['signed','offer','proposal','expected'].forEach(st=>{if(base.bare[st]!=null&&now.bare[st]!=null&&Math.abs(now.bare[st]-base.bare[st])>=.5)add('±',`${FCN[st]} manuell geändert`,(now.bare[st]-base.bare[st])*R[st],now.bare[st]>base.bare[st]?'pos':'neg')});
+  if(Math.abs(now.wN-base.wN)>=.5)add('⏱',`Pauschale neue Opps: ${fmtN(base.weeks,1)} → ${fmtN(now.weeks,1)} Restwochen`,now.wN-base.wN,now.wN>base.wN?'pos':'neg');
+  const total=now.exp-base.exp;const acc=out.reduce((a,x)=>a+(x.delta||0),0);if(Math.abs(total-acc)>=1)add('…','Sonstiges (z. B. geänderte Gewichtung)',total-acc,'');
+  return {now,base,total,rows:out}}
+function sgnE(v){return (v>=0?'+':'−')+fmtE(Math.abs(v))}
+function diffRowsHtml(d){return d.rows.length?`<div class="fd-rows">${d.rows.map(r=>`<div class="fd-r ${r.cls==='pos'?'fp':r.cls==='neg'?'fn':r.cls||''}"><i>${r.icon}</i><span>${r.txt}</span><b class="num">${r.cls==='info2'?'±0 €':sgnE(r.delta)}</b></div>`).join('')}</div>`:'<p class="lbl" style="margin:8px 0 0">Keine Veränderung seit der Abgabe.</p>'}
+function fcReportText(m){const F=forecast(m);const cur=MON[pD(m).getMonth()];const wl=F.target?`${fmtN(F.pct,0)} % vom Ziel ${fmtE(F.target)}`:'';
+  const pipe=F.wO+F.wP+F.wE+F.wN;let t=`Forecast ${cur} (Stand ${dLabel(todayK())}): ${fmtE(F.exp)}${wl?' ('+wl+')':''}.\nClosed Won ${fmtE(F.closed)} · Signed ${fmtE(F.signed)} · gewichtete Pipeline ${fmtE(pipe)}.`;
+  const pb=prevSub(m);if(pb){const base=pb;const d=fcDiff(m,base);t+=`\nVeränderung zur letzten Abgabe (${dLabel(base.date)}): ${sgnE(d.total)}.`;const top=d.rows.filter(r=>r.cls!=='info2'&&Math.abs(r.delta)>=1).sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta)).slice(0,5);if(top.length)t+=`\nGründe: ${top.map(r=>r.txt.replace(/<[^>]+>/g,'')+' ('+sgnE(r.delta)+')').join('; ')}.`}
+  return t.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'")}
+async function fcCopy(){const m=ymOf(new Date());const t=fcReportText(m);try{await navigator.clipboard.writeText(t);toast('Text kopiert, jetzt in Teams einfügen','ok')}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Text kopiert','ok')}catch(_){toast('Kopieren nicht möglich')}ta.remove()}}
+function fcShare(){const t=fcReportText(ymOf(new Date()));if(navigator.share)navigator.share({text:t}).catch(()=>{});else fcCopy()}
+function weekCard(m){if(m!==ymOf(new Date()))return '';const tk=todayK(),mon=pD(tk).getDay()===1;const sw=subThisWeek();const base=lastSub(m);
+  if(sw&&sw.m===m){const d=fcDiff(m,sw);const t=new Date(sw.ts);return `<button class="wk-chip ${Math.abs(d.total)>=1?(d.total>0?'up':'dn'):''}" onclick="fcSubSheet()"><span>✓ Abgegeben ${WD2[t.getDay()]}, ${t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} · ${fmtE(sw.exp)}</span><b class="num">${Math.abs(d.total)>=1?'seitdem '+sgnE(d.total):'unverändert'}</b>${ic('info')}</button>`}
+  const d=base?fcDiff(m,base):null;
+  if(!mon){return `<button class="wk-chip" onclick="fcSubSheet()"><span>${base?`Letzte Abgabe ${dLabel(base.date)} · ${fmtE(base.exp)}`:'Noch kein Forecast abgegeben'}</span><b class="num">${d&&Math.abs(d.total)>=1?'seitdem '+sgnE(d.total):base?'unverändert':'Jetzt abgeben'}</b>${ic('info')}</button>`}
+  const late=new Date().getHours()>=12;
+  return `<div class="panel wk-card"><div class="row"><div class="ptl">📮 Wochen-Forecast</div><span class="sp"></span><span class="chip sm ${late?'late':''}">${late?'Abgabe überfällig':'bis 12:00 Uhr'}</span></div>
+    ${base?`<div class="wk-cmp"><div><small>Letzte Abgabe ${dLabel(base.date)}</small><b class="num">${fmtE(base.exp)}</b></div><div class="wk-ar">→</div><div><small>Heute</small><b class="num">${fmtE(d.now.exp)}</b></div><div class="wk-d ${d.total>=0?'pos':'neg'}"><b class="num">${sgnE(d.total)}</b></div></div>${diffRowsHtml(d)}`:'<p class="lbl" style="margin:6px 0 0">Dein erster abgegebener Forecast. Ab nächster Woche zeigt die App hier, was sich verändert hat und warum.</p>'}
+    <div class="wk-btns"><button class="btn" onclick="fcCopy()">${ic('copy')}Text kopieren</button><button class="btn pri" onclick="fcSubmit()">${ic('check')}Abgegeben</button></div></div>`}
+function fcSubSheet(){const m=ymOf(new Date());const sw=subThisWeek();const base=sw&&sw.m===m?sw:lastSub(m);const d=base?fcDiff(m,base):null;const hist=(S.fcSubs||[]).filter(x=>x.m===m).slice().reverse();
+  openSheet(`${sheetHead('Forecast-Abgabe')}
+   ${base?`<div class="wk-cmp"><div><small>${sw?'Abgegeben':'Letzte Abgabe'} ${dLabel(base.date)}</small><b class="num">${fmtE(base.exp)}</b></div><div class="wk-ar">→</div><div><small>Jetzt</small><b class="num">${fmtE(d.now.exp)}</b></div><div class="wk-d ${d.total>=0?'pos':'neg'}"><b class="num">${sgnE(d.total)}</b></div></div>
+   <div class="fd-h">Was sich seitdem verändert hat</div>${diffRowsHtml(d)}`:'<p class="hint">Noch kein Forecast für diesen Monat abgegeben. Mit „Abgegeben“ friert die App den aktuellen Stand ein und vergleicht ab dann.</p>'}
+   <div class="wk-btns" style="margin-top:16px"><button class="btn" onclick="fcCopy()">${ic('copy')}Text kopieren</button>${navigator.share?`<button class="btn" onclick="fcShare()">${ic('share')}Teilen</button>`:''}<button class="btn pri" onclick="fcSubmit()">${ic('check')}${sw?'Neu abgeben':'Abgegeben'}</button></div>
+   ${sw?`<button class="btn sm" style="margin-top:10px" onclick="fcUnsubmit()">Abgabe dieser Woche zurücknehmen</button>`:''}
+   ${hist.length?`<div class="fd-h" style="margin-top:18px">Abgaben im ${MON[pD(m).getMonth()]}</div><div class="list">${hist.map(h=>`<div class="li"><div class="t"><b>${dLabel(h.date)}</b><small>${new Date(h.ts).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr</small></div><div class="v">${fmtE(h.exp)}<small class="mut" style="display:block;text-align:right;font-size:11.5px">${fmtN(h.pct,0)} %</small></div></div>`).join('')}</div>`:''}`)}
+
 function vForecast(){
   const F=forecast(CUR); const P=S.fcParams; const sal=salaryWith(CUR,F.exp);
   const set=f=>`onchange="fcSet('${f}',this.value)"`; const v=n=>n?String(n).replace('.',','):'';
   return `${head()}
   ${CUR===ymOf(new Date())?carryBanner():''}
+  ${weekCard(CUR)}
   <div class="cols two fc-cols">
     <div class="stack" style="gap:14px">
       <div class="res">
