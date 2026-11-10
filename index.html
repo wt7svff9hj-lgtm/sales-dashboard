@@ -15,6 +15,28 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
+.wk-st{width:100%;display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:12px 14px;border-radius:16px;border:0;font:inherit;text-align:left;cursor:pointer}
+.wk-st .wk-ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex:none}.wk-st .wk-ic svg{width:18px;height:18px}
+.wk-st .wk-tx{flex:1;min-width:0}.wk-st .wk-tx b{display:block;font-size:14.5px}.wk-st .wk-tx small{display:block;font-size:12.5px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wk-st>svg{width:16px;height:16px;color:var(--muted);flex:none}
+.wk-st.ok{background:color-mix(in srgb,var(--green) 12%,var(--paper));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--green) 35%,transparent)}
+.wk-st.ok .wk-ic{background:var(--green);color:#fff}.wk-st.ok .wk-tx b{color:var(--green)}
+.wk-rt{text-align:right;font-size:12px;color:var(--ink2);white-space:nowrap}.wk-rt b{font-size:15px;color:var(--ink)}.wk-rt.up b{color:var(--green)}.wk-rt.dn b{color:var(--red)}
+.wk-st.due{background:color-mix(in srgb,var(--arD) 22%,var(--paper));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--arD) 80%,transparent)}
+.wk-st.due .wk-ic{background:#F2C300;color:#111318}
+.wk-st.due.late{background:color-mix(in srgb,var(--red) 10%,var(--paper));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--red) 45%,transparent)}.wk-st.due.late .wk-ic{background:var(--red);color:#fff}.wk-st.due.late .wk-tx b{color:var(--red)}
+.wk-go{flex:none;height:32px;padding:0 12px;border-radius:99px;background:#111318;color:#F9DC4A;font-weight:700;font-size:13px;display:grid;place-items:center}
+html[data-theme="dark"] .wk-go{background:#F9DC4A;color:#111318}
+.tabs a.dot{position:relative}.tabs a.dot::after{content:'';position:absolute;top:5px;left:calc(50% + 9px);width:9px;height:9px;border-radius:50%;background:#F2C300;box-shadow:0 0 0 2px var(--paper)}
+.wk-sh{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;font-weight:700;font-size:13.5px;margin-bottom:4px}.wk-sh svg{width:16px;height:16px;flex:none}
+.wk-sh.ok{background:color-mix(in srgb,var(--green) 12%,transparent);color:var(--green)}.wk-sh.due{background:color-mix(in srgb,var(--arD) 25%,transparent);color:var(--ink)}
+.wk-main{margin-top:18px;display:flex;align-items:center;justify-content:center;gap:8px}.wk-main svg{width:18px;height:18px}
+.wk-sec{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;margin-top:8px}
+.wk-sec button{height:58px;border-radius:14px;border:1px solid var(--hair2);background:var(--paper);font:inherit;font-size:12.5px;font-weight:600;color:var(--ink2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer}
+.wk-sec svg{width:18px;height:18px;color:var(--ink)}
+.wk-cmp>div:not(.wk-ar):not(.wk-d){min-width:0}
+@media (max-width:420px){.wk-cmp{gap:6px 10px}.wk-cmp b{font-size:18px}.wk-d{width:100%;text-align:right;margin-top:-4px}}
+.oi .v small.vh{display:block;font-size:11px;font-weight:600;color:var(--muted);text-align:right}
 .wk-chip{width:100%;display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 14px;border-radius:14px;border:1px solid var(--hair2);background:var(--paper);font:inherit;font-size:13px;color:var(--ink2);cursor:pointer;text-align:left}
 .wk-chip span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wk-chip b{white-space:nowrap;color:var(--ink)}.wk-chip.up b{color:var(--green)}.wk-chip.dn b{color:var(--red)}.wk-chip svg{width:16px;height:16px;color:var(--muted);flex:none}
 .wk-card{margin-bottom:14px;border:2px solid color-mix(in srgb,var(--arD) 70%,transparent)}
@@ -1139,7 +1161,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='52';const APP_DATE='2026-11-10';
+const APP_VERSION='53';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1466,7 +1488,7 @@ function shiftMonth(n){CUR=addM(CUR,n);render()}
 function renderChrome(){
   const mk=()=>`<div class="mark"><div class="lg" onclick="egg(event)">${logoSvg(S.settings.logo)}</div>${esc(S.settings.appName||'Sales Dashboard')}</div>`;document.title=(S.settings.appName||'Sales Dashboard')+' – Zeit, Umsatz & Provision';
   document.getElementById('side').innerHTML=mk()+NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''}" onclick="if(VIEW==='${k}'){event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}">${ic(i)}${l}</a>`).join('')+`<div class="grow"></div><a href="#einstellungen" class="${VIEW==='einstellungen'?'on':''}">${ic('gear')}Einstellungen</a>`;
-  document.getElementById('tabs').innerHTML=NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''}" onclick="if(VIEW==='${k}'){event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}">${ic(i)}${l}</a>`).join('');
+  const _due=(()=>{try{return fcDue()}catch(e){return false}})();document.getElementById('tabs').innerHTML=NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''} ${k==='forecast'&&_due?'dot':''}" onclick="if(VIEW==='${k}'){event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}">${ic(i)}${l}</a>`).join('');
   document.getElementById('bar').innerHTML=`${mk()}<div class="sp"></div><button class="ibtn" onclick="cycleTheme()" aria-label="Design wechseln" title="Design: ${({auto:'Automatisch',light:'Hell',dark:'Dunkel'})[S.settings.theme||'auto']}">${ic(({auto:'auto',light:'sun',dark:'moon'})[S.settings.theme||'auto'])}</button><button class="ibtn ${VIEW==='einstellungen'?'acc':''}" onclick="VIEW==='einstellungen'?goBack():go('einstellungen')" aria-label="${VIEW==='einstellungen'?'Einstellungen schließen':'Einstellungen'}">${ic(VIEW==='einstellungen'?'x':'gear')}</button>`;
 }
 function head(extra=''){
@@ -1640,9 +1662,17 @@ function itemAge(x){if(x.opp){const f=oppFind(x.opp);if(f)return oppAge({...f.o,
 function openItems(m){const F=S.forecast[m]||{};const out=[];['signed','expected','proposal','offer'].forEach(st=>{((F.items||{})[st]||[]).forEach((x,i)=>out.push({...x,st,i,age:itemAge(x)}))});return out}
 function agingPanel(m){const it=openItems(m);if(!it.length)return '';const nm=MON[pD(addM(m,1)).getMonth()];const stale=it.filter(x=>x.age!=null&&x.age>=14).length;
   return `<div class="sh"><h2>Offene Opps</h2><span class="sp"></span><span class="meta">${stale?`<span class="age old">${stale} seit 14+ Tagen</span>`:it.length+' im '+MON[pD(m).getMonth()]}</span></div>
-  <div class="panel flush"><div class="list">${it.map(x=>`<div class="li oi"><div class="t" ${x.opp?`onclick="const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')"`:''} style="${x.opp?'cursor:pointer':''}"><b>${x.opp?'🎯 ':''}${esc(x.n||'Opp')}</b><small><select class="st-sel" onclick="event.stopPropagation()" onchange="fcItemStage('${m}','${x.st}',${x.i},this.value)" aria-label="Stage ändern">${['offer','proposal','expected','signed'].map(k=>`<option value="${k}" ${k===x.st?'selected':''}>${FCN[k]}</option>`).join('')}</select>${x.age!=null?' '+ageChip(x.age):''}</small></div><div class="v">${fmtE(x.v)}</div>
+  <div class="panel flush"><div class="list">${it.map(x=>`<div class="li oi"><div class="t" onclick="${x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`itemSheet('${m}','${x.st}',${x.i})`}" style="cursor:pointer"><b>${x.opp?'🎯 ':''}${esc(x.n||'Opp')}</b><small><select class="st-sel" onclick="event.stopPropagation()" onchange="fcItemStage('${m}','${x.st}',${x.i},this.value)" aria-label="Stage ändern">${['offer','proposal','expected','signed'].map(k=>`<option value="${k}" ${k===x.st?'selected':''}>${FCN[k]}</option>`).join('')}</select>${x.age!=null?' '+ageChip(x.age):''}</small></div><div class="v" onclick="${x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`itemSheet('${m}','${x.st}',${x.i})`}" style="cursor:pointer">${fmtE(x.v)}${x.vh&&x.vh.length?`<small class="vh">${x.v>x.vh[x.vh.length-1].v?'▲':'▼'} vorher ${fmtE(x.vh[x.vh.length-1].v)}</small>`:''}</div>
     <div class="oi-a"><button class="ok" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')" aria-label="Gewonnen" title="Gewonnen">${ic('check')}</button><button class="mv" onclick="fcItemAct('${m}','${x.st}',${x.i},'push')" aria-label="In den ${nm} schieben" title="In den ${nm} schieben">${ic('right')}</button><button class="no" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')" aria-label="Closed Lost" title="Closed Lost">${ic('x')}</button></div></div>`).join('')}</div></div>
   <p class="hint" style="margin-top:8px">✓ gewonnen (öffnet „Umsatz eintragen“) · → in den ${nm} schieben · ✕ Closed Lost. Alter = Tage seit dem letzten Stage-Wechsel, orange ab 14, rot ab 30 Tagen.</p>`}
+let IE=null;
+function itemSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];if(!x)return;IE={m,st,i};
+  openSheet(`${sheetHead('Opp bearbeiten')}<div class="field"><label>Vertragswert in €</label><input class="inp" id="iev" inputmode="decimal" value="${(+x.v).toLocaleString('de-DE',{maximumFractionDigits:2})}" style="font-size:24px;height:58px;font-weight:600" onkeydown="if(event.key==='Enter'){event.preventDefault();itemSave()}"></div>
+   <div class="field" style="margin-top:14px"><label>Kunde</label><input class="inp" id="ien" value="${esc(x.n||'')}"></div>
+   ${x.vh&&x.vh.length?`<p class="hint" style="margin-top:10px">Wertverlauf: ${[...x.vh.map(h=>fmtE(h.v)+' ('+dLabel(h.d)+')'),fmtE(x.v)+' (jetzt)'].join(' → ')}</p>`:''}
+   <button class="btn pri block" style="margin-top:16px" onclick="itemSave()">Speichern</button>`);setTimeout(()=>{const e=document.getElementById('iev');if(e){e.focus();e.select()}},300)}
+function itemSave(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st][i];const nv=Math.abs(numIn(document.getElementById('iev').value)||0);const nn=document.getElementById('ien').value.trim();
+  if(nv&&Math.abs(nv-x.v)>=.01){x.vh=x.vh||[];x.vh.push({d:todayK(),v:+x.v});const dl=nv-x.v;x.v=nv;toast(`Wert ${dl>0?'erhöht':'gesenkt'}: ${sgnE(dl)}`,'ok')}if(nn)x.n=nn;fcRecalc(F,st);save();closeSheet();render()}
 function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);x.since=todayK();
   let it=F.items[ns];if(!it||!it.length){it=[];if(+F[ns])it.push({v:+F[ns],n:'Bisheriger Wert'})}it.push(x);F.items[ns]=it;fcRecalc(F,ns);
   if(x.opp){const f=oppFind(x.opp);if(f){f.o.stage=ns;f.o.stageSince=todayK()}}save();render();toast(`${x.n||'Opp'} → ${FCN[ns]}`,'ok')}
@@ -1703,7 +1733,7 @@ function funnelPanel(m){const cur=ymOf(new Date());if(m!==cur)return '';const r=
 
 /* Opp ↔ Forecast-Einzelwerte verknüpfen */
 function fcOppUnlink(id,only){Object.keys(S.forecast||{}).forEach(m=>{if(only&&m!==only)return;const F=S.forecast[m];if(!F||!F.items)return;Object.keys(F.items).forEach(st=>{const before=F.items[st].length;F.items[st]=F.items[st].filter(x=>x.opp!==id);if(F.items[st].length!==before){F[st]=F.items[st].reduce((a,x)=>a+(+x.v||0),0);if(!F.items[st].length)delete F.items[st]}})})}
-function fcOppLink(o,date){if(!OPEN_ST.includes(o.stage)||!(+o.amount))return;const m=date.slice(0,7);S.forecast[m]=S.forecast[m]||{};const F=S.forecast[m];F.items=F.items||{};let it=F.items[o.stage];if(!it||!it.length){it=[];if(+F[o.stage])it.push({v:+F[o.stage],n:'Bisheriger Wert'})}it.push({v:+o.amount,n:o.name||'Opp',opp:o.id,since:o.stageSince||date});F.items[o.stage]=it;F[o.stage]=it.reduce((a,x)=>a+(+x.v||0),0)}
+function fcOppLink(o,date){if(!OPEN_ST.includes(o.stage)||!(+o.amount))return;const m=date.slice(0,7);S.forecast[m]=S.forecast[m]||{};const F=S.forecast[m];F.items=F.items||{};let it=F.items[o.stage];if(!it||!it.length){it=[];if(+F[o.stage])it.push({v:+F[o.stage],n:'Bisheriger Wert'})}it.push({v:+o.amount,n:o.name||'Opp',opp:o.id,since:o.stageSince||date,...(o.vh?{vh:o.vh}:{})});F.items[o.stage]=it;F[o.stage]=it.reduce((a,x)=>a+(+x.v||0),0)}
 function saveOp(){const amt=Math.abs(numIn(document.getElementById('opa').value)||0);const k=document.getElementById('opd').value||OPK;const name=document.getElementById('opn').value.trim();
   if(OPST==='__keep'){const f=oppFind(OPID);OPST=f?f.o.stage:'';}
   if(OPEN_ST.includes(OPST)&&!amt){toast('Für den Forecast bitte einen Wert eintragen');document.getElementById('opa').focus();return}
@@ -1712,6 +1742,7 @@ function saveOp(){const amt=Math.abs(numIn(document.getElementById('opa').value)
   const o={id:OPID||uid(),amount:amt||0,name};if(OPST)o.stage=OPST;
   o.stageSince=!prev?k:(prev.stage===OPST?(prev.stageSince||OPK):todayK());
   o.fm=prev?(prev.fm||OPK.slice(0,7)):k.slice(0,7);
+  if(prev&&Math.abs((+prev.amount||0)-o.amount)>=.01){o.vh=[...(prev.vh||[]),{d:todayK(),v:+prev.amount||0}]}else if(prev&&prev.vh)o.vh=prev.vh;
   fcOppUnlink(o.id,o.fm);if(OPEN_ST.includes(OPST))fcOppLink(o,o.fm+'-01');
   actSet(k,a=>{const i=a.ops.findIndex(x=>x.id===o.id);if(i>=0)a.ops[i]=o;else a.ops.push(o)});
   closeSheet();
@@ -2233,6 +2264,8 @@ function ensureIids(m){const F=S.forecast[m];let ch=false;if(F&&F.items)Object.k
 function fcSnapshot(m){ensureIids(m);const F=forecast(m);const f=S.forecast[m]||{};const items=[];['signed','offer','proposal','expected'].forEach(st=>((f.items||{})[st]||[]).forEach(x=>items.push({k:itemKey(x,st),n:x.n||'Opp',st,v:+x.v||0})));
   const bare={};['signed','offer','proposal','expected'].forEach(st=>{if(!((f.items||{})[st]||[]).length)bare[st]=+f[st]||0});
   return {ts:Date.now(),date:todayK(),m,exp:F.exp,pct:F.pct,target:F.target,closed:F.closed,wN:F.wN,weeks:F.weeks,signed:F.signed,offer:F.offer,proposal:F.proposal,expected:F.expected,wO:F.wO,wP:F.wP,wE:F.wE,items,bare,deals:rev(m).ds.filter(d=>!d.retro).map(d=>d.id)}}
+function kwOf(k){const d=pD(k);const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const dn=(t.getUTCDay()+6)%7;t.setUTCDate(t.getUTCDate()-dn+3);const f=new Date(Date.UTC(t.getUTCFullYear(),0,4));return 1+Math.round(((t-f)/864e5-3+((f.getUTCDay()+6)%7))/7)}
+function fcDue(){const m=ymOf(new Date());const sw=subThisWeek();return !(sw&&sw.m===m)}
 function weekStart(k){const d=pD(k);d.setDate(d.getDate()-((d.getDay()+6)%7));return ymd(d)}
 function prevSub(m){const ws=weekStart(todayK());const L=(S.fcSubs||[]).filter(x=>x.m===m&&x.date<ws);return L.length?L[L.length-1]:null}
 function lastSub(m){const L=(S.fcSubs||[]).filter(x=>x.m===m);return L.length?L[L.length-1]:null}
@@ -2271,19 +2304,21 @@ function fcReportText(m){const F=forecast(m);const cur=MON[pD(m).getMonth()];con
 async function fcCopy(){const m=ymOf(new Date());const t=fcReportText(m);try{await navigator.clipboard.writeText(t);toast('Text kopiert, jetzt in Teams einfügen','ok')}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Text kopiert','ok')}catch(_){toast('Kopieren nicht möglich')}ta.remove()}}
 function fcShare(){const t=fcReportText(ymOf(new Date()));if(navigator.share)navigator.share({text:t}).catch(()=>{});else fcCopy()}
 function weekCard(m){if(m!==ymOf(new Date()))return '';const tk=todayK(),mon=pD(tk).getDay()===1;const sw=subThisWeek();const base=lastSub(m);
-  if(sw&&sw.m===m){const d=fcDiff(m,sw);const t=new Date(sw.ts);return `<button class="wk-chip ${Math.abs(d.total)>=1?(d.total>0?'up':'dn'):''}" onclick="fcSubSheet()"><span>✓ Abgegeben ${WD2[t.getDay()]}, ${t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} · ${fmtE(sw.exp)}</span><b class="num">${Math.abs(d.total)>=1?'seitdem '+sgnE(d.total):'unverändert'}</b>${ic('info')}</button>`}
+  const kw=kwOf(tk);
+  if(sw&&sw.m===m){const d=fcDiff(m,sw);const t=new Date(sw.ts);const ch=Math.abs(d.total)>=1;return `<button class="wk-st ok" onclick="fcSubSheet()"><span class="wk-ic">${ic('check')}</span><span class="wk-tx"><b>Forecast KW ${kw} abgegeben</b><small>${WD2[t.getDay()]}, ${t.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr · ${fmtE(sw.exp)}</small></span><span class="wk-rt ${ch?(d.total>0?'up':'dn'):''}">${ch?'seitdem<br><b class="num">'+sgnE(d.total)+'</b>':'unverändert'}</span>${ic('right')}</button>`}
   const d=base?fcDiff(m,base):null;
-  if(!mon){return `<button class="wk-chip" onclick="fcSubSheet()"><span>${base?`Letzte Abgabe ${dLabel(base.date)} · ${fmtE(base.exp)}`:'Noch kein Forecast abgegeben'}</span><b class="num">${d&&Math.abs(d.total)>=1?'seitdem '+sgnE(d.total):base?'unverändert':'Jetzt abgeben'}</b>${ic('info')}</button>`}
+  if(!mon){const over=pD(tk).getDay()>1||pD(tk).getDay()===0;return `<button class="wk-st due ${over?'late':''}" onclick="fcSubSheet()"><span class="wk-ic">${ic('clock')}</span><span class="wk-tx"><b>Forecast KW ${kw} noch nicht abgegeben</b><small>${base?`Letzte Abgabe ${dLabel(base.date)} · ${fmtE(base.exp)}${d&&Math.abs(d.total)>=1?' · seitdem '+sgnE(d.total):''}`:'Noch keine Abgabe in diesem Monat'}</small></span><span class="wk-go">Abgeben</span></button>`}
   const late=new Date().getHours()>=12;
   return `<div class="panel wk-card"><div class="row"><div class="ptl">📮 Wochen-Forecast</div><span class="sp"></span><span class="chip sm ${late?'late':''}">${late?'Abgabe überfällig':'bis 12:00 Uhr'}</span></div>
     ${base?`<div class="wk-cmp"><div><small>Letzte Abgabe ${dLabel(base.date)}</small><b class="num">${fmtE(base.exp)}</b></div><div class="wk-ar">→</div><div><small>Heute</small><b class="num">${fmtE(d.now.exp)}</b></div><div class="wk-d ${d.total>=0?'pos':'neg'}"><b class="num">${sgnE(d.total)}</b></div></div>${diffRowsHtml(d)}`:'<p class="lbl" style="margin:6px 0 0">Dein erster abgegebener Forecast. Ab nächster Woche zeigt die App hier, was sich verändert hat und warum.</p>'}
     <div class="wk-btns"><button class="btn" onclick="fcCopy()">${ic('copy')}Text kopieren</button><button class="btn pri" onclick="fcSubmit()">${ic('check')}Abgegeben</button></div></div>`}
 function fcSubSheet(){const m=ymOf(new Date());const sw=subThisWeek();const base=sw&&sw.m===m?sw:lastSub(m);const d=base?fcDiff(m,base):null;const hist=(S.fcSubs||[]).filter(x=>x.m===m).slice().reverse();
   openSheet(`${sheetHead('Forecast-Abgabe')}
+   <div class="wk-sh ${sw?'ok':'due'}">${sw?ic('check'):ic('clock')}<span>${sw?`KW ${kwOf(todayK())} abgegeben am ${dLabel(sw.date)}, ${new Date(sw.ts).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr`:`KW ${kwOf(todayK())} noch nicht abgegeben`}</span></div>
    ${base?`<div class="wk-cmp"><div><small>${sw?'Abgegeben':'Letzte Abgabe'} ${dLabel(base.date)}</small><b class="num">${fmtE(base.exp)}</b></div><div class="wk-ar">→</div><div><small>Jetzt</small><b class="num">${fmtE(d.now.exp)}</b></div><div class="wk-d ${d.total>=0?'pos':'neg'}"><b class="num">${sgnE(d.total)}</b></div></div>
    <div class="fd-h">Was sich seitdem verändert hat</div>${diffRowsHtml(d)}`:'<p class="hint">Noch kein Forecast für diesen Monat abgegeben. Mit „Abgegeben“ friert die App den aktuellen Stand ein und vergleicht ab dann.</p>'}
-   <div class="wk-btns" style="margin-top:16px"><button class="btn" onclick="fcCopy()">${ic('copy')}Text kopieren</button>${navigator.share?`<button class="btn" onclick="fcShare()">${ic('share')}Teilen</button>`:''}<button class="btn pri" onclick="fcSubmit()">${ic('check')}${sw?'Neu abgeben':'Abgegeben'}</button></div>
-   ${sw?`<button class="btn sm" style="margin-top:10px" onclick="fcUnsubmit()">Abgabe dieser Woche zurücknehmen</button>`:''}
+   <button class="btn pri block wk-main" onclick="fcSubmit()">${ic('check')}${sw?'Aktuellen Stand neu abgeben':'Forecast KW '+kwOf(todayK())+' abgeben'}</button>
+   <div class="wk-sec"><button onclick="fcCopy()">${ic('copy')}<span>Text kopieren</span></button>${navigator.share?`<button onclick="fcShare()">${ic('share')}<span>Teilen</span></button>`:''}${sw?`<button onclick="fcUnsubmit()">${ic('storno')}<span>Zurücknehmen</span></button>`:''}</div>
    ${hist.length?`<div class="fd-h" style="margin-top:18px">Abgaben im ${MON[pD(m).getMonth()]}</div><div class="list">${hist.map(h=>`<div class="li"><div class="t"><b>${dLabel(h.date)}</b><small>${new Date(h.ts).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr</small></div><div class="v">${fmtE(h.exp)}<small class="mut" style="display:block;text-align:right;font-size:11.5px">${fmtN(h.pct,0)} %</small></div></div>`).join('')}</div>`:''}`)}
 
 function vForecast(){
