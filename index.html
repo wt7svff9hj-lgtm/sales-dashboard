@@ -1008,6 +1008,18 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.eod{background:radial-gradient(100% 55% at 50% 0%,rgba(110,120,255,.32),transparent 65%),#0B0C10}
+.eod-sec{background:rgba(255,255,255,.04);border-radius:20px;padding:12px}.eod-sec .kk-stats{margin-top:0;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.eod-sec .kk-stats div{padding:10px;min-width:0}.eod-sec .kk-stats b{font-size:clamp(17px,5vw,24px);display:block;overflow:hidden;text-overflow:ellipsis}
+.kk-stats b em{font-style:normal;font-size:15px;color:rgba(255,255,255,.45);font-weight:600}
+.eod-p{color:#4BE39A}.eod-n{color:#FF8A80}
+.eod-t{margin-top:10px;font-size:13px;color:rgba(255,255,255,.55)}
+.eod-ops{margin-top:10px;display:flex;flex-direction:column}
+.eod-ops>div{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 2px;border-top:1px solid rgba(255,255,255,.07);font-size:15px}
+.eod-ops span small{display:block;font-size:12px;color:rgba(255,255,255,.5);margin-top:1px}.eod-ops b{font-variant-numeric:tabular-nums;font-weight:650;white-space:nowrap;text-align:right}
+.eod-ops b small{display:block;font-size:12px;color:#F9DC4A;font-weight:600}
+.eod-sum span{color:#F9DC4A;font-weight:700}
+.eod-btn{margin-top:12px}
+.eod-tip{padding:7px 0;font-size:14.5px;line-height:1.4;color:rgba(255,255,255,.85)}
 /* ---------- Motivation ---------- */
 .streaks{display:flex;gap:8px;overflow-x:auto;margin:-6px -18px 16px;padding:0 18px 2px;scrollbar-width:none}
 .streaks::-webkit-scrollbar{display:none}
@@ -1153,7 +1165,7 @@ html.prelock .lock{display:block}
 <div class="tip" id="tip"></div>
 <div id="print"></div>
 <div id="lock" class="lock"></div>
-<div id="kick" class="kick"></div>
+<div id="kick" class="kick"></div><div id="eod" class="kick eod"></div>
 <div id="moment" class="kick moment"></div>
 <div id="wrap" class="wrapov"></div>
 <script>
@@ -1162,7 +1174,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='55';const APP_DATE='2026-11-10';
+const APP_VERSION='56';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1872,7 +1884,7 @@ function vHome(){
       <div class="tq tq-add"><span class="lbl">+ Teilpause</span>${[5,10,15,30].map(p=>`<button onclick="todayPauseAdd(${p})">+${p}</button>`).join('')}<input class="tq-own" type="text" inputmode="numeric" placeholder="Min." onkeydown="if(event.key==='Enter'){event.preventDefault();const v=this.value;this.value='';todayPauseAdd(v)}" onblur="if(this.value){const v=this.value;this.value='';todayPauseAdd(v)}" aria-label="Eigene Teilpause in Minuten"></div>
       ${e.pauses&&e.pauses.length>1?`<div class="tq-sum">${e.pauses.join(' + ')} = <b>${e.pause} min</b>${e.pause>=60?' · '+hm(e.pause/60):''}<button onclick="todayPauseUndo()">Rückgängig</button></div>`:''}
       <div class="tq"><span class="lbl">Pause fest</span>${[0,15,30,45,60].map(p=>`<button class="${(+e.pause||0)===p&&e.start?'on':''}" onclick="todaySet('pause',${p})">${p}</button>`).join('')}<span class="sp"></span>${prevW?`<button class="cp" onclick="copyPrev()">${ic('copy')} Wie ${WD[prevW.wd]}</button>`:''}</div>
-      <div class="tres"><div><small>Gearbeitet</small><b>${w!=null?hm(w):'–'}</b></div><div><small>Saldo heute</small><b class="${w!=null?(w-soll>=0?'pos':'neg'):''}">${w!=null?sgn(w-soll)+' h':'–'}</b></div><div><small>5 Arbeitstage</small><b>${hm(weekSum)}</b></div></div>`}`}
+      <div class="tres"><div><small>Gearbeitet</small><b>${w!=null?hm(w):'–'}</b></div><div><small>Saldo heute</small><b class="${w!=null?(w-soll>=0?'pos':'neg'):''}">${w!=null?sgn(w-soll)+' h':'–'}</b></div><div><small>5 Arbeitstage</small><b>${hm(weekSum)}</b></div></div>${w!=null&&e.end?`<button class="btn sm block eod-btn" onclick="eodShow()">🌙 Tagesbilanz ansehen</button>`:''}`}`}
     </div>
 
     <div class="bcol bcol-ws">
@@ -1898,10 +1910,11 @@ function todayPauseUndo(){const tk=todayK();const e=S.days[tk];if(!e||!e.pauses)
 function todayPause(v){const c=calcEval(v);if(c!=null){const terms=String(v).replace(/=+$/,'').split('+').map(x=>Math.round(numIn(x))).filter(Boolean);todaySet('pause',Math.max(0,Math.round(c)));const tk=todayK();if(S.days[tk]&&!/-|−/.test(v)&&terms.length>1){S.days[tk].pauses=terms;save()}toast(`Pause ${Math.round(c)} min${c>=60?' ('+hm(c/60)+')':''}`,'ok')}else{todaySet('pause',v);const tk=todayK();if(S.days[tk])delete S.days[tk].pauses}}
 function copyPrev(){const d=new Date();for(let i=0;i<14;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start&&x.end){const tk=todayK();const t=S.days[tk]&&!isFree(S.days[tk].type)?S.days[tk].type:'arbeit';S.days[tk]={type:t,start:x.start,end:x.end,pause:x.pause||0,note:''};save();render();toast('Zeiten übernommen');return}}}
 function todaySet(f,v){
-  const tk=todayK(); let e=S.days[tk]||{type:'arbeit',start:'',end:'',pause:0,note:''};
+  const tk=todayK(); let e=S.days[tk]||{type:'arbeit',start:'',end:'',pause:0,note:''};const pEnd=e.end||'';
   if(f==='type'){ if(isFree(v))e={type:v,note:e.note||''}; else e={type:v,start:e.start||'',end:e.end||'',pause:+e.pause||0,note:e.note||''}; }
   else { if(isFree(e.type))e={type:'arbeit',start:'',end:'',pause:0,note:e.note||''}; e[f]=f==='pause'?(+v||0):v; if(f==='pause'&&!String(v).includes('+'))delete e.pauses; }
   S.days[tk]=e; save(); render(); {const w=worked(e);toast(isFree(e.type)?`${TYPES[e.type].l} eingetragen`:w!=null?`Gespeichert: ${hm(w)} heute`:'Gespeichert','ok')}
+  if(f==='end'&&v)eodMaybe(tk,pEnd)
 }
 
 /* ============================================================
@@ -2041,7 +2054,7 @@ function updDay(){const {k,e}=ED;const x=dayInfo(k);const w=worked(e);const el=d
   if(isFree(e.type)){el.innerHTML=`<b>${TYPES[e.type].l}</b> <span class="mut">zählt neutral, Soll 0 h</span>`;return}
   const soll=(x.weekend||x.hol||x.sp)?0:(e.type==='halb'?+S.settings.sollHalb:+S.settings.sollTag);
   el.innerHTML=w!=null?`<div class="row"><span class="mut">Arbeitszeit</span><span class="sp"></span><b class="num">${hm(w)} (${dec2(w)} h)</b></div><div class="row" style="margin-top:6px"><span class="mut">Saldo bei ${fmtN(soll,1)} h Soll</span><span class="sp"></span><b class="num ${w-soll>=0?'pos':'neg'}">${sgn(w-soll)} h</b></div>${w>10?`<div class="chip r" style="margin-top:10px">${ic('alert')} Mehr als 10 Stunden</div>`:''}`:`<span class="mut">Beginn und Ende eintragen. Soll ${fmtN(soll,1)} h.</span>`}
-function saveDay(){const {k,e}=ED;FLASH=k;setTimeout(()=>FLASH=null,50);if(isFree(e.type)){S.days[k]={type:e.type,note:e.note||''}}else{S.days[k]={type:e.type,start:e.start||'',end:e.end||'',pause:+e.pause||0,note:e.note||''};if(e.pauses&&e.pauses.length>1)S.days[k].pauses=e.pauses}save();closeSheet();render();const w=worked(S.days[k]);toast(isFree(S.days[k].type)?`${TYPES[S.days[k].type].l} eingetragen`:w!=null?`Gespeichert: ${hm(w)} am ${dLabel(k)}`:'Gespeichert','ok')}
+function saveDay(){const {k,e}=ED;const pEnd=(S.days[k]&&S.days[k].end)||'';FLASH=k;setTimeout(()=>FLASH=null,50);if(isFree(e.type)){S.days[k]={type:e.type,note:e.note||''}}else{S.days[k]={type:e.type,start:e.start||'',end:e.end||'',pause:+e.pause||0,note:e.note||''};if(e.pauses&&e.pauses.length>1)S.days[k].pauses=e.pauses}save();closeSheet();render();const w=worked(S.days[k]);toast(isFree(S.days[k].type)?`${TYPES[S.days[k].type].l} eingetragen`:w!=null?`Gespeichert: ${hm(w)} am ${dLabel(k)}`:'Gespeichert','ok');eodMaybe(k,pEnd)}
 function delDay(){delete S.days[ED.k];save();closeSheet();render();toast('Eintrag gelöscht')}
 let RG={type:'urlaub'};
 function rangeSheet(){
@@ -2629,6 +2642,7 @@ function vSettings(){
       <div class="row" style="margin-bottom:12px"><div class="ptl">${ic('zap','class="pi"')}Tagesstart</div><span class="sp"></span><div class="seg pill"><button class="${S.settings.kickoff!==false?'on':''}" onclick="S.settings.kickoff=true;save();render()">An</button><button class="${S.settings.kickoff===false?'on':''}" onclick="S.settings.kickoff=false;save();render()">Aus</button></div></div>
       <p class="hint" style="margin-top:0">Einmal am Tag beim ersten Öffnen: dein Stand, eine Mission für den Tag und ein Spruch zum Loslegen.</p>
       <button class="btn pri block" onclick="maybeKickoff(true)">Jetzt ansehen 🚀</button>
+      <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Feierabend-Bilanz 🌙</b><div class="lbl">Zusammenfassung, sobald du das Ende für heute einträgst</div></div><span class="sp"></span><div class="seg pill"><button class="${eodOn()?'on':''}" onclick="S.settings.eod=true;save();render()">An</button><button class="${eodOn()?'':'on'}" onclick="S.settings.eod=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Saison-Motive</b><div class="lbl">Dezente Deko zu Advent, Silvester, Karneval, Ostern & Co.</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.season!==false?'on':''}" onclick="S.settings.season=true;save();render()">An</button><button class="${S.settings.season===false?'on':''}" onclick="S.settings.season=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Umsatz-Effekte 💸</b><div class="lbl">Geldregen und Meilenstein-Momente beim Eintragen</div></div><span class="sp"></span><div class="seg pill"><button class="${fxOn()?'on':''}" onclick="S.settings.fx=true;save();render()">An</button><button class="${!fxOn()?'on':''}" onclick="S.settings.fx=false;save();render()">Aus</button></div></div>
       <button class="btn sm" style="margin-top:10px" onclick="fxTestSheet()">✨ Effekte testen</button>
@@ -2922,6 +2936,56 @@ function showKickoff(){
   el.classList.remove('out');el.classList.add('on');
   if(!free){const tgt=r.pct,t0=performance.now();const mx=Math.max(130,tgt);(function f(t){const p=Math.min(1,(t-t0)/1100),v=tgt*(1-Math.pow(1-p,3));const a=document.getElementById('kkPct'),b=document.getElementById('kkBar');if(!a)return;a.textContent=fmtN(v,v<10&&v>0?1:0);b.style.width=Math.min(v,mx)/mx*100+'%';if(p<1)requestAnimationFrame(f)})(t0)}
 }
+/* ---------- Feierabend-Bilanz ---------- */
+const eodOn=()=>S.settings.eod!==false;
+function eodNextWork(k){const d=pD(k);for(let i=0;i<14;i++){d.setDate(d.getDate()+1);const x=dayInfo(ymd(d));if(!x.weekend&&!x.hol&&!x.sp&&!(x.e&&isFree(x.e.type)))return x}return null}
+function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worked(e);if(w==null){toast('Für heute fehlt noch Beginn oder Ende');return}
+  const d0=pD(k),m=k.slice(0,7);const a=actOf(k),g=actGoal(k);const hit=actHit(k);
+  const P=S.fcParams;const rate=st=>({offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:100}[st]||0);
+  const ops=a.ops;const opSum=ops.reduce((s,o)=>s+(+o.amount||0),0);const opW=ops.reduce((s,o)=>s+(OPEN_ST.includes(o.stage)?(+o.amount||0)*rate(o.stage)/100:0),0);
+  const deals=S.deals.filter(x=>x.date===k&&!x.retro&&!x.storno);const dSum=deals.reduce((s,x)=>s+ +x.amount,0);
+  const r=rev(m);const fc=forecast(m);const saldo=w-di.soll;const bal=balanceNow();
+  const mst=missionState(k);const mDone=mst.filter(Boolean).length;
+  const nx=eodNextWork(k);const stale=openItems(ymOf(new Date())).filter(x=>x.age!=null&&x.age>=14);
+  let emo,head,msg;
+  if(dSum>0){emo='🏆';head='Was für ein Tag';msg=`${deals.length===1?'Ein Abschluss':deals.length+' Abschlüsse'} über <b>${fmtE(dSum)}</b>. Damit stehst du bei <b>${fmtN(r.pct)} %</b>.`}
+  else if(hit&&(a.demo>g.demo||ops.length>g.op)){emo='🔥';head='Mehr als geplant';msg='Tagesziel nicht nur geschafft, sondern übertroffen. So füllt sich die Pipeline.'}
+  else if(hit){emo='🎯';head='Tagesziel geschafft';msg=`${a.demo} ${a.demo===1?'Demo':'Demos'} und ${ops.length} ${ops.length===1?'Opp':'Opps'}. Genau so baut sich der nächste Monat auf.`}
+  else if(a.demo||ops.length){emo='💪';head='Feierabend';msg='Nicht jeder Tag ist ein Volltreffer. Was heute angestoßen wurde, zahlt später ein.'}
+  else{emo='🌙';head='Feierabend';msg='Heute ohne Demo und Opp. Morgen ist ein neuer Tag für die Pipeline.'}
+  const tips=[];
+  if(nx&&nx.wd===1&&fcDue())tips.push(`📋 Montag bis 12 Uhr: Forecast KW ${kwOf(nx.k)} abgeben`);
+  if(stale.length)tips.push(`⏳ ${stale.length} ${stale.length===1?'Opp wartet':'Opps warten'} seit 14+ Tagen, ${stale.length===1?'nachfassen':'nachfassen'}: ${stale.slice(0,2).map(x=>esc(x.n||'Opp')).join(', ')}${stale.length>2?' …':''}`);
+  if(r.target&&r.pct<70&&nx){const left=workdaysLeft(m,nx.k);if(left)tips.push(`🎯 Bis 70 % fehlen ${fmtE(r.target*.7-r.tot)}, noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'}`)}
+  const el=document.getElementById('eod');
+  el.innerHTML=`<div class="kk-in">
+    <div class="kk-top"><span>${WDL[d0.getDay()]}, ${d0.toLocaleDateString('de-DE',{day:'numeric',month:'long'})}</span><button class="kk-x" onclick="closeEod()" aria-label="Schließen">${ic('x')}</button></div>
+    <div class="kk-emo">${emo}</div>
+    <div class="kk-hi">Deine Tagesbilanz${S.settings.name?', '+esc(S.settings.name):''}</div>
+    <h2 class="kk-h">${head}</h2>
+    <p class="kk-msg">${msg}</p>
+    <div class="eod-sec"><div class="kk-lbl">⏱ Arbeitszeit</div><div class="kk-stats">
+      <div><small>Gearbeitet</small><b>${hm(w)}</b></div>
+      <div><small>Heute</small><b class="${saldo>=-1/120?'eod-p':'eod-n'}">${hmS(saldo)}</b></div>
+      <div><small>Stundenkonto</small><b class="${bal>=-1/120?'eod-p':'eod-n'}">${hmS(bal)}</b></div></div>
+      <div class="eod-t">${e.start}–${e.end} Uhr${+e.pause?` · ${e.pauses&&e.pauses.length>1?e.pauses.join(' + ')+' = ':''}${e.pause} min Pause`:''}</div></div>
+    <div class="eod-sec"><div class="kk-lbl">🚀 Aktivität</div><div class="kk-stats">
+      <div><small>Demos</small><b>${a.demo}<em>/${g.demo}</em></b></div>
+      <div><small>Opps</small><b>${ops.length}<em>/${g.op}</em></b></div>
+      <div><small>Missionen</small><b>${mDone}<em>/${Math.min(3,mst.length||3)}</em></b></div></div>
+      ${ops.length?`<div class="eod-ops">${ops.map(o=>`<div><span>🎯 ${esc(o.name||'Opp')}${OPEN_ST.includes(o.stage)?`<small>${FCN[o.stage]}${o.fm&&o.fm!==m?' · '+MON[pD(o.fm).getMonth()]:''}</small>`:''}</span><b>${+o.amount?fmtE(+o.amount):'–'}</b></div>`).join('')}
+        ${opSum?`<div class="eod-sum"><span>Neue Pipeline</span><b>${fmtE(opSum)}<small>gewichtet ${fmtE(opW)}</small></b></div>`:''}</div>`:''}</div>
+    <div class="eod-sec"><div class="kk-lbl">📈 Umsatz ${MON[d0.getMonth()]}</div><div class="kk-stats">
+      <div><small>Heute</small><b>${dSum?'+'+fmtE(dSum):'–'}</b></div>
+      <div><small>Quote</small><b>${fmtN(r.pct)} %</b></div>
+      <div><small>Erwartung</small><b>${fmtN(fc.pct)} %</b></div></div></div>
+    ${tips.length?`<div class="kk-mis"><div class="kk-lbl">Für ${nx?(nx.k===ymd(new Date(d0.getTime()+864e5))?'morgen':WDL[nx.wd]):'die nächsten Tage'}</div>${tips.map(t=>`<div class="eod-tip">${t}</div>`).join('')}</div>`:''}
+    <button class="kk-go" onclick="closeEod()">Schönen Feierabend 🌙</button>
+  </div>`;
+  el.classList.remove('out');el.classList.add('on');lockScroll();if(hit||dSum)setTimeout(confetti,250)}
+function closeEod(){const el=document.getElementById('eod');el.classList.add('out');unlockScroll();setTimeout(()=>{el.classList.remove('on','out');el.innerHTML=''},380)}
+function eodMaybe(k,prevEnd){if(!eodOn()||k!==todayK()||prevEnd)return;const e=S.days[k];if(!e||isFree(e.type)||worked(e)==null)return;setTimeout(()=>eodShow(k),450)}
+
 function closeKick(){const el=document.getElementById('kick');el.classList.add('out');setTimeout(()=>{el.classList.remove('on','out');el.innerHTML=''},380)}
 
 /* ============================================================
