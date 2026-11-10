@@ -1008,10 +1008,20 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+html.xmon body{background:radial-gradient(800px 460px at 90% -8%,rgba(214,40,60,.07),transparent 60%),radial-gradient(700px 460px at -8% 40%,rgba(30,140,90,.06),transparent 60%),var(--canvas)}
+html.xmon[data-theme=dark] body{background:radial-gradient(800px 460px at 90% -8%,rgba(214,40,60,.12),transparent 60%),radial-gradient(700px 460px at -8% 40%,rgba(40,170,110,.08),transparent 60%),var(--canvas)}
+html.xmon.rest body{background:radial-gradient(900px 520px at 80% -12%,rgba(120,110,255,.14),transparent 62%),radial-gradient(700px 460px at -8% 40%,rgba(214,40,60,.06),transparent 60%),var(--canvas)}
+#xsnow{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+#xsnow i{position:absolute;top:-10px;border-radius:50%;background:#9FB4D6;opacity:.45;animation:xsn linear infinite}
+html[data-theme=dark] #xsnow i{background:#fff;opacity:.35}
+@keyframes xsn{0%{transform:translate3d(0,-10px,0)}50%{transform:translate3d(14px,50vh,0)}100%{transform:translate3d(-6px,104vh,0)}}
+html.xmon .app,html.xmon .main{position:relative;z-index:1}
+
 .fx-fest .fx-in{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 30px;border-radius:28px;background:rgba(10,11,20,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:fxPop .5s cubic-bezier(.2,1.5,.4,1) both}
 .fx-fest .fe{font-size:72px;line-height:1;animation:bounce 1s cubic-bezier(.3,1.6,.5,1) both}
 .fx-fest b{font-size:min(44px,11vw);font-weight:800;font-stretch:var(--cond);color:#fff;line-height:1.05;text-align:center}
 .fx-fest small{font-size:16px;color:rgba(255,255,255,.85);text-align:center}
+.rest-card.rest-card.rs-bday{background:linear-gradient(150deg,#FF7AB6 0%,#B45CFF 50%,#4F6BFF 100%)}
 .rest-card.rest-card.rs-xmas{background:linear-gradient(150deg,#C8283C 0%,#8E1730 50%,#123D2B 100%)}
 .rest-card.rest-card.rs-nye{background:linear-gradient(150deg,#1A1440 0%,#3B1E6E 50%,#0B0C1E 100%)}.rs-nye .rs-sky i{opacity:.9;background:#FFD84A}
 .rest-card.rest-card.rs-kar{background:linear-gradient(120deg,#E5323E 0%,#E5323E 33%,#F5F5F5 33%,#F5F5F5 36%,#1F5FBF 36%,#1F5FBF 70%,#F2C200 70%)}
@@ -1222,7 +1232,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='60';const APP_DATE='2026-11-10';
+const APP_VERSION='63';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1674,7 +1684,7 @@ function restState(now){now=now||new Date();const tk=ymd(now);const di=dayInfo(t
   if(di.weekend)return{t:'we',di};if(di.hol)return{t:'hol',di};if(di.sp)return{t:'sp',di};
   if(di.e&&!isFree(di.e.type)&&di.e.end&&worked(di.e)!=null&&nm>=toMin(di.e.end)){const nx=eodNextWork(tk);const wkEnd=nx&&(pD(nx.k)-pD(tk))/864e5>1;return{t:wkEnd?'wkend':'eve',di,nx}}
   return null}
-function restSync(){const r=restState();const h=document.documentElement;h.classList.toggle('rest',!!r);h.dataset.rest=r?r.t:''}
+function restSync(){const r=restState();const h=document.documentElement;{const md=todayK().slice(5);const on=md>='12-01'&&md<='12-26'&&S.settings.season!==false;h.classList.toggle('xmon',on);if(on&&!document.getElementById('xsnow')&&!RM()){const z=document.createElement('div');z.id='xsnow';z.innerHTML=[...Array(16)].map((_,i)=>`<i style="left:${(i*61)%100}%;animation-duration:${14+(i*7)%12}s;animation-delay:-${(i*5)%14}s;width:${2+(i%3)}px;height:${2+(i%3)}px"></i>`).join('');document.body.appendChild(z)}else if(!on){document.getElementById('xsnow')?.remove()}}h.classList.toggle('rest',!!r);h.dataset.rest=r?r.t:''}
 function weekRecap(k){const d=pD(k);const mon=new Date(d);mon.setDate(d.getDate()-((d.getDay()+6)%7));let hrs=0,demo=0,ops=0,rv=0,days=0;
   for(let i=0;i<5;i++){const x=new Date(mon);x.setDate(mon.getDate()+i);const xk=ymd(x);if(xk>k)break;const w=worked(S.days[xk]);if(w!=null){hrs+=w;days++}const a=actOf(xk);demo+=a.demo;ops+=a.ops.length;
     rv+=S.deals.filter(z=>z.date===xk&&!z.retro&&!z.storno).reduce((s,z)=>s+ +z.amount,0)}
@@ -1699,7 +1709,7 @@ function restCard(){const r=restState();if(!r)return '';const now=new Date();con
   else if(r.t==='urlaub'){let n=0;const d=new Date();for(let i=0;i<40;i++){const x=dayInfo(ymd(d));if(x.e&&x.e.type==='urlaub')n++;else if(!(x.weekend||x.hol))break;d.setDate(d.getDate()+1)}
     emo='✈️';kick='Urlaub';head='Abschalten erlaubt';sub=`Noch ${n} ${n===1?'Urlaubstag':'Urlaubstage'} am Stück`;foot=nx?`<div class="rs-next">Zurück am ${WDL[nx.wd]}, ${pD(nx.k).toLocaleDateString('de-DE',{day:'numeric',month:'long'})}</div>`:''}
   else if(r.t==='krank'){emo='🫖';kick='Krank gemeldet';head='Gute Besserung'+nm;sub='Heute zählt nur, dass du wieder fit wirst.'}
-  const fe=festOf();if(fe){if(fe.id==='nye'){sub=`Noch <span id="restClock">${restDur(nyeLeft())}</span> bis ${now.getFullYear()+1} 🎆`;cls+=' rs-nye'}else if(fe.m==='xmas')cls+=' rs-xmas';else if(fe.m==='kamelle')cls+=' rs-kar';else if(fe.id==='ny')cls+=' rs-nye';if(fe.id==='nye'||r.t!=='eve'){head=fe.t;kick=fe.s}emo=`<span onclick="festPlay(true)" style="cursor:pointer">${fe.emo}</span>`}
+  const fe=festOf();if(fe){if(fe.id==='nye'){sub=`Noch <span id="restClock">${restDur(nyeLeft())}</span> bis ${now.getFullYear()+1} 🎆`;cls+=' rs-nye'}else if(fe.m==='xmas')cls+=' rs-xmas';else if(fe.m==='kamelle')cls+=' rs-kar';else if(fe.id==='ny')cls+=' rs-nye';else if(fe.id==='bday')cls+=' rs-bday';if(fe.id==='nye'||r.t!=='eve'){head=fe.t;kick=fe.s}emo=`<span onclick="festPlay(true)" style="cursor:pointer">${fe.emo}</span>`}
   return `<div class="rest-card rs-${cls}"><div class="rs-sky"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="rs-top"><span class="rs-emo">${emo}</span><div><div class="rs-kick">${kick}</div><h2 class="rs-h">${head}</h2>${sub?`<div class="rs-sub">${sub}</div>`:''}</div></div>
     ${body}${foot}<div class="rs-note">Alles bleibt eintragbar, falls doch noch was reinkommt.</div></div>`}
@@ -1708,6 +1718,8 @@ setInterval(()=>{const el=document.getElementById('restClock');if(!el||document.
 /* ---------- Feiertags-Effekte (Easter Eggs) ---------- */
 function festOf(d){d=d||new Date();if(S.settings.season===false)return null;const y=d.getFullYear(),k=ymd(d),md=k.slice(5);const e=easter(y);const off=n=>{const x=new Date(e);x.setDate(x.getDate()+n);return ymd(x)};
   const kar=['🎭','🎉','🍬','🍭','🎊','🥳','🍬','💐'];
+  const bd=S.settings.bday||'02-28';if(bd&&(md===bd||(bd==='02-29'&&md==='02-28'&&!(y%4===0&&(y%100!==0||y%400===0)))))return{id:'bday',emo:'🎂',t:`Happy Birthday${S.settings.name?', '+esc(S.settings.name):''}!`,s:'Alles Gute zum Geburtstag 🥳',m:'bday',big:true,ch:['🎂','🎁','🥳','🎉','🍰']};
+  const js=S.settings.jobStart||'2020-09-01';if(md===js.slice(-5)){const yy=js.length>5?y-(+js.slice(0,4)):0;return{id:'jubi',emo:'🏅',t:yy>0?`${yy} ${yy===1?'Jahr':'Jahre'} dabei!`:'Firmenjubiläum!',s:'Danke für jeden Deal. Auf das nächste Jahr 🥂',m:'fw',big:true,ch:['🏅','🥂','🎉','⭐','🏆']}}
   if(md==='11-11')return{id:'1111',emo:'🎭',t:'Alaaf & Helau!',s:'11.11., die fünfte Jahreszeit startet',m:'kamelle',ch:kar};
   if(k===off(-52))return{id:'weiber',emo:'✂️',t:'Weiberfastnacht',s:'Heute lieber keine Krawatte 😉',m:'kamelle',ch:['✂️','👔','🎭','🍬','🎉','💋']};
   if(k>off(-52)&&k<off(-48))return{id:'kar',emo:'🎭',t:'Alaaf & Helau!',s:'Jeck sein ist erlaubt',m:'kamelle',ch:kar};
@@ -1718,13 +1730,39 @@ function festOf(d){d=d||new Date();if(S.settings.season===false)return null;cons
   if(k>=off(-2)&&k<=off(1))return{id:'ostern',emo:'🐣',t:'Frohe Ostern',s:'Eiersuche statt Leadsuche',m:'rain',ch:['🐣','🥚','🐰','🌷','🍫','🥚']};
   if(md==='05-01')return{id:'mai',emo:'🌳',t:'Tag der Arbeit',s:'Ausgerechnet heute frei',m:'rain',ch:['🌳','🍻','🌸','☀️']};
   if(md==='10-31')return{id:'hall',emo:'🎃',t:'Happy Halloween',s:'Süßes, sonst gibt’s Opps!',m:'rain',ch:['🎃','👻','🦇','🕸️','🍬','💀']};
+  if(k===off(39))return{id:'himmel',emo:'🍻',t:'Vatertag',s:'Christi Himmelfahrt, Bollerwagen startklar?',m:'rain',ch:['🍻','🚲','☀️','🌭','🍺']};
+  if(k===off(49)||k===off(50))return{id:'pfingst',emo:'🕊️',t:'Frohe Pfingsten',s:'Langes Wochenende, genieß es',m:'rain',ch:['🕊️','🌿','☀️','🌸']};
+  if(k===off(60))return{id:'fron',emo:'🌸',t:'Fronleichnam',s:'Brückentag morgen? 😉',m:'rain',ch:['🌸','🌼','🌺','☀️']};
+  if(md==='10-03')return{id:'einheit',emo:'🇩🇪',t:'Tag der Deutschen Einheit',s:'Feiertag, Akku laden',m:'rain',ch:['🇩🇪','🎈','⚫','🔴','🟡']};
+  if(md==='11-01')return{id:'allerh',emo:'🕯️',t:'Allerheiligen',s:'Ein ruhiger Tag',m:'calm',ch:['🍂','🍁','🕯️']};
+  {const mu=new Date(y,4,1);mu.setDate(1+((7-mu.getDay())%7)+7);if(k===ymd(mu))return{id:'mutter',emo:'💐',t:'Muttertag',s:'Schon angerufen? 📞',m:'rain',ch:['💐','🌷','❤️','🌸']}}
+  {const x=new Date(y,11,24);x.setDate(24-x.getDay());const a4=ymd(x);for(let i=3;i>=0;i--){const ad=new Date(x);ad.setDate(x.getDate()-7*(3-i));if(k===ymd(ad)){const n=i+1;return{id:'adv'+n,emo:'🕯️'.repeat(n),t:`${n}. Advent`,s:n===4?'Bald ist Weihnachten':'Gemütliche Adventszeit',m:'xmas',ch:['❄️','⭐','🕯️','🍪','❄️']}}}}
+  if(md==='03-20')return{id:'fruehl',emo:'🌱',t:'Frühlingsanfang',s:'Neue Saison, neue Pipeline',m:'rain',ch:['🌱','🌷','🌼','🐝','🦋']};
+  if(md==='06-21')return{id:'sommer',emo:'☀️',t:'Sommeranfang',s:'Längster Tag des Jahres, nutz ihn',m:'rain',ch:['☀️','🌴','🍦','🕶️','🍉']};
   if(md==='12-06')return{id:'niko',emo:'🎅',t:'Nikolaustag',s:'Stiefel geputzt?',m:'rain',ch:['🎅','🍫','🍊','🥜','🍬','⭐']};
   if(md==='12-24')return{id:'xmas',emo:'🎄',t:'Frohe Weihnachten',s:'Schöne Bescherung',m:'xmas',big:true,ch:['❄️','🎁','⭐','❄️','🔔','🎄']};
   if(md==='12-25'||md==='12-26')return{id:'xmas2',emo:'🎄',t:'Frohe Weihnachten',s:'Genieß die Feiertage',m:'xmas',ch:['❄️','🎁','⭐','❄️','❄️']};
   if(md==='12-31')return{id:'nye',emo:'🥂',t:'Guten Rutsch!',s:`Auf ein starkes ${y+1}`,m:'fw',ch:['🥂','🍾','✨']};
   if(md==='01-01')return{id:'ny',emo:'🎆',t:`Frohes ${y}!`,s:'Neues Jahr, neue Quote',m:'fw',big:true,ch:['🎆','🎇','🥂','✨']};
+  if(md==='07-01')return{id:'halb',emo:'⏳',t:'Halbzeit '+y,s:`Erstes Halbjahr: ${fmtE(yRevTo(y,6))} Umsatz. Jetzt die zweite Hälfte rocken`,m:'rain',ch:['⏳','📈','💶','🏁']};
+      {const doy=Math.round((pD(k)-new Date(y,0,1))/864e5)+1;if(doy===100)return{id:'d100',emo:'💯',t:'Tag 100',s:`${fmtE(yRevTo(y,+md.slice(0,2)))} Umsatz in ${y} bisher`,m:'rain',ch:['💯','📈','⭐','💶']}}
+  {const di=dayInfo(k);const work=!di.weekend&&!di.hol&&!(di.e&&isFree(di.e.type));
+    const step=dir=>{const x=new Date(d);for(let i=0;i<10;i++){x.setDate(x.getDate()+dir);const z=dayInfo(ymd(x));if(!z.weekend&&!z.hol)return z}return null};
+    if(work){const nx=step(1),pv=step(-1);
+      if(nx&&nx.e&&nx.e.type==='urlaub'){let n=0;const x=new Date(d);for(let i=0;i<40;i++){x.setDate(x.getDate()+1);const z=dayInfo(ymd(x));if(z.e&&z.e.type==='urlaub')n++;else if(!(z.weekend||z.hol))break}return{id:'oof',emo:'✈️',t:'Out of Office!',s:`Letzter Tag vor ${n} ${n===1?'Urlaubstag':'Urlaubstagen'}. Abwesenheitsnotiz gesetzt?`,m:'rain',ch:['✈️','🧳','🏖️','🌴','🍹','☀️']}}
+      if(pv&&pv.e&&pv.e.type==='urlaub')return{id:'back',emo:'🔋',t:'Willkommen zurück!',s:'Akku voll. Zuerst Mails sortieren, dann High-Prios',m:'rain',ch:['🔋','⚡','☕','🚀']};
+      const realWork=x=>x&&!(x.e&&isFree(x.e.type))&&!x.sp;
+      const pvW=(()=>{const x=new Date(d);for(let i=0;i<20;i++){x.setDate(x.getDate()-1);const z=dayInfo(ymd(x));if(!z.weekend&&!z.hol&&realWork(z))return z}return null})();
+      const nxW=(()=>{const x=new Date(d);for(let i=0;i<20;i++){x.setDate(x.getDate()+1);const z=dayInfo(ymd(x));if(!z.weekend&&!z.hol&&realWork(z))return z}return null})();
+      if(!pvW||pvW.k.slice(0,7)!==k.slice(0,7)){if(md.slice(0,2)==='01')return{id:'ystart',emo:'🗓️',t:'Neues Jahr, neue Ziele',s:`${y-1}: ${fmtE(yRevTo(y-1,12))} Umsatz. Jetzt kommt ${y}`,m:'fw',ch:['🗓️','🚀','⭐']};
+        return{id:'mstart',emo:'🚀',t:`Hallo ${MON[d.getMonth()]}!`,s:'Quote auf null, alles ist drin',m:'rocket',ch:['🚀','⭐','✨']}}
+      if(!nxW||nxW.k.slice(0,7)!==k.slice(0,7)){const q=['03','06','09','12'].includes(md.slice(0,2));const r=rev(k.slice(0,7));return{id:'final',emo:'🔥',t:q?`Finaltag Q${Math.ceil(+md.slice(0,2)/3)}`:'Finaltag!',s:r.target&&r.pct<130?`Stand ${fmtN(r.pct)} %. Alles, was heute unterschrieben wird, zählt noch`:'Letzter Tag im Monat. Alles, was heute reinkommt, zählt noch',m:'final',big:q,ch:['🔥','⏰','💶','🏁']}}
+      if(d.getDay()===1){const dst=mo=>{const x=new Date(y,mo+1,0);x.setDate(x.getDate()-x.getDay());return x};const ds=dst(2),dw=dst(9);ds.setDate(ds.getDate()+1);dw.setDate(dw.getDate()+1);
+        if(k===ymd(ds))return{id:'dst1',emo:'😴',t:'Sommerzeit',s:'Eine Stunde weniger Schlaf. Kaffee bereit? ☕',m:'calm',ch:['☕','😴','🕐','☀️']};
+        if(k===ymd(dw))return{id:'dst2',emo:'🕐',t:'Winterzeit',s:'Eine Stunde geschenkt, dafür früher dunkel 💡',m:'calm',ch:['🕐','🌙','🍂']}}}}
   if(d.getDate()===13&&d.getDay()===5)return{id:'f13',emo:'🍀',t:'Freitag, der 13.',s:'Pech? Nicht mit dieser Pipeline',m:'rain',ch:['🍀','🐞','🍀','🐈‍⬛']};
   return null}
+function yRevTo(y,mo){let t=0;for(let i=1;i<=mo;i++)t+=rev(`${y}-${pad(i)}`).tot;return t}
 function fxDot(col,sz){const k='dot'+col+sz;if(!FXE[k]){const c=document.createElement('canvas');const d=Math.ceil(sz*1.4);c.width=c.height=d;const x=c.getContext('2d');const g=x.createRadialGradient(d/2,d/2,0,d/2,d/2,d/2);g.addColorStop(0,'#fff');g.addColorStop(.25,col);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.beginPath();x.arc(d/2,d/2,d/2,0,6.29);x.fill();FXE[k]=c}return 'dot'+col}
 function fxFirework(x,y,delay){const F=fxStage();const cols=[['#FFD84A','#FFF1A6'],['#FF5A7A','#FFB3C1'],['#5AC8FF','#C9EEFF'],['#7CFF9A','#D9FFE2'],['#B88CFF','#E9DBFF']][Math.floor(Math.random()*5)];
   const n=46+Math.floor(Math.random()*20);for(let i=0;i<n;i++){const a=i/n*Math.PI*2+Math.random()*.1;const sp=260+Math.random()*120;const col=cols[i%2];fxAdd({ch:fxDot(col,10),sz:10,x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,g:160,drag:.955,tv:140,flut:0,vr:0,flip:false,delay,ttl:1.9})}
@@ -1734,6 +1772,11 @@ function festPlay(force){const f=festOf();if(!f)return;if(RM()&&!force)return;co
   if(f.m==='kamelle'){fxCannon&&fxCannon(0);for(let i=0;i<Math.round(60*big);i++){const left=i%2===0;fxAdd({ch:pick(f.ch),sz:30,x:left?-20:F.W+20,y:F.H*(.55+Math.random()*.35),vx:(left?1:-1)*(380+Math.random()*420),vy:-(620+Math.random()*420),g:820,drag:.985,tv:520,flut:60,delay:Math.random()*1.4,ttl:5})}
     [523,659,784,659,1046].forEach((fq,i)=>fxTone(fq,i*.12,.18,.1,'square'))}
   else if(f.m==='fw'){fxFireworks(Math.round(7*big));setTimeout(()=>{for(let i=0;i<14;i++)fxAdd({ch:pick(f.ch),sz:30,x:Math.random()*F.W,y:-40,vx:0,vy:80,g:160,tv:160,flut:100,delay:Math.random()*1.2,ttl:6})},1200)}
+  else if(f.m==='bday'){const bal=['🎈','🎈','🎈','🎈','🎁','🎉'];for(let i=0;i<34;i++)fxAdd({ch:pick(bal),sz:38+Math.random()*16,x:Math.random()*F.W,y:F.H+40+Math.random()*120,vx:(Math.random()-.5)*40,vy:-(90+Math.random()*90),g:-60,tv:-260,drag:.995,flut:50,vr:(Math.random()-.5)*.8,delay:Math.random()*1.8,ttl:8,flip:false});setTimeout(()=>{fxFireworks(3);if(typeof confetti==='function')confetti()},900);
+    [[392,0,.2],[392,.3,.12],[440,.45,.4],[392,.9,.4],[523,1.35,.4],[494,1.8,.8],[392,2.7,.2],[392,3,.12],[440,3.15,.4],[392,3.6,.4],[587,4.05,.4],[523,4.5,.8]].forEach(([f2,t,d])=>fxTone(f2,t,d+.15,.11,'triangle'))}
+  else if(f.m==='rocket'){for(let i=0;i<10;i++)fxAdd({ch:'🚀',sz:40,x:F.W*(.1+Math.random()*.8),y:F.H+40,vx:(Math.random()-.5)*80,vy:-(700+Math.random()*300),g:-120,tv:-1400,drag:.99,flut:0,vr:0,r:-.78,delay:i*.18,ttl:3,flip:false});for(let i=0;i<26;i++)fxAdd({ch:pick(['⭐','✨']),sz:22,x:Math.random()*F.W,y:-30,vy:120,g:200,tv:200,flut:80,delay:.6+Math.random()*1.2,ttl:5});fxRise&&fxRise(0)}
+  else if(f.m==='final'){for(let i=0;i<8;i++)fxTone(110,i*.09,.08,.18,'triangle');fxShake&&setTimeout(()=>fxShake(),750);setTimeout(()=>{fxBurst?fxFireworks(f.big?5:2):0;for(let i=0;i<30;i++)fxAdd({ch:pick(f.ch),sz:30,x:F.W/2,y:F.H*.45,vx:(Math.random()-.5)*900,vy:-(300+Math.random()*600),g:900,drag:.97,tv:400,flut:60,delay:Math.random()*.2,ttl:4});fxBoom&&fxBoom()},750)}
+  else if(f.m==='calm'){for(let i=0;i<18;i++)fxAdd({ch:pick(f.ch),sz:24+Math.random()*10,x:Math.random()*F.W,y:-40-Math.random()*100,vx:(Math.random()-.5)*30,vy:30,g:40,tv:60,drag:.995,flut:80,delay:Math.random()*2,ttl:9})}
   else if(f.m==='xmas'){for(let i=0;i<Math.round(55*big);i++)fxAdd({ch:pick(f.ch),sz:20+Math.random()*16,x:Math.random()*F.W,y:-40-Math.random()*100,vx:(Math.random()-.5)*30,vy:40,g:60,tv:70+Math.random()*60,drag:.995,flut:90,delay:Math.random()*2.5,ttl:9});fxBell&&fxBell(3)}
   else{for(let i=0;i<Math.round(45*big);i++)fxAdd({ch:pick(f.ch),sz:28+Math.random()*10,x:Math.random()*F.W,y:-40-Math.random()*90,vx:(Math.random()-.5)*60,vy:60+Math.random()*80,g:220,tv:170+Math.random()*120,drag:.995,flut:120,delay:Math.random()*1.6,ttl:6})}
   fxLayer('fx-fest',`<span class="fe">${f.emo}</span><b>${f.t}</b><small>${f.s}</small>`,2600)}
@@ -1958,7 +2001,7 @@ function vHome(){
 
   const prevW=(()=>{const d=new Date(d0);for(let i=0;i<14;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start&&x.end)return dayInfo(ymd(d))}return null})();
   return `
-  <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();return rs?({eve:'🌙',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
+  <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={bday:'Happy Birthday',nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();if(document.documentElement.classList.contains('xmon')&&(!rs||rs.t==='eve'||rs.t==='we'))return rs&&rs.t==='eve'?'🌙':'🎄';return rs?({eve:'🌙',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
   ${saveOk?'':`<div class="warn" style="margin-bottom:14px">${ic('alert')} Daten können hier nicht gespeichert werden. Bitte Backup nutzen.</div>`}
   <div class="streaks">${mSt?`<span>🔥 ${mSt} ${mSt===1?'Monat':'Monate'} über 70 %</span>`:''}${tSt?`<span>⏱️ ${tSt} ${tSt===1?'Tag':'Tage'} erfasst</span>`:''}${miSt?`<span>✅ ${miSt} ${miSt===1?'Tag':'Tage'} Missionen</span>`:''}<a href="#verlauf" onclick="setTimeout(()=>document.getElementById('badges')?.scrollIntoView({behavior:'smooth'}),400)">🏅 ${earnedBadges().length}/${BADGES.length} Abzeichen</a></div>
   ${restCard()}
@@ -2782,6 +2825,8 @@ function vSettings(){
       <div class="row" style="margin-bottom:12px"><div class="ptl">${ic('zap','class="pi"')}Tagesstart</div><span class="sp"></span><div class="seg pill"><button class="${S.settings.kickoff!==false?'on':''}" onclick="S.settings.kickoff=true;save();render()">An</button><button class="${S.settings.kickoff===false?'on':''}" onclick="S.settings.kickoff=false;save();render()">Aus</button></div></div>
       <p class="hint" style="margin-top:0">Einmal am Tag beim ersten Öffnen: dein Stand, eine Mission für den Tag und ein Spruch zum Loslegen.</p>
       <button class="btn pri block" onclick="maybeKickoff(true)">Jetzt ansehen 🚀</button>
+      <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Geburtstag 🎂</b><div class="lbl">Für eine kleine Überraschung</div></div><span class="sp"></span><input class="inp" style="width:96px;text-align:center" inputmode="numeric" placeholder="TT.MM." value="${(()=>{const b=S.settings.bday||'02-28';return b.slice(3)+'.'+b.slice(0,2)+'.'})()}" onchange="{const m=this.value.match(/(\d{1,2})\D+(\d{1,2})/);if(m){S.settings.bday=String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');save();toast('Geburtstag gespeichert','ok')}else toast('Bitte als TT.MM. eingeben')}"></div>
+      <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Im Unternehmen seit 🏅</b><div class="lbl">TT.MM. oder TT.MM.JJJJ für die Jahreszahl</div></div><span class="sp"></span><input class="inp" style="width:120px;text-align:center" inputmode="numeric" placeholder="01.09.2024" value="${(()=>{const j=S.settings.jobStart||'2020-09-01';const md=j.slice(-5);return md.slice(3)+'.'+md.slice(0,2)+'.'+(j.length>5?j.slice(0,4):'')})()}" onchange="{const m=this.value.match(/(\d{1,2})\D+(\d{1,2})(?:\D+(\d{4}))?/);if(m){S.settings.jobStart=(m[3]?m[3]+'-':'')+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');save();toast('Gespeichert','ok')}else toast('Bitte als TT.MM.JJJJ eingeben')}"></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">High-Prio-Erinnerung ⚡</b><div class="lbl">Bleibt auf Home stehen, bis du sie abhakst</div></div><span class="sp"></span><div class="seg pill"><button class="${hpOn()?'on':''}" onclick="S.settings.hiprio=true;save();render()">An</button><button class="${hpOn()?'':'on'}" onclick="S.settings.hiprio=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Feierabend-Bilanz 🌙</b><div class="lbl">Zusammenfassung, sobald du das Ende für heute einträgst</div></div><span class="sp"></span><div class="seg pill"><button class="${eodOn()?'on':''}" onclick="S.settings.eod=true;save();render()">An</button><button class="${eodOn()?'':'on'}" onclick="S.settings.eod=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Saison-Motive</b><div class="lbl">Dezente Deko zu Advent, Silvester, Karneval, Ostern & Co.</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.season!==false?'on':''}" onclick="S.settings.season=true;save();render()">An</button><button class="${S.settings.season===false?'on':''}" onclick="S.settings.season=false;save();render()">Aus</button></div></div>
