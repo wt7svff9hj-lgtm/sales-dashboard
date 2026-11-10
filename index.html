@@ -862,6 +862,7 @@ html[data-theme=dark] .hero,html[data-theme=dark] .res,html[data-theme=dark] .to
 .payhero{display:block;border-radius:28px;padding:22px}
 .paybig{font-size:54px;font-weight:700;font-stretch:var(--cond);line-height:1;margin-top:18px;font-variant-numeric:tabular-nums}
 .paysub{color:rgba(255,255,255,.7);font-size:14px;margin-top:6px}.paysub b{color:#F9DC4A;font-weight:650}
+.paynet{display:inline-block;margin-top:10px;padding:5px 11px;border-radius:999px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.88);font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums;border:0;font-family:inherit;cursor:pointer}
 .stackbar{display:flex;gap:3px;height:14px;margin-top:20px;border-radius:99px;overflow:hidden}
 .stackbar i{display:block;height:100%;border-radius:3px}
 .paylegend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px;margin-top:16px}
@@ -1161,7 +1162,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='53';const APP_DATE='2026-11-10';
+const APP_VERSION='54';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2367,6 +2368,45 @@ function fcSet(f,v){const cv=calcEval(v);if(cv!=null)v=String(cv);S.forecast[CUR
 function salaryWith(m,amount){const backup=S.deals;const extra=amount-rev(m).tot;S.deals=[...backup,{id:'tmp',date:`${m}-28`,amount:Math.max(0,extra),channel:'in',name:''}];const s=salary(m);S.deals=backup;return s}
 
 /* ============================================================
+   Netto-Schätzung (Lohnsteuer 2026, vereinfacht)
+   ============================================================ */
+function taxP(){const t=S.settings.tax||{};return{stk:t.stk||'1',kids:+t.kids||0,kist:+t.kist||0,zus:t.zus!=null?+t.zus:2.9,age23:t.age23!==false,on:t.on!==false}}
+function est32a(x){x=Math.floor(Math.max(0,x));let e;if(x<=12348)e=0;else if(x<=17799){const y=(x-12348)/1e4;e=(914.51*y+1400)*y}else if(x<=69878){const z=(x-17799)/1e4;e=(173.10*z+2397)*z+1034.87}else if(x<=277825)e=.42*x-11135.63;else e=.45*x-19470.38;return Math.floor(e)}
+function netEst(gm){
+  const p=taxP();gm=Math.max(0,+gm||0);const BKV=5812.5,BRV=8450;
+  const kvR=7.3+p.zus/2;let pvR=1.8;if(p.kids===0&&p.age23)pvR+=.6;else if(p.kids>=2)pvR-=.25*(Math.min(p.kids,5)-1);
+  const kv=Math.min(gm,BKV)*kvR/100,pv=Math.min(gm,BKV)*pvR/100,rv=Math.min(gm,BRV)*.093,av=Math.min(gm,BRV)*.013;
+  const G=gm*12;const married=p.stk==='3'||p.stk==='4';
+  /* Vorsorgepauschale: RV + KV (ermäßigt 7,0 %) + PV, AV nur bis 1.900 € */
+  const vRV=Math.min(G,BRV*12)*.093;const kvpv=Math.min(G,BKV*12)*((7.0+p.zus/2)+pvR)/100;const vAV=Math.min(Math.min(G,BRV*12)*.013,Math.max(0,1900-kvpv));
+  let zvE=G-1230-(p.stk==='3'?72:36)-vRV-kvpv-vAV-(p.stk==='2'?4260+240*Math.max(0,p.kids-1):0);zvE=Math.max(0,zvE);
+  const estOf=x=>p.stk==='3'?2*est32a(x/2):est32a(x);
+  const lst=estOf(zvE);
+  const kfb=p.kids*(p.stk==='3'||p.stk==='2'?9756:4878);const lstK=estOf(Math.max(0,zvE-kfb));
+  const fg=p.stk==='3'?40700:20350;const soli=lstK<=fg?0:Math.min(lstK*.055,(lstK-fg)*.119);
+  const kist=lstK*p.kist/100;
+  const tax=(lst+soli+kist)/12,soc=kv+pv+rv+av;
+  return{gross:gm,net:gm-tax-soc,lst:lst/12,soli:soli/12,kist:kist/12,kv,pv,rv,av,soc,tax}
+}
+function netSheet(){const p=taxP();const s=salary(CUR);const n=netEst(s.total);
+  const seg=(k,opts)=>`<div class="seg pill">${opts.map(([v,l])=>`<button class="${String(p[k])===String(v)?'on':''}" onclick="taxSet('${k}',${JSON.stringify(v).replace(/"/g,"'")})">${l}</button>`).join('')}</div>`;
+  const r=(l,v,b)=>`<div class="li"><div class="t">${b?`<b>${l}</b>`:l}</div><div class="v">${b?`<b>${v}</b>`:v}</div></div>`;
+  openSheet(`${sheetHead('Netto-Schätzung')}<p class="hint" style="margin-top:-6px">Grobe Schätzung nach Lohnsteuer 2026 für die Auszahlung ${mLabel(addM(CUR,1))}. Die Abrechnung kann um ein paar Euro abweichen.</p>
+  <div class="panel flush" style="margin-bottom:16px"><div class="list">
+    ${r('Brutto',fmtE(n.gross,2),1)}
+    ${r('Lohnsteuer','− '+fmtE(n.lst,2))}${n.soli>0?r('Soli','− '+fmtE(n.soli,2)):''}${n.kist>0?r('Kirchensteuer','− '+fmtE(n.kist,2)):''}
+    ${r('Krankenversicherung','− '+fmtE(n.kv,2))}${r('Pflegeversicherung','− '+fmtE(n.pv,2))}${r('Rentenversicherung','− '+fmtE(n.rv,2))}${r('Arbeitslosenversicherung','− '+fmtE(n.av,2))}
+    ${r('≈ Netto',fmtE(n.net,2),1)}
+  </div></div>
+  <div class="row" style="flex-wrap:wrap;gap:10px;margin-bottom:12px"><b style="font-weight:600">Auf Gehaltskachel zeigen</b><span class="sp"></span>${seg('on',[[true,'An'],[false,'Aus']])}</div>
+  <div class="row" style="flex-wrap:wrap;gap:10px;margin-bottom:12px"><b style="font-weight:600">Steuerklasse</b><span class="sp"></span>${seg('stk',[['1','I'],['2','II'],['3','III'],['4','IV']])}</div>
+  <div class="row" style="flex-wrap:wrap;gap:10px;margin-bottom:12px"><b style="font-weight:600">Kinder</b><span class="sp"></span>${seg('kids',[[0,'0'],[1,'1'],[2,'2'],[3,'3'],[4,'4+']])}</div>
+  <div class="row" style="flex-wrap:wrap;gap:10px;margin-bottom:12px"><b style="font-weight:600">Kirchensteuer</b><span class="sp"></span>${seg('kist',[[0,'Keine'],[8,'8 %'],[9,'9 %']])}</div>
+  <div class="row" style="flex-wrap:wrap;gap:10px;margin-bottom:6px"><div><b style="font-weight:600">KV-Zusatzbeitrag</b><div class="lbl">Steht auf der Website deiner Krankenkasse</div></div><span class="sp"></span><input class="inp num" style="width:90px;text-align:right" inputmode="decimal" value="${fmtN(p.zus,2)}" onchange="taxSet('zus',numIn(this.value))"><span class="lbl">%</span></div>
+  <p class="hint" style="margin-bottom:0">Gesetzlich versichert, Beitragsgrenzen 2026 berücksichtigt. Ohne Kirchensteuer spielt das Bundesland keine Rolle. Steuerklasse V ist nicht abgebildet.</p>`)}
+function taxSet(k,v){S.settings.tax={...(S.settings.tax||{}),[k]:v};save();render();const sh=document.getElementById('sheet');const st=sh.scrollTop;netSheet();sh.scrollTop=st}
+
+/* ============================================================
    Gehalt
    ============================================================ */
 function vGehalt(){
@@ -2382,6 +2422,7 @@ function vGehalt(){
       <div class="row"><span class="hl">${ic('wallet')} Auszahlung ${mLabel(addM(CUR,1))}</span><span class="sp"></span><span class="hchip">für ${MONS[pD(CUR).getMonth()]}</span></div>
       <div class="paybig">${fmtE(s.total,2)}</div>
       <div class="paysub">brutto, davon variabel <b>${fmtE(s.total-s.base,2)}</b></div>
+      ${taxP().on?`<button class="paynet" onclick="netSheet()">≈ ${fmtE(netEst(s.total).net)} netto <span style="opacity:.55">›</span></button>`:''}
       <div class="stackbar">${parts.filter(p=>p[1]>0).map(p=>`<i style="flex:${p[1]};background:${p[2]}" data-tip="${p[0]}: ${fmtE(p[1],2)}"></i>`).join('')}</div>
       <div class="paylegend">${parts.map(p=>`<div><span style="background:${p[2]}"></span><small>${p[0]}</small><b>${fmtE(p[1])}</b></div>`).join('')}</div>
     </div>
@@ -2605,6 +2646,7 @@ function vSettings(){
       <div class="stack" style="margin-bottom:20px">
         <button class="btn block" onclick="reportSheet()">${ic('cal')} Jahresauszug für die Steuer</button>
         <button class="btn block" onclick="CUR=ymOf(new Date());exportSheet()">${ic('clock')} Arbeitszeit-Nachweis Monat</button>
+        <button class="btn block" onclick="netSheet()">${ic('wallet')} Netto-Schätzung &amp; Steuerdaten</button>
       </div>
       <div class="lbl" style="margin-bottom:12px">Cloud-Sync</div>
       <button class="btn block" style="margin-bottom:20px" onclick="syncSheet()">${ic(syncOn()?'cloudok':'cloud')} ${syncOn()?'Verbunden mit '+esc(SY.repo):'Mit GitHub verbinden'}</button>
