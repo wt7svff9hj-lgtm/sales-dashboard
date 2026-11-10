@@ -1008,6 +1008,15 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.fx-fest .fx-in{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 30px;border-radius:28px;background:rgba(10,11,20,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:fxPop .5s cubic-bezier(.2,1.5,.4,1) both}
+.fx-fest .fe{font-size:72px;line-height:1;animation:bounce 1s cubic-bezier(.3,1.6,.5,1) both}
+.fx-fest b{font-size:min(44px,11vw);font-weight:800;font-stretch:var(--cond);color:#fff;line-height:1.05;text-align:center}
+.fx-fest small{font-size:16px;color:rgba(255,255,255,.85);text-align:center}
+.rest-card.rest-card.rs-xmas{background:linear-gradient(150deg,#C8283C 0%,#8E1730 50%,#123D2B 100%)}
+.rest-card.rest-card.rs-nye{background:linear-gradient(150deg,#1A1440 0%,#3B1E6E 50%,#0B0C1E 100%)}.rs-nye .rs-sky i{opacity:.9;background:#FFD84A}
+.rest-card.rest-card.rs-kar{background:linear-gradient(120deg,#E5323E 0%,#E5323E 33%,#F5F5F5 33%,#F5F5F5 36%,#1F5FBF 36%,#1F5FBF 70%,#F2C200 70%)}
+.rs-kar .rs-figs div{background:rgba(0,0,0,.22)}.rs-kar .rs-h,.rs-kar .rs-kick,.rs-kar .rs-sub{text-shadow:0 2px 10px rgba(0,0,0,.35)}
+
 /* Feierabend-/Wochenend-Modus */
 html.rest body{background:radial-gradient(900px 520px at 80% -12%,rgba(120,110,255,.16),transparent 62%),radial-gradient(700px 500px at -10% 25%,rgba(90,160,255,.08),transparent 60%),var(--canvas)}
 html.rest[data-theme=dark] body{background:radial-gradient(900px 520px at 80% -12%,rgba(120,110,255,.22),transparent 62%),radial-gradient(700px 500px at -10% 25%,rgba(90,160,255,.10),transparent 60%),var(--canvas)}
@@ -1213,7 +1222,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='59';const APP_DATE='2026-11-10';
+const APP_VERSION='60';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1690,11 +1699,49 @@ function restCard(){const r=restState();if(!r)return '';const now=new Date();con
   else if(r.t==='urlaub'){let n=0;const d=new Date();for(let i=0;i<40;i++){const x=dayInfo(ymd(d));if(x.e&&x.e.type==='urlaub')n++;else if(!(x.weekend||x.hol))break;d.setDate(d.getDate()+1)}
     emo='✈️';kick='Urlaub';head='Abschalten erlaubt';sub=`Noch ${n} ${n===1?'Urlaubstag':'Urlaubstage'} am Stück`;foot=nx?`<div class="rs-next">Zurück am ${WDL[nx.wd]}, ${pD(nx.k).toLocaleDateString('de-DE',{day:'numeric',month:'long'})}</div>`:''}
   else if(r.t==='krank'){emo='🫖';kick='Krank gemeldet';head='Gute Besserung'+nm;sub='Heute zählt nur, dass du wieder fit wirst.'}
+  const fe=festOf();if(fe){if(fe.id==='nye'){sub=`Noch <span id="restClock">${restDur(nyeLeft())}</span> bis ${now.getFullYear()+1} 🎆`;cls+=' rs-nye'}else if(fe.m==='xmas')cls+=' rs-xmas';else if(fe.m==='kamelle')cls+=' rs-kar';else if(fe.id==='ny')cls+=' rs-nye';if(fe.id==='nye'||r.t!=='eve'){head=fe.t;kick=fe.s}emo=`<span onclick="festPlay(true)" style="cursor:pointer">${fe.emo}</span>`}
   return `<div class="rest-card rs-${cls}"><div class="rs-sky"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="rs-top"><span class="rs-emo">${emo}</span><div><div class="rs-kick">${kick}</div><h2 class="rs-h">${head}</h2>${sub?`<div class="rs-sub">${sub}</div>`:''}</div></div>
     ${body}${foot}<div class="rs-note">Alles bleibt eintragbar, falls doch noch was reinkommt.</div></div>`}
 setInterval(()=>{const el=document.getElementById('restClock');if(!el||document.hidden)return;const r=restState();if(!r)return;const now=new Date();
-  if(r.t==='eve'){el.textContent=restDur(now.getHours()*60+now.getMinutes()-toMin(r.di.e.end))}else{const ns=restNextStart(eodNextWork(todayK()));if(ns)el.textContent=restDur((ns.t-now)/6e4)}},20000);
+  const fe=festOf();if(fe&&fe.id==='nye'){el.textContent=restDur(nyeLeft())}else if(r.t==='eve'){el.textContent=restDur(now.getHours()*60+now.getMinutes()-toMin(r.di.e.end))}else{const ns=restNextStart(eodNextWork(todayK()));if(ns)el.textContent=restDur((ns.t-now)/6e4)}},20000);
+/* ---------- Feiertags-Effekte (Easter Eggs) ---------- */
+function festOf(d){d=d||new Date();if(S.settings.season===false)return null;const y=d.getFullYear(),k=ymd(d),md=k.slice(5);const e=easter(y);const off=n=>{const x=new Date(e);x.setDate(x.getDate()+n);return ymd(x)};
+  const kar=['🎭','🎉','🍬','🍭','🎊','🥳','🍬','💐'];
+  if(md==='11-11')return{id:'1111',emo:'🎭',t:'Alaaf & Helau!',s:'11.11., die fünfte Jahreszeit startet',m:'kamelle',ch:kar};
+  if(k===off(-52))return{id:'weiber',emo:'✂️',t:'Weiberfastnacht',s:'Heute lieber keine Krawatte 😉',m:'kamelle',ch:['✂️','👔','🎭','🍬','🎉','💋']};
+  if(k>off(-52)&&k<off(-48))return{id:'kar',emo:'🎭',t:'Alaaf & Helau!',s:'Jeck sein ist erlaubt',m:'kamelle',ch:kar};
+  if(k===off(-48))return{id:'rosi',emo:'🤡',t:'Rosenmontag!',s:'Kamelle! Kamelle!',m:'kamelle',big:true,ch:[...kar,'🤡','🌹']};
+  if(k===off(-47))return{id:'veil',emo:'🎭',t:'Veilchendienstag',s:'Heute Nacht wird der Nubbel verbrannt',m:'kamelle',ch:kar};
+  if(k===off(-46))return{id:'ascher',emo:'🐟',t:'Aschermittwoch',s:'Alles vorbei. Zurück an die Pipeline!',m:'rain',ch:['🐟','🐟','🎭']};
+  if(md==='02-14')return{id:'val',emo:'💘',t:'Valentinstag',s:'Kleiner Tipp: Blumen nicht vergessen',m:'rain',ch:['❤️','💕','💘','🌹','💖']};
+  if(k>=off(-2)&&k<=off(1))return{id:'ostern',emo:'🐣',t:'Frohe Ostern',s:'Eiersuche statt Leadsuche',m:'rain',ch:['🐣','🥚','🐰','🌷','🍫','🥚']};
+  if(md==='05-01')return{id:'mai',emo:'🌳',t:'Tag der Arbeit',s:'Ausgerechnet heute frei',m:'rain',ch:['🌳','🍻','🌸','☀️']};
+  if(md==='10-31')return{id:'hall',emo:'🎃',t:'Happy Halloween',s:'Süßes, sonst gibt’s Opps!',m:'rain',ch:['🎃','👻','🦇','🕸️','🍬','💀']};
+  if(md==='12-06')return{id:'niko',emo:'🎅',t:'Nikolaustag',s:'Stiefel geputzt?',m:'rain',ch:['🎅','🍫','🍊','🥜','🍬','⭐']};
+  if(md==='12-24')return{id:'xmas',emo:'🎄',t:'Frohe Weihnachten',s:'Schöne Bescherung',m:'xmas',big:true,ch:['❄️','🎁','⭐','❄️','🔔','🎄']};
+  if(md==='12-25'||md==='12-26')return{id:'xmas2',emo:'🎄',t:'Frohe Weihnachten',s:'Genieß die Feiertage',m:'xmas',ch:['❄️','🎁','⭐','❄️','❄️']};
+  if(md==='12-31')return{id:'nye',emo:'🥂',t:'Guten Rutsch!',s:`Auf ein starkes ${y+1}`,m:'fw',ch:['🥂','🍾','✨']};
+  if(md==='01-01')return{id:'ny',emo:'🎆',t:`Frohes ${y}!`,s:'Neues Jahr, neue Quote',m:'fw',big:true,ch:['🎆','🎇','🥂','✨']};
+  if(d.getDate()===13&&d.getDay()===5)return{id:'f13',emo:'🍀',t:'Freitag, der 13.',s:'Pech? Nicht mit dieser Pipeline',m:'rain',ch:['🍀','🐞','🍀','🐈‍⬛']};
+  return null}
+function fxDot(col,sz){const k='dot'+col+sz;if(!FXE[k]){const c=document.createElement('canvas');const d=Math.ceil(sz*1.4);c.width=c.height=d;const x=c.getContext('2d');const g=x.createRadialGradient(d/2,d/2,0,d/2,d/2,d/2);g.addColorStop(0,'#fff');g.addColorStop(.25,col);g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.beginPath();x.arc(d/2,d/2,d/2,0,6.29);x.fill();FXE[k]=c}return 'dot'+col}
+function fxFirework(x,y,delay){const F=fxStage();const cols=[['#FFD84A','#FFF1A6'],['#FF5A7A','#FFB3C1'],['#5AC8FF','#C9EEFF'],['#7CFF9A','#D9FFE2'],['#B88CFF','#E9DBFF']][Math.floor(Math.random()*5)];
+  const n=46+Math.floor(Math.random()*20);for(let i=0;i<n;i++){const a=i/n*Math.PI*2+Math.random()*.1;const sp=260+Math.random()*120;const col=cols[i%2];fxAdd({ch:fxDot(col,10),sz:10,x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,g:160,drag:.955,tv:140,flut:0,vr:0,flip:false,delay,ttl:1.9})}
+  setTimeout(()=>{fxTone(90,0,.35,.35,'sine',40);fxTone(1800,.02,.5,.03,'sawtooth',900)},delay*1000)}
+function fxFireworks(n){const F=fxStage();for(let i=0;i<n;i++)fxFirework(F.W*(.15+Math.random()*.7),F.H*(.15+Math.random()*.35),i*.45+Math.random()*.2)}
+function festPlay(force){const f=festOf();if(!f)return;if(RM()&&!force)return;const F=fxStage();const big=f.big?1.6:1;
+  if(f.m==='kamelle'){fxCannon&&fxCannon(0);for(let i=0;i<Math.round(60*big);i++){const left=i%2===0;fxAdd({ch:pick(f.ch),sz:30,x:left?-20:F.W+20,y:F.H*(.55+Math.random()*.35),vx:(left?1:-1)*(380+Math.random()*420),vy:-(620+Math.random()*420),g:820,drag:.985,tv:520,flut:60,delay:Math.random()*1.4,ttl:5})}
+    [523,659,784,659,1046].forEach((fq,i)=>fxTone(fq,i*.12,.18,.1,'square'))}
+  else if(f.m==='fw'){fxFireworks(Math.round(7*big));setTimeout(()=>{for(let i=0;i<14;i++)fxAdd({ch:pick(f.ch),sz:30,x:Math.random()*F.W,y:-40,vx:0,vy:80,g:160,tv:160,flut:100,delay:Math.random()*1.2,ttl:6})},1200)}
+  else if(f.m==='xmas'){for(let i=0;i<Math.round(55*big);i++)fxAdd({ch:pick(f.ch),sz:20+Math.random()*16,x:Math.random()*F.W,y:-40-Math.random()*100,vx:(Math.random()-.5)*30,vy:40,g:60,tv:70+Math.random()*60,drag:.995,flut:90,delay:Math.random()*2.5,ttl:9});fxBell&&fxBell(3)}
+  else{for(let i=0;i<Math.round(45*big);i++)fxAdd({ch:pick(f.ch),sz:28+Math.random()*10,x:Math.random()*F.W,y:-40-Math.random()*90,vx:(Math.random()-.5)*60,vy:60+Math.random()*80,g:220,tv:170+Math.random()*120,drag:.995,flut:120,delay:Math.random()*1.6,ttl:6})}
+  fxLayer('fx-fest',`<span class="fe">${f.emo}</span><b>${f.t}</b><small>${f.s}</small>`,2600)}
+function festBusy(){return LOCKED||['kick','wrap','moment','eod','lock'].some(id=>{const e=document.getElementById(id);return e&&e.classList.contains('on')})||document.getElementById('sheet').classList.contains('on')}
+function festMaybe(n){n=n||0;const f=festOf();if(!f||VIEW!=='home')return;if(festBusy()){if(n<60)setTimeout(()=>festMaybe(n+1),2000);return}const key='fest_'+todayK();try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}setTimeout(()=>festPlay(),500)}
+setTimeout(()=>{const k=document.getElementById('kick');if(!(k&&k.classList.contains('on'))&&!LOCKED)festMaybe()},1600);
+let _festDay=todayK();setInterval(()=>{const k=todayK();if(k!==_festDay){_festDay=k;if(k.slice(5)==='01-01'&&!document.hidden){try{localStorage.setItem('fest_'+k,'1')}catch(e){}festPlay(true)}render()}},15000);
+function nyeLeft(){const n=new Date();const t=new Date(n.getFullYear()+1,0,1);return (t-n)/6e4}
 /* ---------- High-Prio zuerst ---------- */
 const hpOn=()=>S.settings.hiprio!==false;
 function hpDone(k){return !!((S.hiprio||{})[k||todayK()])}
@@ -1911,7 +1958,7 @@ function vHome(){
 
   const prevW=(()=>{const d=new Date(d0);for(let i=0;i<14;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start&&x.end)return dayInfo(ymd(d))}return null})();
   return `
-  <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const rs=restState();return rs?({eve:'Schönen Feierabend',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo">${(()=>{const rs=restState();return rs?({eve:'🌙',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
+  <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();return rs?({eve:'🌙',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
   ${saveOk?'':`<div class="warn" style="margin-bottom:14px">${ic('alert')} Daten können hier nicht gespeichert werden. Bitte Backup nutzen.</div>`}
   <div class="streaks">${mSt?`<span>🔥 ${mSt} ${mSt===1?'Monat':'Monate'} über 70 %</span>`:''}${tSt?`<span>⏱️ ${tSt} ${tSt===1?'Tag':'Tage'} erfasst</span>`:''}${miSt?`<span>✅ ${miSt} ${miSt===1?'Tag':'Tage'} Missionen</span>`:''}<a href="#verlauf" onclick="setTimeout(()=>document.getElementById('badges')?.scrollIntoView({behavior:'smooth'}),400)">🏅 ${earnedBadges().length}/${BADGES.length} Abzeichen</a></div>
   ${restCard()}
@@ -2852,7 +2899,7 @@ async function pinKey(k){if(Date.now()<LOCKUNTIL)return;if(k==='del'){PINBUF=PIN
   if(PINBUF.length===4){const h=await sha(PINBUF);if(h===SEC().pin){FAILS=0;unlock()}else{FAILS++;dots(4,true);if(navigator.vibrate)try{navigator.vibrate([30,40,30])}catch(e){}const sub=document.getElementById('lkSub');
     if(FAILS>=5){LOCKUNTIL=Date.now()+30000;sub.textContent='Zu viele Versuche. Bitte 30 Sekunden warten.';setTimeout(()=>{FAILS=0;const s2=document.getElementById('lkSub');if(s2)s2.textContent='PIN eingeben'},30000)}else sub.textContent='Falsche PIN, bitte nochmal';
     setTimeout(()=>{PINBUF='';dots(0)},450)}}}
-function unlock(){LOCKED=false;const el=document.getElementById('lock');
+function unlock(){LOCKED=false;setTimeout(()=>{const k=document.getElementById('kick');if(!(k&&k.classList.contains('on')))festMaybe()},1800);const el=document.getElementById('lock');
   const plain=()=>{ANIM_PENDING=true;setTimeout(render,60);el.classList.add('out');document.documentElement.classList.remove('islocked','prelock');setTimeout(()=>{el.classList.remove('on','out','fx');el.innerHTML=''},420);setTimeout(()=>afterInitial(dailyFlow),450)};
   if(RM()||!el.classList.contains('on')){plain();return}
   /* Volltreffer-Animation: Pfeil trifft ins Schwarze, Schockwelle, dann öffnet sich die App */
@@ -3082,7 +3129,7 @@ function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worke
 function closeEod(){const el=document.getElementById('eod');el.classList.add('out');unlockScroll();setTimeout(()=>{el.classList.remove('on','out');el.innerHTML=''},380)}
 function eodMaybe(k,prevEnd){if(!eodOn()||k!==todayK()||prevEnd)return;const e=S.days[k];if(!e||isFree(e.type)||worked(e)==null)return;setTimeout(()=>eodShow(k),450)}
 
-function closeKick(){const el=document.getElementById('kick');el.classList.add('out');setTimeout(()=>{el.classList.remove('on','out');el.innerHTML=''},380)}
+function closeKick(){const el=document.getElementById('kick');el.classList.add('out');setTimeout(()=>{el.classList.remove('on','out');el.innerHTML='';festMaybe()},380)}
 
 /* ============================================================
    Motivation: Missionen, Serien, Rekorde, Abzeichen, Tempo,
