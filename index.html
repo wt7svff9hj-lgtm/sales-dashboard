@@ -15,6 +15,16 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
+.cbar{position:fixed;left:0;right:0;top:0;z-index:60;height:calc(var(--safeT) + 44px);padding:var(--safeT) 12px 0;display:flex;align-items:center;gap:8px;
+  background:color-mix(in srgb,var(--canvas) 78%,transparent);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid var(--hair);
+  opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .2s ease,transform .2s ease}
+.cbar.on{opacity:1;transform:none;pointer-events:auto}
+.cb-t{flex:1;text-align:center;font-weight:700;font-size:16.5px;letter-spacing:-.01em;cursor:pointer}
+.cb-s,.cb-r{width:36px;height:36px;flex:none}
+.cb-s{border:0;background:transparent;display:grid;place-items:center;color:var(--ink2);cursor:pointer;border-radius:50%}
+.cb-s svg{width:20px;height:20px}.cb-s.busy svg{animation:cbPulse 1s ease-in-out infinite}.cb-s.warn{color:#C98500}.cb-s.err{color:var(--red)}.cb-s.loc{color:var(--muted)}
+@keyframes cbPulse{50%{opacity:.35}}
+@media (min-width:1000px){.cbar{display:none}}
 .oi .st-sel{appearance:none;-webkit-appearance:none;border:0;width:auto;max-width:150px;background:color-mix(in srgb,var(--ink) 7%,transparent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238C91A1' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center/12px;border-radius:8px;padding:3px 22px 3px 8px;font:inherit;font-size:12px;font-weight:600;color:var(--ink2);cursor:pointer;margin-right:2px}
 .oi{flex-wrap:wrap}.oi .t{flex:1;min-width:0}
 .oi-a{display:flex;gap:6px;flex:none;margin-left:8px}
@@ -1052,6 +1062,7 @@ html.prelock .lock{display:block}
 </style>
 </head>
 <body>
+<div class="cbar" id="cbar" aria-hidden="true"><button class="cb-s" id="cbsync" onclick="syncSheet()" aria-label="Sync-Status"></button><div class="cb-t" onclick="window.scrollTo({top:0,behavior:'smooth'})">Sales Dashboard</div><span class="cb-r"></span></div>
 <div class="app">
   <nav class="side" id="side"></nav>
   <main class="main"><div class="wrap">
@@ -1076,7 +1087,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='48';const APP_DATE='2026-11-09';
+const APP_VERSION='49';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1400,8 +1411,8 @@ function shiftMonth(n){CUR=addM(CUR,n);render()}
 
 function renderChrome(){
   const mk=()=>`<div class="mark"><div class="lg" onclick="egg(event)">${logoSvg(S.settings.logo)}</div>${esc(S.settings.appName||'Sales Dashboard')}</div>`;document.title=(S.settings.appName||'Sales Dashboard')+' – Zeit, Umsatz & Provision';
-  document.getElementById('side').innerHTML=mk()+NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''}">${ic(i)}${l}</a>`).join('')+`<div class="grow"></div><a href="#einstellungen" class="${VIEW==='einstellungen'?'on':''}">${ic('gear')}Einstellungen</a>`;
-  document.getElementById('tabs').innerHTML=NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''}">${ic(i)}${l}</a>`).join('');
+  document.getElementById('side').innerHTML=mk()+NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''}" onclick="if(VIEW==='${k}'){event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}">${ic(i)}${l}</a>`).join('')+`<div class="grow"></div><a href="#einstellungen" class="${VIEW==='einstellungen'?'on':''}">${ic('gear')}Einstellungen</a>`;
+  document.getElementById('tabs').innerHTML=NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''}" onclick="if(VIEW==='${k}'){event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}">${ic(i)}${l}</a>`).join('');
   document.getElementById('bar').innerHTML=`${mk()}<div class="sp"></div><button class="ibtn" onclick="cycleTheme()" aria-label="Design wechseln" title="Design: ${({auto:'Automatisch',light:'Hell',dark:'Dunkel'})[S.settings.theme||'auto']}">${ic(({auto:'auto',light:'sun',dark:'moon'})[S.settings.theme||'auto'])}</button><button class="ibtn ${VIEW==='einstellungen'?'acc':''}" onclick="VIEW==='einstellungen'?goBack():go('einstellungen')" aria-label="${VIEW==='einstellungen'?'Einstellungen schließen':'Einstellungen'}">${ic(VIEW==='einstellungen'?'x':'gear')}</button>`;
 }
 function head(extra=''){
@@ -2134,14 +2145,23 @@ function fcListSave(){const items=FL.items.map(x=>{const o={v:numIn(String(x.v))
 function fcListClear(){const F=S.forecast[CUR]||{};if(F.items)delete F.items[FL.f];save();closeSheet();render();toast('Liste entfernt, der Betrag bleibt stehen')}
 function fcField(f,val){const F=S.forecast[CUR]||{};const it=(F.items||{})[f];const vv=val?String(val).replace('.',','):'';
   return it&&it.length?`<div class="fcw"><button class="fcl on" onclick="fcList('${f}')" aria-label="Einzelwerte bearbeiten">${ic('list')}<i>${it.length}</i></button><button class="inp num fcf fcro" onclick="fcList('${f}')">${fmtE(val||0,2)}</button></div>`
-  :`<div class="fcw"><button class="fcl" onclick="fcList('${f}')" aria-label="Einzelwerte eintragen" tabindex="-1">${ic('list')}</button><input class="inp num fcf" id="fc-${f}" inputmode="decimal" enterkeyhint="next" value="${vv}" placeholder="0 €" onchange="fcSet('${f}',this.value)" oninput="fcLive(this,'${f}')" onkeydown="fcKey(event,this,'${f}')"></div><div class="fcc" id="fcc-${f}"></div>`}
+  :`<div class="fcw"><button class="fcl" onclick="fcList('${f}')" aria-label="Einzelwerte eintragen" tabindex="-1">${ic('list')}</button><input class="inp num fcf" id="fc-${f}" inputmode="decimal" enterkeyhint="next" value="${val?fmtE(val,2):''}" placeholder="0,00 €" onfocus="this.value=this.value?(+numIn(this.value)).toLocaleString('de-DE',{maximumFractionDigits:2}):'';try{this.select()}catch(e){}" onblur="const el=this;setTimeout(()=>{if(el.isConnected&&document.activeElement!==el&&el.value&&calcEval(el.value)==null)el.value=fmtE(numIn(el.value),2)},0)" onchange="fcSet('${f}',this.value)" oninput="fcLive(this,'${f}')" onkeydown="fcKey(event,this,'${f}')"></div><div class="fcc" id="fcc-${f}"></div>`}
 
 function vForecast(){
   const F=forecast(CUR); const P=S.fcParams; const sal=salaryWith(CUR,F.exp);
   const set=f=>`onchange="fcSet('${f}',this.value)"`; const v=n=>n?String(n).replace('.',','):'';
   return `${head()}
   ${CUR===ymOf(new Date())?carryBanner():''}
-  <div class="cols two">
+  <div class="cols two fc-cols">
+    <div class="stack" style="gap:14px">
+      <div class="res">
+        <div class="lbl">Erwartung ${MON[pD(CUR).getMonth()]}</div>
+        <div class="row" style="align-items:baseline;margin-top:8px"><div class="big">${fmtE(F.exp)}</div><span class="sp"></span><div class="mid">${fmtN(F.pct)} %</div></div>
+        ${rail(F.pct,[70,100],true)}
+        <div class="lbl">Ziel ${fmtE(F.target)}. ${F.pct>=70?'Du landest in der Provision.':`Bis 70 % fehlen ${fmtE(Math.max(0,F.target*.7-F.exp))}.`}</div>
+      </div>
+      <div class="panel"><div class="lbl">Auszahlung ${mLabel(addM(CUR,1))}, wenn der Forecast eintritt</div><div class="mid" style="margin-top:6px">${fmtE(sal.total)}</div><div class="lbl" style="margin-top:2px">davon Provision ${fmtE(sal.provision)}</div></div>
+    </div>
     <div class="panel">
       <div class="grp">Bereits gesichert</div>
       <div class="fr"><div><b>Closed Won</b><small>automatisch aus deinen Verträgen</small></div><div class="fixed">${ic('lock','style="width:14px;height:14px;vertical-align:-1px;color:var(--muted);margin-right:6px"')}${fmtE(F.closed,2)}</div></div>
@@ -2151,15 +2171,6 @@ function vForecast(){
       <div class="fr"><div><b>Proposal sent</b><small>Pipeline-Wert, zählt ${P.proposalRate} %</small></div>${fcField('proposal',F.proposal)}<div class="w">ergibt ${fmtE(F.wP,2)}</div></div>
       <div class="fr"><div><b>Expected sign up</b><small>Pipeline-Wert, zählt ${P.expectedRate} %</small></div>${fcField('expected',F.expected)}<div class="w">ergibt ${fmtE(F.wE,2)}</div></div>
       <div class="fr"><div><b>Neue Opps</b><small>1 pro Woche à ${fmtE(P.weekValue)}, zählt ${P.weekRate} %</small></div><input class="inp num fcf" id="fc-weeks" inputmode="decimal" enterkeyhint="done" value="${String(F.weeks).replace('.',',')}" ${set('weeks')} onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"><div class="w">${F.autoWeeks?'Wochen ohne Urlaub, ':'Wochen, '}ergibt ${fmtE(F.wN,2)}</div></div>
-    </div>
-    <div class="stack" style="gap:14px">
-      <div class="res">
-        <div class="lbl">Erwartung ${MON[pD(CUR).getMonth()]}</div>
-        <div class="row" style="align-items:baseline;margin-top:8px"><div class="big">${fmtE(F.exp)}</div><span class="sp"></span><div class="mid">${fmtN(F.pct)} %</div></div>
-        ${rail(F.pct,[70,100],true)}
-        <div class="lbl">Ziel ${fmtE(F.target)}. ${F.pct>=70?'Du landest in der Provision.':`Bis 70 % fehlen ${fmtE(Math.max(0,F.target*.7-F.exp))}.`}</div>
-      </div>
-      <div class="panel"><div class="lbl">Auszahlung ${mLabel(addM(CUR,1))}, wenn der Forecast eintritt</div><div class="mid" style="margin-top:6px">${fmtE(sal.total)}</div><div class="lbl" style="margin-top:2px">davon Provision ${fmtE(sal.provision)}</div></div>
     </div>
   </div>
   ${funnelPanel(CUR)}
@@ -2303,16 +2314,16 @@ function vVerlauf(){
   const diff=curA&&prevA?curA.v-prevA.v:null;
   const maxAvg=Math.max(100,...valid.map(a=>a.v));
   return `${head()}
+  <div class="panel" style="margin-bottom:14px">
+    <div class="ptl">${ic('trend','class="pi"')}Ø Zielerreichung pro Jahr</div>
+    <div class="lbl" style="margin-top:2px">Durchschnitt aller Monate eines Jahres. Die gestrichelte Linie markiert 100 %.</div>
+    <div class="ybars"><div class="yl" style="bottom:${100/maxAvg*120+30}px"><span>100 %</span></div>${years.map((y,j)=>{const a=avgs[j];return `<div class="yc ${y===cy?'cur':''} ${bestY&&y===bestY.y?'top':''}" data-tip="${y}: ${a?fmtP(a.v,1)+', '+a.n+' Monate':'keine Daten'}">${a?`<b>${R(a.v)}<small> %</small></b><i class="${heatCls(a.v)}" style="height:${a.v/maxAvg*120}px">${bestY&&y===bestY.y?ic('crown'):''}</i>`:'<i class="none"></i>'}<small class="yy">${y}</small><em class="run">${y===cy?'läuft':''}</em></div>`}).join('')}</div>
+  </div>
   <div class="vtiles">
     <div class="tile"><div class="ti" style="--tc:var(--tY)">${ic('trend')}</div><div class="tl">${cy} im Schnitt</div><div class="tv">${curA?R(curA.v):'–'}<small> %</small></div><div class="ts">${diff!=null?`<span class="${diff>=0?'pos':'neg'}">${diff>=0?'▲':'▼'} ${fmtN(Math.abs(diff))} Punkte</span> zu ${cy-1}`:''}</div></div>
     <div class="tile"><div class="ti" style="--tc:var(--amber)">${ic('trophy')}</div><div class="tl">Bester Monat ${cy}</div><div class="tv">${bestCur?R(bestCur.v):'–'}<small> %</small></div><div class="ts">${bestCur?MON[bestCur.i-1]:''}</div></div>
     <div class="tile"><div class="ti" style="--tc:var(--green)">${ic('crown')}</div><div class="tl">Bestes Jahr</div><div class="tv">${bestY?bestY.y:'–'}</div><div class="ts">${bestY?`Ø ${R(bestY.v)} %`:''}</div></div>
     <div class="tile"><div class="ti" style="--tc:var(--k)">${ic('flame')}</div><div class="tl">Über 100 %</div><div class="tv">${allHit}<small> von ${allN}</small></div><div class="ts">Monaten seit 2020</div></div>
-  </div>
-  <div class="panel" style="margin-top:14px">
-    <div class="ptl">${ic('trend','class="pi"')}Ø Zielerreichung pro Jahr</div>
-    <div class="lbl" style="margin-top:2px">Durchschnitt aller Monate eines Jahres. Die gestrichelte Linie markiert 100 %.</div>
-    <div class="ybars"><div class="yl" style="bottom:${100/maxAvg*120+30}px"><span>100 %</span></div>${years.map((y,j)=>{const a=avgs[j];return `<div class="yc ${y===cy?'cur':''} ${bestY&&y===bestY.y?'top':''}" data-tip="${y}: ${a?fmtP(a.v,1)+', '+a.n+' Monate':'keine Daten'}">${a?`<b>${R(a.v)}<small> %</small></b><i class="${heatCls(a.v)}" style="height:${a.v/maxAvg*120}px">${bestY&&y===bestY.y?ic('crown'):''}</i>`:'<i class="none"></i>'}<small class="yy">${y}</small><em class="run">${y===cy?'läuft':''}</em></div>`}).join('')}</div>
   </div>
   <div class="sh"><h2>${ic('trophy','class="pi"')}Rekorde</h2></div>
   <div class="vtiles">${(()=>{const rc=records();return `
@@ -2954,8 +2965,12 @@ function agoTxt(t){if(!t)return '';const s=Math.round((Date.now()-t)/1000);retur
 function paintSync(){const el=document.getElementById('syncbar');if(!el)return;
   const off=syncOn()&&!navigator.onLine;const st=off?'offline':syncState;
   const m={ok:['ok','cloudok',`<b>Live</b> · synchronisiert ${agoTxt(syncAt)}`],saving:['busy','cloud','Speichert in der Cloud …'],local:['loc','device','Nur auf diesem Gerät gespeichert'],offline:['warn','cloudoff',dirty||pendingPush?'<b>Offline</b> · Änderungen warten auf Upload':'<b>Offline</b> · Stand von '+(syncAt?agoTxt(syncAt):'zuvor')],error:['err','cloudoff','Sync-Fehler · antippen für Details']}[st]||['loc','device','Nur auf diesem Gerät gespeichert'];
-  el.className='syncbar '+m[0];el.innerHTML=`<span class="sd"></span>${ic(m[1])}<span>${m[2]}</span>`}
+  el.className='syncbar '+m[0];el.innerHTML=`<span class="sd"></span>${ic(m[1])}<span>${m[2]}</span>`;
+  const cs=document.getElementById('cbsync');if(cs){cs.className='cb-s '+m[0];cs.innerHTML=ic(m[1]);cs.title=m[2].replace(/<[^>]+>/g,'')}}
 setInterval(()=>{if(!document.hidden)paintSync()},10000);
+/* Kompakte Kopfzeile wie bei iOS-Apps: erscheint beim Scrollen */
+let _cbT=0;function cbarUpdate(){const c=document.getElementById('cbar');if(!c)return;const y=_lockY!=null?_lockY:window.scrollY;const on=y>54&&!LOCKED;c.classList.toggle('on',on);c.setAttribute('aria-hidden',on?'false':'true')}
+window.addEventListener('scroll',()=>{if(_cbT)return;_cbT=requestAnimationFrame(()=>{_cbT=0;cbarUpdate()})},{passive:true});
 window.addEventListener('offline',paintSync);
 async function pushNow(){if(!syncOn())return setSync('local');if(pushing){pushAgain=true;return}pushing=true;
   try{const body={message:'Sync '+new Date().toISOString(),content:enc(await packData(syncPayload()))};if(SY.sha)body.sha=SY.sha;
