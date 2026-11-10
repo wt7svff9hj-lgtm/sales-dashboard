@@ -15,6 +15,45 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
+.fx-lostcard .lc{background:var(--paper);border-radius:22px;padding:22px 30px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.35);min-width:220px;animation:lcAway 1s cubic-bezier(.5,0,.75,0) forwards}
+.fx-lostcard .lc small{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--red);text-transform:uppercase}.fx-lostcard .lc b{display:block;font-size:22px;margin:4px 0}.fx-lostcard .lc span{color:var(--muted);font-weight:700}
+@keyframes lcAway{0%{transform:scale(.6);opacity:0}25%{transform:scale(1);opacity:1}55%{transform:scale(1) rotate(0)}100%{transform:translate(-140vw,-10vh) rotate(-28deg);opacity:.9}}
+.fx-next .fx-in{display:flex;flex-direction:column;align-items:center;gap:6px}
+.fx-next b{font-family:'SD Display','SD Text',sans-serif;font-size:min(64px,16vw);font-weight:800;letter-spacing:-.02em;color:#F9DC4A;text-shadow:0 8px 30px rgba(0,0,0,.35);animation:fxPop .45s cubic-bezier(.2,1.5,.4,1) both}
+.fx-next .arw{display:flex;gap:6px;font-style:normal}.fx-next .arw em{width:34px;height:34px;border-right:7px solid #F9DC4A;border-top:7px solid #F9DC4A;transform:rotate(45deg);opacity:0;animation:arwGo .7s ease forwards}
+.fx-next .arw em:nth-child(2){animation-delay:.12s}.fx-next .arw em:nth-child(3){animation-delay:.24s}
+@keyframes arwGo{0%{opacity:0;transform:translateX(-20px) rotate(45deg)}50%{opacity:1}100%{opacity:1;transform:translateX(10px) rotate(45deg)}}
+.lr{margin:12px 0 4px;text-align:left}.lr small{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}.lr-c{display:flex;flex-wrap:wrap;gap:6px}
+.lr-c button{border:1px solid var(--hair2);background:var(--paper);border-radius:99px;padding:6px 11px;font:inherit;font-size:12.5px;font-weight:600;color:var(--ink2);cursor:pointer}.lr-c button.on{background:#F9DC4A;color:#111318;border-color:#F9DC4A}.mo-line{font-size:18px!important;font-weight:700;color:#fff!important;line-height:1.35;margin:4px 0 14px!important}.lr small{color:rgba(255,255,255,.6)}
+.kr3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.kr3 small{display:block;font-size:11.5px;color:var(--muted)}.kr3 b{display:block;font-family:'SD Display','SD Text',sans-serif;font-size:20px;font-weight:800;margin:2px 0}.kr3 span{font-size:11.5px;color:var(--muted)}
+@media (max-width:420px){.kr3 b{font-size:17px}}
+.fx-cv{position:fixed;inset:0;width:100vw;height:100vh;z-index:150;pointer-events:none}
+.fx-ov{position:fixed;inset:0;z-index:149;pointer-events:none;display:grid;place-items:center;transition:opacity .5s ease}
+.fx-ov.out{opacity:0}
+.fx-dim{background:rgba(6,7,11,.55);animation:fadein .35s ease both;z-index:148}.fx-dim.deep{background:radial-gradient(70% 50% at 50% 40%,rgba(249,220,74,.22),rgba(6,7,11,.86))}
+.fx-cnt{text-align:center}.fx-cnt b{display:block;font-family:'SD Display','SD Text',sans-serif;font-size:58px;font-weight:800;letter-spacing:-.03em;color:#1E9E5A;text-shadow:0 2px 0 #fff,0 10px 40px rgba(30,158,90,.35);animation:fxPop .5s cubic-bezier(.2,1.5,.4,1) both}
+html[data-theme="dark"] .fx-cnt b{color:#3DDC84;text-shadow:0 10px 40px rgba(61,220,132,.35)}
+.fx-cnt small{display:block;font-weight:700;color:var(--ink2);margin-top:4px}
+.fx-in{text-align:center}.fx-gold .fx-in>*{display:block}.fx-gold .fx-in>.k{display:inline-block}
+.fx-gold .k{display:inline-block;padding:7px 16px;border-radius:99px;background:#111318;color:#F9DC4A;font-weight:800;letter-spacing:.08em;font-size:14px;animation:fxPop .45s cubic-bezier(.2,1.6,.4,1) both}
+.fx-gold b{font-family:'SD Display','SD Text',sans-serif;font-size:64px;font-weight:800;letter-spacing:-.035em;line-height:1.05;margin-top:10px;background:linear-gradient(180deg,#FFF3B0,#F9DC4A 45%,#C99E00);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 18px rgba(201,158,0,.45));animation:fxPop .6s .08s cubic-bezier(.2,1.5,.4,1) both}
+.fx-gold.xl b{font-size:min(92px,22vw)}.fx-gold b{font-size:min(64px,16vw)}.fx-gold small{margin-top:8px;font-weight:700;color:#fff;font-size:17px;text-shadow:0 2px 10px rgba(0,0,0,.5);animation:fadein .5s .4s both}
+.fx-gold.mega .k{background:linear-gradient(135deg,#FBE36B,#F2C300);color:#111318}
+@keyframes fxPop{0%{transform:scale(2.4);opacity:0}100%{transform:scale(1);opacity:1}}
+.fx-stamp>div{transform:rotate(-8deg);border:6px solid #18A957;border-radius:18px;padding:14px 24px;background:rgba(11,12,16,.9);text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.4);animation:fxStamp .5s cubic-bezier(.2,1.6,.4,1) both}
+.fx-stamp b{display:block;font-family:'SD Display','SD Text',sans-serif;font-size:42px;font-weight:800;letter-spacing:.02em;color:#3DDC84;line-height:1}.fx-stamp span{display:block;color:#F9DC4A;font-weight:800;font-size:17px;margin-top:6px}
+@keyframes fxStamp{0%{transform:rotate(-8deg) scale(3);opacity:0}100%{transform:rotate(-8deg) scale(1);opacity:1}}
+.fx-vault .vlt{width:150px;height:150px;border-radius:26px;background:linear-gradient(145deg,#3A3F4B,#15171D);box-shadow:0 30px 60px rgba(0,0,0,.45),inset 0 0 0 4px rgba(255,255,255,.08);display:grid;place-items:center;perspective:500px;animation:fxPop .35s cubic-bezier(.2,1.5,.4,1) both}
+.fx-vault .vlt-door{width:120px;height:120px;border-radius:20px;background:linear-gradient(145deg,#5B6070,#2A2E38);display:grid;place-items:center;transform-origin:left center;animation:vltOpen .35s .45s cubic-bezier(.6,0,.4,1) forwards;box-shadow:inset 0 0 0 3px rgba(249,220,74,.5)}
+.fx-vault .vlt-dial{width:56px;height:56px;border-radius:50%;border:5px solid #F9DC4A;background:radial-gradient(circle,#2A2E38 40%,#15171D);animation:vltSpin .45s ease-in both}
+@keyframes vltOpen{to{transform:rotateY(-110deg)}}@keyframes vltSpin{from{transform:rotate(-200deg)}}
+.fx-shake{animation:fxShake .45s cubic-bezier(.36,.07,.19,.97)}
+@keyframes fxShake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+body.fx-frame::after{content:'';position:fixed;inset:0;z-index:151;pointer-events:none;box-shadow:inset 0 0 0 6px #F9DC4A,inset 0 0 60px rgba(249,220,74,.55);animation:fadein .4s ease both}
+.fx-grp{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin:6px 0 8px}
+.fx-tb{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:14px}
+.fx-tb button{text-align:left;padding:12px 14px;border-radius:14px;border:1px solid var(--hair2);background:var(--paper);font:inherit;cursor:pointer;color:var(--ink)}.fx-tb b{display:block;font-size:14px}.fx-tb small{color:var(--muted);font-size:12px}
+.fx-tb button:active{transform:scale(.96)}
 .cbar{position:fixed;left:0;right:0;top:0;z-index:60;height:calc(var(--safeT) + 44px);padding:var(--safeT) 12px 0;display:flex;align-items:center;gap:8px;
   background:color-mix(in srgb,var(--canvas) 78%,transparent);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid var(--hair);
   opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .2s ease,transform .2s ease}
@@ -1087,7 +1126,7 @@ html.prelock .lock{display:block}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='49';const APP_DATE='2026-11-10';
+const APP_VERSION='51';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1550,7 +1589,7 @@ function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.f
    <div class="grid2" style="margin-top:14px"><div class="field"><label>Kunde</label><input class="inp" id="opn" placeholder="Name des Kunden" value="${o?esc(o.name||''):''}" onkeydown="if(event.key==='Enter'){event.preventDefault();saveOp()}"></div><div class="field"><label>Datum</label><input class="inp" type="date" id="opd" value="${OPK}"></div></div>
    <div class="field" style="margin-top:14px"><label>Stage im Forecast</label><div class="seg op-stage">${[['offer','Offer created'],['proposal','Proposal sent'],['expected','Expected'],['signed','Signed'],['','Nicht im Forecast']].map(([k2,l2])=>`<button class="${(o?(o.stage||''):'offer')===k2?'on':''}" onclick="OPST='${k2}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on');opHint()">${l2}</button>`).join('')}</div><div class="hint" id="ophint" style="margin-top:6px"></div></div>
 
-   ${id&&o&&OPEN_ST.includes(o.stage)?`<div class="op-acts"><button class="ok" onclick="oppAction('won')">${ic('check')}Gewonnen</button><button class="mv" onclick="oppAction('push')">${ic('right')}Nach ${MONS[pD(addM(o.fm||OPK.slice(0,7),1)).getMonth()]}</button><button class="no" onclick="oppAction('lost')">${ic('x')}Verloren</button></div>`:''}${id&&o&&(o.stage==='won'||o.stage==='lost')?`<p class="hint" style="margin-top:12px">Status: <b>${o.stage==='won'?'✓ Gewonnen':'✗ Verloren'}</b>. Wählst du oben eine Stage, ist sie wieder offen.</p>`:''}
+   ${id&&o&&OPEN_ST.includes(o.stage)?`<div class="op-acts"><button class="ok" onclick="oppAction('won')">${ic('check')}Gewonnen</button><button class="mv" onclick="oppAction('push')">${ic('right')}Nach ${MONS[pD(addM(o.fm||OPK.slice(0,7),1)).getMonth()]}</button><button class="no" onclick="oppAction('lost')">${ic('x')}Lost</button></div>`:''}${id&&o&&(o.stage==='won'||o.stage==='lost')?`<p class="hint" style="margin-top:12px">Status: <b>${o.stage==='won'?'✓ Gewonnen':'✗ Closed Lost'}</b>. Wählst du oben eine Stage, ist sie wieder offen.</p>`:''}
    <div class="row" style="margin-top:18px;gap:8px">${id?`<button class="btn danger" onclick="closeSheet();actOpDel('${OPK}','${id}')" aria-label="Löschen">${ic('trash')}</button>`:''}<button class="btn pri block" onclick="saveOp()">${id?'Speichern':'+1 Opp eintragen'}</button></div>`);
   opHint();if(!id)setTimeout(()=>{const i=document.getElementById('opa');i&&i.focus()},350)}
 function opHint(){const h=document.getElementById('ophint');if(!h)return;if(OPST==='__keep'){h.innerHTML='';return}const a=Math.abs(numIn((document.getElementById('opa')||{}).value||'')||0);const P=S.fcParams;const rate={offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:100}[OPST];
@@ -1587,21 +1626,44 @@ function openItems(m){const F=S.forecast[m]||{};const out=[];['signed','expected
 function agingPanel(m){const it=openItems(m);if(!it.length)return '';const nm=MON[pD(addM(m,1)).getMonth()];const stale=it.filter(x=>x.age!=null&&x.age>=14).length;
   return `<div class="sh"><h2>Offene Opps</h2><span class="sp"></span><span class="meta">${stale?`<span class="age old">${stale} seit 14+ Tagen</span>`:it.length+' im '+MON[pD(m).getMonth()]}</span></div>
   <div class="panel flush"><div class="list">${it.map(x=>`<div class="li oi"><div class="t" ${x.opp?`onclick="const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')"`:''} style="${x.opp?'cursor:pointer':''}"><b>${x.opp?'🎯 ':''}${esc(x.n||'Opp')}</b><small><select class="st-sel" onclick="event.stopPropagation()" onchange="fcItemStage('${m}','${x.st}',${x.i},this.value)" aria-label="Stage ändern">${['offer','proposal','expected','signed'].map(k=>`<option value="${k}" ${k===x.st?'selected':''}>${FCN[k]}</option>`).join('')}</select>${x.age!=null?' '+ageChip(x.age):''}</small></div><div class="v">${fmtE(x.v)}</div>
-    <div class="oi-a"><button class="ok" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')" aria-label="Gewonnen" title="Gewonnen">${ic('check')}</button><button class="mv" onclick="fcItemAct('${m}','${x.st}',${x.i},'push')" aria-label="In den ${nm} schieben" title="In den ${nm} schieben">${ic('right')}</button><button class="no" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')" aria-label="Verloren" title="Verloren">${ic('x')}</button></div></div>`).join('')}</div></div>
-  <p class="hint" style="margin-top:8px">✓ gewonnen (öffnet „Umsatz eintragen“) · → in den ${nm} schieben · ✕ verloren. Alter = Tage seit dem letzten Stage-Wechsel, orange ab 14, rot ab 30 Tagen.</p>`}
+    <div class="oi-a"><button class="ok" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')" aria-label="Gewonnen" title="Gewonnen">${ic('check')}</button><button class="mv" onclick="fcItemAct('${m}','${x.st}',${x.i},'push')" aria-label="In den ${nm} schieben" title="In den ${nm} schieben">${ic('right')}</button><button class="no" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')" aria-label="Closed Lost" title="Closed Lost">${ic('x')}</button></div></div>`).join('')}</div></div>
+  <p class="hint" style="margin-top:8px">✓ gewonnen (öffnet „Umsatz eintragen“) · → in den ${nm} schieben · ✕ Closed Lost. Alter = Tage seit dem letzten Stage-Wechsel, orange ab 14, rot ab 30 Tagen.</p>`}
 function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);x.since=todayK();
   let it=F.items[ns];if(!it||!it.length){it=[];if(+F[ns])it.push({v:+F[ns],n:'Bisheriger Wert'})}it.push(x);F.items[ns]=it;fcRecalc(F,ns);
   if(x.opp){const f=oppFind(x.opp);if(f){f.o.stage=ns;f.o.stageSince=todayK()}}save();render();toast(`${x.n||'Opp'} → ${FCN[ns]}`,'ok')}
 function fcRecalc(F,st){const it=F.items[st]||[];F[st]=it.reduce((a,y)=>a+(+y.v||0),0);if(!it.length)delete F.items[st]}
+/* ---------- Closed Won / Closed Lost protokollieren + Motivations-Effekt ---------- */
+function closedLog(res,x,m,st){S.closed=S.closed||[];const e={id:uid(),res,date:todayK(),m,n:x.n||x.name||'Opp',v:+x.v||+x.amount||0,st:st||x.stage||'',opp:x.opp||x.id||null};S.closed.push(e);return e}
+function closedStats(){const c=S.closed||[];const won=c.filter(x=>x.res==='won').length,lost=c.filter(x=>x.res==='lost').length;const cm=ymOf(new Date());const lm=c.filter(x=>x.res==='lost'&&x.date.slice(0,7)===cm);
+  const reasons={};c.filter(x=>x.res==='lost'&&x.reason).forEach(x=>reasons[x.reason]=(reasons[x.reason]||0)+1);
+  return {won,lost,rate:won+lost?won/(won+lost)*100:null,lostM:lm.length,lostMV:lm.reduce((a,x)=>a+x.v,0),reasons:Object.entries(reasons).sort((a,b)=>b[1]-a[1])}}
+const LOST_REASONS=['Preis','Timing','Wettbewerb','Kein Bedarf','Kein Budget','Kein Kontakt mehr','Entscheider fehlt','Sonstiges'];
+const LOST_LINES=['Jedes Nein bringt dich näher ans nächste Ja.','Abhaken. Der nächste Kunde wartet schon.','Kopf hoch, Hörer ab.','Ein Nein heute schafft Platz für ein Ja morgen.','Die Besten verlieren auch. Sie rufen nur schneller den Nächsten an.','Kein Deal ist auch eine klare Antwort. Weiter!','Fokus nach vorn: Wer ist dein nächster Kandidat?','Nicht jeder Lead ist dein Kunde. Der nächste vielleicht schon.'];
+function fxLost(e){const d=RM()?300:1900;
+  if(!RM()){fxDim(1900);fxLayer('fx-lostcard',`<div class="lc"><small>Closed Lost</small><b>${esc(e.n)}</b><span class="num">${fmtE(e.v)}</span></div>`,1000);
+    fxTone(520,.55,.3,.07,'sawtooth',160);
+    setTimeout(()=>{fxLayer('fx-next',`<b>NÄCHSTER.</b><i class="arw"><em></em><em></em><em></em></i>`,1100);fxTone(392,0,.14,.1,'triangle');fxTone(523,.1,.14,.1,'triangle');fxTone(784,.2,.35,.12,'triangle')},950)}
+  const cs=closedStats();const pipe=openItems(ymOf(new Date())).reduce((a,x)=>a+x.v,0);const line=LOST_LINES[Math.floor(Math.random()*LOST_LINES.length)];
+  const toYes=cs.rate&&cs.won>=2?Math.max(1,Math.round(100/cs.rate)):null;
+  setTimeout(()=>showMoment(`<div class="mo-badge">💪</div><div class="mo-kick">Weiter geht's</div><p class="mo-p mo-line">${line}</p>
+    <div class="mo-grid"><div><small>Gewinnquote</small><b>${cs.rate!=null?fmtN(cs.rate,0)+' %':'–'}</b><em>${cs.won} gewonnen · ${cs.lost} verloren</em></div><div><small>${toYes?'Nächstes Ja':'Offene Pipeline'}</small><b>${toYes?'~ '+toYes+' '+(toYes===1?'Opp':'Opps'):fmtE(pipe)}</b><em>${toYes?'statistisch entfernt':'diesen Monat'}</em></div></div>
+    <div class="lr"><small>Woran lag's? (optional, für deine Auswertung)</small><div class="lr-c">${LOST_REASONS.map(r=>`<button onclick="lostReason('${e.id}','${r}',this)">${r}</button>`).join('')}</div></div>
+    <button class="kk-go" onclick="closeMoment()">Nächster Lead →</button>`,false),d)}
+function lostReason(id,r,btn){const e=(S.closed||[]).find(x=>x.id===id);if(!e)return;e.reason=e.reason===r?null:r;save();render();btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.textContent===e.reason))}
+function lostPanel(){const cs=closedStats();if(!cs.won&&!cs.lost)return '';const c=(S.closed||[]).slice().reverse().filter(x=>x.res==='lost').slice(0,5);
+  return `<div class="sh"><h2>Closed Won & Lost</h2></div><div class="panel"><div class="kr3"><div><small>Gewinnquote</small><b class="num">${cs.rate!=null?fmtN(cs.rate,0)+' %':'–'}</b><span>${cs.won} gewonnen, ${cs.lost} verloren</span></div><div><small>Closed Lost ${MONS[new Date().getMonth()]}</small><b class="num">${cs.lostM}</b><span>${fmtE(cs.lostMV)}</span></div><div><small>Häufigster Grund</small><b>${cs.reasons[0]?cs.reasons[0][0]:'–'}</b><span>${cs.reasons[0]?cs.reasons[0][1]+'×':'noch keine Gründe'}</span></div></div>
+   ${c.length?`<div class="list" style="margin-top:10px">${c.map(x=>`<div class="li"><div class="t"><b>${esc(x.n)}</b><small>${dLabel(x.date)} · ${FCN[x.st]||''}${x.reason?' · '+x.reason:''}</small></div><div class="v mut">${fmtE(x.v)}</div></div>`).join('')}</div>`:''}</div>`}
+
 function fcItemAct(m,st,i,act){const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);const f=x.opp?oppFind(x.opp):null;
   if(act==='push'){const nm=addM(m,1);S.forecast[nm]=S.forecast[nm]||{};const N=S.forecast[nm];N.items=N.items||{};let it=N.items[st];if(!it||!it.length){it=[];if(+N[st])it.push({v:+N[st],n:'Bisheriger Wert'})}it.push(x);N.items[st]=it;fcRecalc(N,st);if(f)f.o.fm=nm;save();render();toast(`${x.n||'Opp'} → ${MON[pD(nm).getMonth()]} verschoben`,'ok');return}
   if(f){f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK()}
+  const ce=closedLog(act==='won'?'won':'lost',x,m,st);
   save();render();
-  if(act==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');setTimeout(()=>dealSheet(null,false,{amount:x.v,name:x.n&&x.n!=='Bisheriger Wert'?x.n:''}),300)}else toast(`${x.n||'Opp'} als verloren markiert`)}
+  if(act==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');setTimeout(()=>dealSheet(null,false,{amount:x.v,name:x.n&&x.n!=='Bisheriger Wert'?x.n:''}),300)}else fxLost(ce)}
 function oppAction(act){const f=oppFind(OPID);if(!f)return;const m=f.o.fm||f.k.slice(0,7);const F=S.forecast[m];let st=null,i=-1;if(F&&F.items)Object.keys(F.items).some(k=>{const j=F.items[k].findIndex(x=>x.opp===OPID);if(j>=0){st=k;i=j;return true}});closeSheet();
   if(st){fcItemAct(m,st,i,act);return}
   if(act==='push'){toast('Diese Opp steht in keinem Forecast');return}
-  f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK();save();render();if(act==='won')setTimeout(()=>dealSheet(null,false,{amount:f.o.amount,name:f.o.name}),300)}
+  f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK();const ce=closedLog(f.o.stage,{...f.o,opp:f.o.id},f.o.fm||f.k.slice(0,7),'');save();render();if(act==='won')setTimeout(()=>dealSheet(null,false,{amount:f.o.amount,name:f.o.name}),300);else fxLost(ce)}
 /* Rückwärtsrechner */
 function funnelData(){const st=S.settings.startMonth;const cur=ymOf(new Date());let demos=0,opps=0,leads=0;Object.keys(S.act||{}).forEach(k=>{if(k.slice(0,7)<st)return;demos+=+S.act[k].demo||0;opps+=(S.act[k].ops||[]).length});
   (S.leads||[]).forEach(l=>{if(l.date.slice(0,7)>=st)leads+=+l.count||0});
@@ -1609,7 +1671,7 @@ function funnelData(){const st=S.settings.startMonth;const cur=ymOf(new Date());
   const won=allOpps().filter(o=>o.stage==='won').length;
   const avgAll=deals.length?deals.reduce((a,d)=>a+ +d.amount,0)/deals.length:0;
   const FN=S.funnel||{};
-  const autoDemoOpp=demos>=5&&opps?opps/demos*100:null;const autoOppDeal=opps>=5&&dealsSince.length>=2?Math.min(100,dealsSince.length/opps*100):null;
+  const autoDemoOpp=demos>=5&&opps?opps/demos*100:null;const cst=closedStats();const autoOppDeal=cst.won+cst.lost>=5?cst.rate:(opps>=5&&dealsSince.length>=2?Math.min(100,dealsSince.length/opps*100):null);
   return {demos,opps,leads,deals:dealsSince.length,won,
     avg:FN.avg!=null?FN.avg:(avgAll||null),avgAuto:FN.avg==null&&!!avgAll,
     rDO:FN.rDO!=null?FN.rDO:(autoDemoOpp??50),rDOAuto:FN.rDO==null&&autoDemoOpp!=null,
@@ -1622,7 +1684,7 @@ function funnelPanel(m){const cur=ymOf(new Date());if(m!==cur)return '';const r=
   return `<div class="sh"><h2>Was brauche ich?</h2><span class="sp"></span><span class="meta">${wl} ${wl===1?'Arbeitstag':'Arbeitstage'} übrig</span></div>
   <div class="panel fu"><div class="fu-cols">${col(a,'Für 70 %')}${col(b,'Für 100 %')}</div>
    <div class="fu-ins">${inp('avg',f.avg,f.avgAuto,'€','Ø Abschluss')}${inp('rOD',f.rOD,f.rODAuto,'%','Opp → Abschluss')}${inp('rDO',f.rDO,f.rDOAuto,'%','Demo → Opp')}</div>
-   <p class="hint" style="margin-top:10px">Rückwärts gerechnet: fehlender Umsatz ÷ Ø Abschluss = Abschlüsse, ÷ Abschlussquote = Opps, ÷ Opp-Quote = Demos. Basis seit ${mLabel(S.settings.startMonth)}: ${f.demos} Demos, ${f.opps} Opps, ${f.deals} Abschlüsse. Je mehr du einträgst, desto genauer.</p></div>`}
+   <p class="hint" style="margin-top:10px">Rückwärts gerechnet: fehlender Umsatz ÷ Ø Abschluss = Abschlüsse, ÷ Abschlussquote = Opps, ÷ Opp-Quote = Demos. Basis seit ${mLabel(S.settings.startMonth)}: ${f.demos} Demos, ${f.opps} Opps, ${f.deals} Abschlüsse${(()=>{const c=closedStats();return c.won+c.lost?`, Gewinnquote ${fmtN(c.rate,0)} % aus ${c.won+c.lost} geschlossenen Opps`:''})()}. Je mehr du einträgst, desto genauer.</p></div>`}
 
 /* Opp ↔ Forecast-Einzelwerte verknüpfen */
 function fcOppUnlink(id,only){Object.keys(S.forecast||{}).forEach(m=>{if(only&&m!==only)return;const F=S.forecast[m];if(!F||!F.items)return;Object.keys(F.items).forEach(st=>{const before=F.items[st].length;F.items[st]=F.items[st].filter(x=>x.opp!==id);if(F.items[st].length!==before){F[st]=F.items[st].reduce((a,x)=>a+(+x.v||0),0);if(!F.items[st].length)delete F.items[st]}})})}
@@ -2129,7 +2191,7 @@ function yearTargets(y){
 function calcEval(str){let t=String(str||'').replace(/[\s€]/g,'').replace(/−/g,'-').replace(/=+$/,'');if(!t)return null;const body=t.replace(/^[-+]/,'');if(!/[+\-]/.test(body))return null;const terms=t.match(/[+-]?[^+-]+/g);if(!terms)return null;let sum=0;for(const x of terms){const sg=x[0]==='-'?-1:1;const n=numIn(x.replace(/^[+-]/,''));sum+=sg*n}return Math.round(sum*100)/100}
 function fcLive(el,f){const h=document.getElementById('fcc-'+f);if(!h)return;const r=calcEval(el.value);h.textContent=r==null?'':'= '+fmtE(r,2)+'  (Enter oder =)';h.style.display=r==null?'none':'block'}
 function fcKey(e,el,f){if(e.key==='='||e.key==='Enter'){const r=calcEval(el.value);if(r!=null||e.key==='Enter'){e.preventDefault();if(r!=null){el.value=String(r).replace('.',',');fcLive(el,f)}if(e.key==='Enter'){const all=[...document.querySelectorAll('#view .fcf')];const nx=all[all.indexOf(el)+1];if(nx)nx.focus();else el.blur()}}}}
-const FCN={signed:'Signed',offer:'Offer created',proposal:'Proposal sent',expected:'Expected sign up',won:'Gewonnen',lost:'Verloren'};
+const FCN={signed:'Signed',offer:'Offer created',proposal:'Proposal sent',expected:'Expected sign up',won:'Gewonnen',lost:'Closed Lost'};
 let FL=null;
 function fcList(f){const F=S.forecast[CUR]||{};const items=((F.items||{})[f]||[]).map(x=>({...x}));FL={f,items:items.length?items:[{v:'',n:''},{v:'',n:''}]};if(!items.length&&+F[f])FL.items=[{v:+F[f],n:'Bisheriger Wert'},{v:'',n:''}];fcListDraw()}
 function fcListDraw(){const sum=FL.items.reduce((a,x)=>a+numIn(String(x.v)),0);const n=FL.items.filter(x=>numIn(String(x.v))).length;
@@ -2175,6 +2237,7 @@ function vForecast(){
   </div>
   ${funnelPanel(CUR)}
   ${agingPanel(CUR)}
+  ${CUR===ymOf(new Date())?lostPanel():''}
   <div class="sh"><h2>Gewichtung</h2></div>
   <div class="panel">
     <div class="grid3 r">
@@ -2403,6 +2466,8 @@ function vSettings(){
       <p class="hint" style="margin-top:0">Einmal am Tag beim ersten Öffnen: dein Stand, eine Mission für den Tag und ein Spruch zum Loslegen.</p>
       <button class="btn pri block" onclick="maybeKickoff(true)">Jetzt ansehen 🚀</button>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Saison-Motive</b><div class="lbl">Dezente Deko zu Advent, Silvester, Karneval, Ostern & Co.</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.season!==false?'on':''}" onclick="S.settings.season=true;save();render()">An</button><button class="${S.settings.season===false?'on':''}" onclick="S.settings.season=false;save();render()">Aus</button></div></div>
+      <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Umsatz-Effekte 💸</b><div class="lbl">Geldregen und Meilenstein-Momente beim Eintragen</div></div><span class="sp"></span><div class="seg pill"><button class="${fxOn()?'on':''}" onclick="S.settings.fx=true;save();render()">An</button><button class="${!fxOn()?'on':''}" onclick="S.settings.fx=false;save();render()">Aus</button></div></div>
+      <button class="btn sm" style="margin-top:10px" onclick="fxTestSheet()">✨ Effekte testen</button>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Gong bei Abschluss</b><div class="lbl">Ton bei neuen Deals und Abzeichen</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.sound?'on':''}" onclick="S.settings.sound=true;save();render();gong()">An</button><button class="${!S.settings.sound?'on':''}" onclick="S.settings.sound=false;save();render()">Aus</button></div></div>
     </div>
   </div>
@@ -2743,13 +2808,76 @@ function gong(){if(!S.settings.sound)return;try{const A=new (window.AudioContext
 /* Moment-Overlay */
 function showMoment(html,conf){const el=document.getElementById('moment');el.innerHTML=`<div class="mo-in">${html}</div>`;el.classList.remove('out');el.classList.add('on');if(conf)setTimeout(confetti,150)}
 function closeMoment(then){const el=document.getElementById('moment');el.classList.add('out');setTimeout(()=>{el.classList.remove('on','out');el.innerHTML='';if(typeof then==='function')then();else nextBadge()},350)}
+/* ============================================================
+   Umsatz-Effekte: Geldregen in Stufen + Meilenstein-Momente
+   ============================================================ */
+const fxOn=()=>S.settings.fx!==false;
+let _fxA=null;function fxAudio(){if(!S.settings.sound)return null;try{_fxA=_fxA||new (window.AudioContext||window.webkitAudioContext)();if(_fxA.state==='suspended')_fxA.resume();return _fxA}catch(e){return null}}
+function fxTone(f,t,dur,vol,type='sine',f2){const A=fxAudio();if(!A)return;const o=A.createOscillator(),g=A.createGain();o.type=type;const t0=A.currentTime+t;o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+dur);g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+.006);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);o.connect(g).connect(A.destination);o.start(t0);o.stop(t0+dur+.05)}
+const fxCoin=(t=0)=>{fxTone(2093,t,.18,.12,'triangle');fxTone(3136,t+.04,.22,.08,'triangle')};
+const fxCoins=(n,t=0,gap=.07)=>{for(let i=0;i<n;i++)fxCoin(t+i*gap+Math.random()*.03)};
+const fxBoom=(t=0)=>{fxTone(120,t,.5,.5,'sine',38);fxTone(70,t,.7,.35,'triangle',30)};
+const fxWhoosh=(t=0)=>{fxTone(300,t,.35,.08,'sawtooth',1400)};
+const fxBell=(n=3,t=0)=>{for(let s=0;s<n;s++)[[1,.22],[2.76,.11],[5.4,.06],[.5,.08]].forEach(([r,v])=>fxTone(880*r,t+s*.3,r<1?2.2:1.6/r+.3,v))};
+const fxRise=(t=0)=>{[523,659,784,1046].forEach((f,i)=>fxTone(f,t+i*.09,.5,.12,'triangle'))};
+/* Partikel-Engine */
+const FXE={};function fxSprite(ch,sz){const k=ch+sz;if(FXE[k])return FXE[k];const c=document.createElement('canvas');const d=Math.ceil(sz*1.4);c.width=c.height=d;const x=c.getContext('2d');x.font=`${sz}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText(ch,d/2,d/2+sz*.06);FXE[k]=c;return c}
+let FX=null;
+function fxStage(){if(FX&&FX.c.isConnected)return FX;const c=document.createElement('canvas');c.className='fx-cv';document.body.appendChild(c);const dpr=Math.min(2,window.devicePixelRatio||1);const W=innerWidth,H=innerHeight;c.width=W*dpr;c.height=H*dpr;const x=c.getContext('2d');x.scale(dpr,dpr);
+  FX={c,x,W,H,p:[],run:false,end:0};return FX}
+function fxLoop(){const F=FX;if(!F)return;let last=performance.now();F.run=true;const step=now=>{const dt=Math.min(.05,(now-last)/1000);last=now;const {x,W,H}=F;x.clearRect(0,0,W,H);
+  F.p=F.p.filter(q=>{if(q.delay>0){q.delay-=dt;return true}q.life+=dt;q.vy+=q.g*dt;q.vx*=Math.pow(q.drag,dt*60);q.vy*=Math.pow(q.drag,dt*60);if(q.flut){q.vx+=Math.sin(q.life*q.fs+q.ph)*q.flut*dt}q.x+=q.vx*dt;q.y+=q.vy*dt;q.r+=q.vr*dt;
+    if(q.vy>q.tv)q.vy=q.tv;
+    const fade=q.life>q.ttl-.4?Math.max(0,(q.ttl-q.life)/.4):1;if(q.life>=q.ttl||q.y>H+80)return false;
+    x.save();x.globalAlpha=fade;x.translate(q.x,q.y);x.rotate(q.r);const s=q.sc*(q.flip?Math.abs(Math.cos(q.life*q.fs*.7+q.ph))*.8+.2:1);x.scale(q.flip?s:q.sc,q.sc);x.drawImage(q.img,-q.img.width/2,-q.img.height/2);x.restore();return true});
+  if(F.p.length||now<F.end)requestAnimationFrame(step);else{F.c.remove();FX=null}};requestAnimationFrame(step)}
+function fxAdd(o){const F=fxStage();const ch=o.ch||'💵';const sz=o.sz||34;F.p.push({x:o.x,y:o.y,vx:o.vx||0,vy:o.vy||0,g:o.g??900,drag:o.drag??.985,tv:o.tv??520,r:o.r??(Math.random()*6.28),vr:o.vr??((Math.random()-.5)*6),flut:o.flut??140,fs:2+Math.random()*3,ph:Math.random()*6.28,flip:o.flip??(ch==='💵'||ch==='💸'),sc:o.sc||1,img:fxSprite(ch,sz),life:0,ttl:o.ttl||4,delay:o.delay||0});if(!F.run)fxLoop()}
+const BILLS=['💵','💵','💵','💸','💶'];const pick=a=>a[Math.floor(Math.random()*a.length)];
+function fxRain(n,{dur=1.2,gold=0,big=false}={}){const F=fxStage();for(let i=0;i<n;i++){const g=Math.random()<gold;fxAdd({ch:g?pick(['🪙','🪙','💰']):pick(BILLS),sz:g?30:(big?40:34),x:Math.random()*F.W,y:-40-Math.random()*80,vx:(Math.random()-.5)*60,vy:60+Math.random()*120,g:260,tv:180+Math.random()*160,drag:.995,flut:120+Math.random()*120,delay:Math.random()*dur,ttl:5.5})}}
+function fxCannon(n,{delay=0,gold=0}={}){const F=fxStage();[[-1,0],[1,F.W]].forEach(([dir,x0])=>{for(let i=0;i<n;i++){const ang=(-90+dir*(18+Math.random()*22))*Math.PI/180;const sp=900+Math.random()*700;const g=Math.random()<gold;fxAdd({ch:g?'🪙':pick(BILLS),x:x0,y:F.H+20,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,g:900,drag:.965,tv:200,flut:160,delay:delay+Math.random()*.35,ttl:5})}})}
+function fxBurst(n,{x,y,delay=0,gold=.3,speed=1}={}){const F=fxStage();x=x??F.W/2;y=y??F.H*.42;for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2;const sp=(400+Math.random()*900)*speed;const g=Math.random()<gold;fxAdd({ch:g?pick(['🪙','🪙','💰','💎']):pick(BILLS),sz:g?32:36,x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-200,g:800,drag:.955,tv:220,flut:150,delay:delay+Math.random()*.08,ttl:5})}}
+/* Texte & Overlays */
+function fxLayer(cls,html,ms){const d=document.createElement('div');d.className='fx-ov '+cls;d.innerHTML=html?`<div class="fx-in">${html}</div>`:'';document.body.appendChild(d);setTimeout(()=>d.classList.add('out'),ms);setTimeout(()=>d.remove(),ms+600);return d}
+function fxShake(n=1){const ap=document.querySelector('.app');if(!ap||RM())return;let i=0;const go=()=>{ap.classList.remove('fx-shake');void ap.offsetWidth;ap.classList.add('fx-shake');if(++i<n)setTimeout(go,480)};go()}
+function fxCount(el,v,ms){const t0=performance.now();const st=now=>{const k=Math.min(1,(now-t0)/ms),e=1-Math.pow(1-k,3);el.textContent='+'+fmtE(v*e);if(k<1)requestAnimationFrame(st)};requestAnimationFrame(st)}
+function fxDim(ms,cls=''){return fxLayer('fx-dim '+cls,'',ms)}
+function fxVault(){return fxLayer('fx-vault',`<div class="vlt"><div class="vlt-door"><div class="vlt-dial"></div></div></div>`,900)}
+/* Stufen */
+function fxSmall(a){fxRain(16,{dur:.8});fxCoins(3);return 900}
+function fxMid(a){if(Math.random()<.5){fxRain(70,{dur:1.3});fxCoins(6)}else{fxWhoosh();fxCannon(34,{});fxCoins(6,.2)}return 1300}
+function fxStorm(a){fxRain(90,{dur:1.6,gold:.08});const d=fxLayer('fx-cnt',`<b class="num">+0 €</b><small>${a.name?esc(a.name):'Deal'}</small>`,2100);fxCount(d.querySelector('b'),a.amount,1600);fxCoins(14,0,.11);return 1900}
+function fxBig(a){fxDim(2600);fxVault();fxTone(180,0,.12,.25,'square');fxTone(140,.25,.12,.25,'square');setTimeout(()=>{fxBoom();fxShake();fxBurst(110,{gold:.3});fxRain(60,{dur:1.6,gold:.2,big:true});fxLayer('fx-gold',`<span class="k">BIG DEAL</span><b class="num">+${fmtE(a.amount)}</b>`,2000);fxCoins(10,.2,.08)},700);return 2500}
+function fxMega(a){fxDim(3300,'deep');fxAdd({ch:'💵',sz:64,x:innerWidth/2,y:-60,vy:60,g:0,tv:120,drag:1,flut:40,vr:.8,ttl:1.6});fxWhoosh(.2);
+  setTimeout(()=>{fxBoom();fxBell(2);fxShake(2);fxCannon(50,{gold:.25});fxBurst(140,{gold:.35,speed:1.2});fxRain(90,{dur:2,gold:.25,big:true});fxLayer('fx-gold mega',`<span class="k">MEGA DEAL</span><b class="num">+${fmtE(a.amount)}</b>`,2400);fxCoins(16,.2,.07)},1300);return 3400}
+/* Meilensteine (fest pro Stufe) */
+function fxM70(a){fxRise();fxShake();fxRain(90,{dur:1.4,gold:.15});fxLayer('fx-stamp g',`<div><b>PROVISION FREI</b><span>70 % geknackt</span></div>`,1900);fxCoins(8,.3);return 2000}
+function fxM100(a){fxDim(3600);fxAdd({ch:'💵',sz:64,x:innerWidth/2,y:-60,vy:70,g:0,tv:130,drag:1,flut:30,vr:.6,ttl:1.4});fxWhoosh(.1);
+  setTimeout(()=>{fxBoom();fxBell(3);fxShake();fxRain(160,{dur:2.2,gold:.25,big:true});fxCannon(30,{gold:.3});const d=fxLayer('fx-gold xl',`<span class="k">ZIEL GEKNACKT</span><b class="num">${fmtN(a.after,1)} %</b>${a.sal?`<small>Gehalt ${MONS[pD(addM(a.m,1)).getMonth()]}: ${fmtE(a.sal.total)}</small>`:''}`,2600)},1200);return 3600}
+function fxM120(a){fxVault();setTimeout(()=>{fxBoom();fxShake(2);fxBurst(150,{gold:.4,speed:1.15});fxRain(140,{dur:2,gold:.35,big:true});fxLayer('fx-gold xl',`<span class="k">OVERDRIVE</span><b class="num">${fmtN(a.after,1)} %</b>`,2400);fxCoins(14,.1,.07);fxRise(.3)},700);return 3200}
+function fxM130(a,lvl){fxDim(4200,'deep');document.body.classList.add('fx-frame');setTimeout(()=>document.body.classList.remove('fx-frame'),4200);fxBell(4);
+  setTimeout(()=>{fxBoom();fxShake(3);fxCannon(60,{gold:.4});fxBurst(180,{gold:.45,speed:1.25});fxRain(180,{dur:2.4,gold:.4,big:true});fxLayer('fx-gold xl mega',`<span class="k">LEGENDÄR · ${lvl} %</span><b class="num">${fmtN(a.after,1)} %</b>${a.sal?`<small>Gehalt ${MONS[pD(addM(a.m,1)).getMonth()]}: ${fmtE(a.sal.total)}</small>`:''}`,2800);fxCoins(20,.1,.06)},600);return 3800}
+/* Auswahl */
+const FX_LV=[200,150,130,120,100,70];
+function fxDeal(o,before,after,sAfter){if(!fxOn()||!(+o.amount>0)||o.storno)return 0;const m=o.date.slice(0,7);S.fxDone=S.fxDone||{};const done=S.fxDone[m]||[];
+  const crossed=FX_LV.filter(t=>before<t&&after>=t&&!done.includes(t));const a={amount:+o.amount,name:o.name,after,m,sal:sAfter};
+  if(RM()){fxRain(12,{dur:.4});return 400}
+  if(crossed.length){S.fxDone[m]=[...new Set([...done,...crossed])];save();const top=crossed[0];return top>=130?fxM130(a,top):top>=120?fxM120(a):top>=100?fxM100(a):fxM70(a)}
+  const big=+S.salary.bigThreshold||2500;const v=+o.amount;
+  return v>5000?fxMega(a):v>big?fxBig(a):v>=2000?fxStorm(a):v>=1000?fxMid(a):fxSmall(a)}
+function fxTest(kind){const t=ymOf(new Date());const r=rev(t);const sal=t>=S.settings.startMonth&&S.targets[t]?salary(t):null;const a={amount:{small:800,mid:1500,storm:2300,big:3400,mega:7200}[kind]||2400,name:'Testkunde',after:{m70:71.3,m100:102.4,m120:121.8,m130:134.6}[kind]||r.pct,m:t,sal};
+  closeSheet();setTimeout(()=>({small:fxSmall,mid:fxMid,storm:fxStorm,big:fxBig,mega:fxMega,m70:fxM70,m100:fxM100,m120:fxM120,m130:x=>fxM130(x,130)})[kind](a),250)}
+function fxTestSheet(){openSheet(`${sheetHead('Effekte testen')}<p class="hint" style="margin:0 0 12px">So sieht es aus, wenn du einen Umsatz einträgst. Ton gibt es nur, wenn „Gong bei Abschluss“ an ist.</p>
+  <div class="fx-grp">Nach Dealgröße</div><div class="fx-tb">${[['small','unter 1.000 €','Schauer'],['mid','1.000–2.000 €','Regen oder Kanone'],['storm','2.000–2.500 €','Geldsturm'],['big','Big Deal bis 5.000 €','Tresor'],['mega','über 5.000 €','Mega Deal']].map(([k,a,b])=>`<button onclick="fxTest('${k}')"><b>${a}</b><small>${b}</small></button>`).join('')}</div>
+  <div class="fx-grp">Meilensteine (einmal pro Monat)</div><div class="fx-tb">${[['m70','70 %','Provision frei'],['m100','100 %','Ziel geknackt'],['m120','120 %','Overdrive'],['m130','130 % +','Legendär']].map(([k,a,b])=>`<button onclick="fxTest('${k}')"><b>${a}</b><small>${b}</small></button>`).join('')}</div>
+  <div class="fx-grp">Opp verloren</div><div class="fx-tb"><button onclick="closeSheet();setTimeout(()=>fxLost({id:'test',n:'Testkunde',v:2400}),250)"><b>Closed Lost</b><small>Nächster.</small></button></div>`)}
+
 function dealMoment(o,before,sBefore,recBig){const m=o.date.slice(0,7);const r=rev(m);const after=r.pct;const sAfter=m>=S.settings.startMonth?salary(m):null;
   const hit=[200,150,130,100,70].find(t=>before<t&&after>=t);const nextLv=LEVELS.find(l=>after<l);
   const dProv=sAfter&&sBefore?sAfter.total-sBefore.total:0;
   const big=+o.amount>+S.salary.bigThreshold;const isRec=recBig&&S.deals.filter(d=>!d.retro).length>1;
   const mx=Math.max(130,after);
-  gong();
-  showMoment(`<div class="mo-badge">${hit?(hit>=100?'🏆':'💸'):big?'💎':'🎉'}</div>
+  const fxd=fxDeal(o,before,after,sAfter);if(!fxd)gong();
+  const _sm=()=>showMoment(`<div class="mo-badge">${hit?(hit>=100?'🏆':'💸'):big?'💎':'🎉'}</div>
     <div class="mo-kick">${hit?`${hit} % geknackt!`:big?'Big Deal!':'Deal eingetragen'}</div>
     <div class="mo-amt">+${fmtE(o.amount)}</div>
     <p class="mo-p">${o.channel==='in'?'Inbound':'Outbound'}${o.name?', '+esc(o.name):''}</p>
@@ -2757,7 +2885,8 @@ function dealMoment(o,before,sBefore,recBig){const m=o.date.slice(0,7);const r=r
     <div class="kk-bar" style="margin:6px 0 4px"><i style="width:${Math.min(after,mx)/mx*100}%"></i><span style="left:${70/mx*100}%"></span><span style="left:${100/mx*100}%"></span></div>
     ${nextLv&&r.target?`<p class="mo-p">Nächste Stufe ${nextLv} %: noch <b>${fmtE(r.target*nextLv/100-r.tot)}</b></p>`:''}
     ${isRec?`<div class="mo-rec">⭐ Neuer Rekord: dein größter Deal!</div>`:''}
-    <button class="kk-go" onclick="closeMoment()">Weiter 🚀</button>`,!!(hit||big||isRec))}
+    <button class="kk-go" onclick="closeMoment()">Weiter 🚀</button>`,!fxd&&!!(hit||big||isRec));
+  if(fxd)setTimeout(_sm,Math.round(fxd*.75));else _sm()}
 /* Tempo & Wochenziel */
 /* ---------- Tempo-Kurve: Ist vs. Soll (tagesaktuell) ---------- */
 function paceData(m){
