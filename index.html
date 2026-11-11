@@ -1455,7 +1455,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='84';const APP_SEMVER='3.5.0';const APP_DATE='2026-11-11';
+const APP_VERSION='85';const APP_SEMVER='3.5.1';const APP_DATE='2026-11-11';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -3881,7 +3881,8 @@ function gateStats(){const L=S.gateLog||{},K=S.gateSkip||{};const tk=todayK(),m=
   const blockVisits=bl.reduce((a,x)=>a+(L[x]||0),0);const monthVisits=Object.keys(L).filter(x=>x.startsWith(m)).reduce((a,x)=>a+L[x],0);
   let clean=0;monthDays(m).forEach(x=>{if(x.k>=tk)return;if(gateFreeDay(x.k)&&!L[x.k])clean++});const skips=Object.keys(K).filter(x=>x.startsWith(m)).reduce((a,x)=>a+K[x],0);
   return{blockVisits,monthVisits,clean,skips,bl}}
-function gatePassed(){const g=gateState();const key=g&&g.key||todayK();try{return localStorage.getItem('gate_'+key)==='1'}catch(e){return false}}
+let GATE_OK_AT=0;
+function gatePassed(){if(!GATE_OK_AT)return false;if(typeof HIDDEN_AT!=='undefined'&&HIDDEN_AT>GATE_OK_AT&&Date.now()-HIDDEN_AT>30000){GATE_OK_AT=0;return false}return true}
 function gateNeeded(){return gateOn()&&!gatePassed()&&!!gateState()}
 let GATE_CB=null,GATE_PREV=null,GATE_PT=null;
 function gateScene(g){const tk=todayK();const nx=eodNextWork(tk);const ns=restNextStart(nx);const until=ns?restDur((ns.t-new Date())/6e4):'';const d0=new Date();
@@ -3918,7 +3919,7 @@ function gateBind(){const h=document.getElementById('gHold');if(!h)return;const 
   const down=ev=>{if(done)return;ev.preventDefault();h.classList.add('on');document.getElementById('gHl').textContent='Weiter halten …';t0=performance.now();raf=requestAnimationFrame(step);try{fxTone(440,0,.08,.05,'sine')}catch(e){}};
   const up=()=>{if(done||!h.classList.contains('on'))return;cancelAnimationFrame(raf);h.classList.remove('on');h.classList.add('nope');setTimeout(()=>h.classList.remove('nope'),450);pr.style.transition='stroke-dashoffset .4s ease';pr.style.strokeDashoffset=C;setTimeout(()=>pr.style.transition='',420);document.getElementById('gHl').textContent='Ganz halten 😉, 3 Sekunden'};
   h.addEventListener('pointerdown',down);['pointerup','pointerleave','pointercancel'].forEach(e=>h.addEventListener(e,up));h.addEventListener('contextmenu',e=>e.preventDefault())}
-function gateOpen(){const el=document.getElementById('gate');if(!GATE_PREV){const g=gateState();const k=g&&g.key||todayK();S.gateLog=S.gateLog||{};S.gateLog[k]=(S.gateLog[k]||0)+1;save();try{localStorage.setItem('gate_'+k,'1')}catch(e){}}
+function gateOpen(){const el=document.getElementById('gate');if(!GATE_PREV){const g=gateState();const k=g&&g.key||todayK();S.gateLog=S.gateLog||{};S.gateLog[k]=(S.gateLog[k]||0)+1;save();GATE_OK_AT=Date.now()}
   try{const F=fxStage();for(let i=0;i<26;i++)fxAdd({ch:pick(['🔓','✨','💼','📈']),sz:28,x:F.W/2,y:F.H*.62,vx:(Math.random()-.5)*900,vy:-(300+Math.random()*600),g:900,drag:.97,tv:400,flut:40,delay:Math.random()*.1,ttl:3});fxTone(660,0,.12,.08,'triangle');fxTone(990,.1,.2,.08,'triangle')}catch(e){}
   el.classList.add('out');setTimeout(()=>{el.className='gate';el.innerHTML='';unlockScroll();const cb=GATE_CB;GATE_CB=null;cb&&cb();if(!GATE_PREV)toast('Okay, aber nicht zu lange 😉')},520)}
 function gateNo(){const el=document.getElementById('gate');if(!GATE_PREV){const g=gateState();const k=g&&g.key||todayK();S.gateSkip=S.gateSkip||{};S.gateSkip[k]=(S.gateSkip[k]||0)+1;save()}
