@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#EEF0F5">
 <meta name="format-detection" content="telephone=no">
 <title>Sales Dashboard – Zeit, Umsatz &amp; Provision</title>
-<script>try{var t=(JSON.parse(localStorage.getItem("quota_v1")||"{}").settings||{}).theme||"auto";var d=t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";var sc=(JSON.parse(localStorage.getItem("quota_v1")||"{}").security||{});if(sc.pin)document.documentElement.classList.add("prelock");var tm=document.querySelector("meta[name=theme-color]");if(tm)tm.setAttribute("content",sc.pin?"#0B0C10":d?"#06070B":"#EEF0F5")}catch(e){}</script>
+<script>try{var t=(JSON.parse(localStorage.getItem("quota_v1")||"{}").settings||{}).theme||"auto";var d=t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=d?"dark":"light";var sc=(JSON.parse(localStorage.getItem("quota_v1")||"{}").security||{});if(sc.pin)document.documentElement.classList.add("prelock");var tm=document.querySelector("meta[name=theme-color]");if(tm)tm.setAttribute("content",d?"#06070B":"#EEF0F5")}catch(e){}</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
@@ -1008,6 +1008,29 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+/* Helle Variante für Sperrbildschirm, Tagesstart und Feierabend (Statusleiste passt dann) */
+html[data-theme=light] .lock{background:radial-gradient(90% 60% at 50% 0%,rgba(249,220,74,.35),transparent 60%),#F4F5F8;color:#111318}
+html[data-theme=light] .lk-logo{box-shadow:0 14px 40px rgba(180,140,0,.25)}
+html[data-theme=light] .lk-sub{color:rgba(17,19,24,.55)}html[data-theme=light] .lk-txt{color:rgba(17,19,24,.65)}
+html[data-theme=light] .lk-dots i{border-color:rgba(17,19,24,.35)}html[data-theme=light] .lk-dots i.f{background:#E8C400;border-color:#E8C400}
+html[data-theme=light] .lk-pad button{background:#fff;color:#111318;box-shadow:0 2px 10px rgba(17,19,24,.06)}html[data-theme=light] .lk-pad button.fn{background:none;box-shadow:none}
+html[data-theme=light] .lk-ver{color:rgba(17,19,24,.35)}html[data-theme=light] .lk-forgot{color:rgba(17,19,24,.55)}
+html[data-theme=light] .kick{background:radial-gradient(100% 55% at 50% 0%,rgba(249,220,74,.45),transparent 65%),#F4F5F8;color:#111318}
+html[data-theme=light] .eod{background:radial-gradient(100% 55% at 50% 0%,rgba(110,120,255,.22),transparent 65%),#F4F5F8}
+html[data-theme=light] .kk-top{color:rgba(17,19,24,.55)}html[data-theme=light] .kk-x{background:rgba(17,19,24,.07);color:#111318}
+html[data-theme=light] .kk-hi,html[data-theme=light] .kk-lbl,html[data-theme=light] .eod-ops b small,html[data-theme=light] .eod-sum span{color:#A37F00}
+html[data-theme=light] .kk-msg{color:rgba(17,19,24,.8)}
+html[data-theme=light] .kk-stats div{background:#fff;border-color:rgba(17,19,24,.06)}html[data-theme=light] .kk-stats small{color:rgba(17,19,24,.5)}html[data-theme=light] .kk-stats b em{color:rgba(17,19,24,.4)}
+html[data-theme=light] .kk-bar{background:rgba(17,19,24,.08)}html[data-theme=light] .kk-bar span{background:rgba(17,19,24,.3)}
+html[data-theme=light] .kk-y{color:rgba(17,19,24,.75)}html[data-theme=light] .kk-y svg,html[data-theme=light] .kk-y b,html[data-theme=light] .eod-p{color:#1F9D61}html[data-theme=light] .eod-n{color:#D9383E}
+html[data-theme=light] .kk-mis,html[data-theme=light] .eod-sec{background:#fff}
+html[data-theme=light] .kk-mis input{border-color:rgba(17,19,24,.3)}html[data-theme=light] .kk-mis input:checked+span{color:rgba(17,19,24,.45)}
+html[data-theme=light] .kk-q{color:rgba(17,19,24,.7)}html[data-theme=light] .kk-season{background:rgba(249,220,74,.3);color:#7A5F00}
+html[data-theme=light] .eod-t,html[data-theme=light] .eod-ops span small{color:rgba(17,19,24,.5)}html[data-theme=light] .eod-ops>div{border-top-color:rgba(17,19,24,.07)}html[data-theme=light] .eod-tip{color:rgba(17,19,24,.8)}
+/* Unterreiter: Hintergrund beim Scrollen voll abdecken */
+.subtabs{top:calc(var(--safeT) + 44px);box-shadow:var(--shadow),0 0 0 100vmax var(--canvas);clip-path:inset(-10px -100vmax -10px -100vmax)}
+@media (min-width:1000px){.subtabs{top:0;clip-path:inset(-14px -100vmax -10px -100vmax)}}
+
 .curtg{display:flex;gap:6px;margin-top:8px}.curtg button{flex:1;height:34px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink2);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
 .curtg button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .fxh{margin-top:6px;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}.fxh:empty{display:none}.fxh b{color:var(--ink)}.fxh button{border:0;background:none;color:var(--ink2);text-decoration:underline;font:inherit;padding:0;cursor:pointer}
@@ -1304,7 +1327,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='72';const APP_SEMVER='3.1.1';const APP_DATE='2026-11-11';
+const APP_VERSION='73';const APP_SEMVER='3.1.2';const APP_DATE='2026-11-11';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1603,7 +1626,7 @@ const heatCls=v=>v<50?'c0':v<70?'c1':v<100?'c2':'c3';
 /* ---------- Theme ---------- */
 const mq=matchMedia('(prefers-color-scheme: dark)');
 function applyTheme(){const t=S.settings.theme||'auto';const d=t==='dark'||(t==='auto'&&mq.matches);document.documentElement.dataset.theme=d?'dark':'light';barSync()}
-let _barC=null;function barSync(){const d=document.documentElement.dataset.theme==='dark';const dark=document.documentElement.classList.contains('prelock')||['lock','kick','eod','moment'].some(id=>{const e=document.getElementById(id);return e&&e.classList.contains('on')&&!e.classList.contains('out')});const c=dark?'#0B0C10':d?'#06070B':'#EEF0F5';if(c===_barC)return;_barC=c;const o=document.querySelector('meta[name=theme-color]');const n=document.createElement('meta');n.name='theme-color';n.content=c;if(o)o.replaceWith(n);else document.head.appendChild(n)}
+let _barC=null;function barSync(){const d=document.documentElement.dataset.theme==='dark';const dark=document.documentElement.classList.contains('prelock')||['lock','kick','eod','moment'].some(id=>{const e=document.getElementById(id);return e&&e.classList.contains('on')&&!e.classList.contains('out')});const c=d?'#06070B':'#EEF0F5';if(c===_barC)return;_barC=c;const o=document.querySelector('meta[name=theme-color]');const n=document.createElement('meta');n.name='theme-color';n.content=c;if(o)o.replaceWith(n);else document.head.appendChild(n)}
 function barWatch(){const mo=new MutationObserver(()=>barSync());mo.observe(document.documentElement,{attributes:true,attributeFilter:['class','data-theme']});['lock','kick','eod','moment'].forEach(id=>{const e=document.getElementById(id);if(e)mo.observe(e,{attributes:true,attributeFilter:['class']})});barSync()}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){_barC=null;barSync()}});
 if(document.readyState!=='loading')setTimeout(barWatch,0);else document.addEventListener('DOMContentLoaded',barWatch);
