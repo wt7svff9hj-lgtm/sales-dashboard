@@ -171,6 +171,7 @@ html[data-theme="dark"] .fu-pd.no{color:#FFB224}
 @keyframes txtIn{to{opacity:1;transform:none}}
 .ufx-txt b{display:block;font-family:'SD Display','SD Text',sans-serif;font-size:34px;font-weight:800;letter-spacing:-.03em;color:#F9DC4A}
 .ufx-txt span{display:block;margin-top:4px;font-size:16px;color:rgba(255,255,255,.75)}
+html[data-theme=light] .ufx-txt b{color:#B48A00}html[data-theme=light] .ufx-txt span{color:rgba(17,19,24,.7)}html[data-theme=light] .ufx-sp i:nth-child(3n){background:#111318}html[data-theme=light] .ufx-wave{border-color:#E0B800}html[data-theme=light] .ufx-tg{filter:drop-shadow(0 18px 40px rgba(180,140,0,.3))}html[data-theme=light] .ufx-dart [fill="#F3F4F8"]{fill:#fff;stroke:#2A2D36;stroke-width:1.6}
 #lock.lock.zoomout{animation:lockZoom .55s cubic-bezier(.5,0,.2,1) forwards}
 @keyframes lockZoom{to{opacity:0;transform:scale(1.25);filter:blur(6px)}}
 html.appin .app,html.appin .tabs{animation:appIn .6s cubic-bezier(.2,.8,.2,1) both}
@@ -1389,7 +1390,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='75';const APP_SEMVER='3.3.0';const APP_DATE='2026-11-11';
+const APP_VERSION='76';const APP_SEMVER='3.3.1';const APP_DATE='2026-11-11';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
