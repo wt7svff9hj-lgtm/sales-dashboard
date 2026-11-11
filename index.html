@@ -231,7 +231,7 @@ html.appin .app,html.appin .tabs{animation:appIn .6s cubic-bezier(.2,.8,.2,1) bo
 @media (min-width:760px){.ac-cols{align-items:start}.ac-sh{margin-top:0!important}.ac-cd{aspect-ratio:auto;height:84px;min-width:0;overflow:hidden}.ac-cd>svg{width:min(44px,72%);max-width:none}.ac-cg{gap:8px}}
 @media (min-width:760px) and (max-width:999px){.cols.two.ac-cols{grid-template-columns:1fr}}
 .bcol{display:contents}.bento .bcol>*{grid-column:1/-1}
-@media (max-width:759px){.bento .dream,.bento>.today,.bento .week,.bento .strip{order:1}.bento .deals{order:2}}
+/* (Reihenfolge jetzt über Startseiten-Layout) */
 @media (min-width:760px){
  .bcol{display:flex;flex-direction:column;gap:14px;grid-column:span 2;min-width:0}
  .bcol>*{min-width:0}.bcol-md>.deals{flex:1}
@@ -684,7 +684,7 @@ html[data-theme=dark] .hm th.cy span{color:#F9DC4A;background:none}
 /* ---------- Dashboard ---------- */
 .bento{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}
 .bento>.hero,.bento>.today,.bento>.week,.bento>.strip,.bento>.deals{grid-column:1/-1}
-@media (min-width:760px){.bento{grid-template-columns:repeat(4,minmax(0,1fr))}.bento>.hero{grid-column:span 2;grid-row:span 2}.bento>.today,.bento>.week,.bento>.strip,.bento>.deals{grid-column:span 2}}
+@media (min-width:760px){.bento{grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-flow:row dense}.bento>.hero{grid-column:span 2;grid-row:span 2}.bento>.today,.bento>.week,.bento>.strip,.bento>.deals{grid-column:span 2}}
 .hero{display:block;text-decoration:none;border-radius:28px;padding:22px;box-shadow:0 18px 50px rgba(0,0,0,.18)}
 .hero .hl{font-size:14px;color:rgba(255,255,255,.75);font-weight:600}
 .hchip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:99px;background:rgba(255,255,255,.14);font-size:12.5px;font-weight:600;color:#fff}
@@ -1008,6 +1008,37 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.subtabs{display:flex;gap:4px;padding:4px;margin:0 0 16px;border-radius:14px;background:var(--paper);box-shadow:var(--shadow);position:sticky;top:calc(env(safe-area-inset-top) + 50px);z-index:5}
+@media (min-width:1000px){.subtabs{top:10px;max-width:520px}}
+.subtabs button{flex:1;border:0;background:transparent;height:36px;border-radius:10px;font:inherit;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.subtabs button.on{background:#F9DC4A;color:#111318}
+.subtabs em{font-style:normal;font-size:11.5px;font-weight:700;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:rgba(17,19,24,.12);display:inline-grid;place-items:center}
+.empty-s{padding:22px;text-align:center;color:var(--ink2);border-radius:18px;border:1px dashed var(--line);margin-bottom:14px}
+
+/* Kompakte Startseite */
+.rs-date{position:relative;display:flex;justify-content:space-between;gap:10px;margin:-4px 0 12px;font-size:12.5px;font-weight:650;color:rgba(255,255,255,.72)}
+.daytile.dt-c{padding:16px 18px 16px}
+.dt-c .dmain{margin-top:6px;align-items:center}
+.dt-c .dw{font-size:clamp(28px,8.5vw,36px);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.dt-c .dw .dd{font-size:16px;font-weight:600;margin:0;letter-spacing:0}
+.dt-c .dico{width:46px;height:46px;border-radius:15px}.dt-c .dico svg{width:22px;height:22px}
+.dchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.dchips .dchip{margin-top:0}
+.dch2{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 11px;border-radius:99px;background:rgba(17,19,24,.08);font-size:13px;font-weight:600}.dch2 svg{width:14px;height:14px;opacity:.7}
+.dsub2{margin-top:8px;font-size:13.5px;font-weight:600;color:rgba(17,19,24,.7)}
+.dt-c .dq{margin-top:10px;font-size:14.5px}
+.dstart{margin-top:12px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border:0;border-radius:16px;background:#111318;color:#F9DC4A;font:inherit;font-size:15px;font-weight:650;cursor:pointer}.dstart svg{width:18px;height:18px}.dstart b{font-variant-numeric:tabular-nums;color:#fff}
+.dstart:active{transform:scale(.98)}
+.more-tg{width:100%;margin:14px 0 0;display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:18px;border:1px dashed var(--line);background:transparent;color:var(--ink);font:inherit;cursor:pointer;text-align:left}
+.more-tg span:first-child{font-weight:650;font-size:15px;white-space:nowrap}.more-tg small{flex:1;min-width:0;color:var(--ink2);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mt-ch{font-size:22px;line-height:1;color:var(--ink2);transform:rotate(90deg);transition:transform .2s}.more-tg.on .mt-ch{transform:rotate(-90deg)}
+.more-b{margin-top:14px;animation:rise .3s ease both}
+.bar .mark{white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:420px){.bar .mark{font-size:15.5px;gap:8px}.bar .syncbar{padding:0 8px 0 7px;gap:5px;margin-left:2px}}
+.bar .syncbar{height:24px;padding:0 9px 0 8px;margin:0 0 0 4px;box-shadow:none;background:var(--paper);font-size:12px;flex:none;max-width:120px}
+.hl-list{display:flex;flex-direction:column;gap:6px}.hl-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.hl-mv{display:flex;flex-direction:column;gap:2px}.hl-mv button{border:0;background:var(--paper);color:var(--ink2);width:26px;height:18px;border-radius:6px;font-size:9px;cursor:pointer}.hl-mv button:disabled{opacity:.3}
+.hl-n{flex:1;min-width:0;font-size:14.5px;font-weight:600}.hl-seg button{padding:0 9px;font-size:12.5px}
+
 .rest-card.rs-work{background:linear-gradient(150deg,#FFB547 0%,#F08A3E 45%,#C2475E 100%)}
 .rs-sun{position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,236,170,.55),rgba(255,236,170,0) 65%);animation:sunp 6s ease-in-out infinite}
 @keyframes sunp{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.12);opacity:1}}
@@ -1268,7 +1299,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='69';const APP_DATE='2026-11-10';
+const APP_VERSION='70';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1600,7 +1631,9 @@ function renderChrome(){
   const mk=()=>`<div class="mark"><div class="lg" onclick="egg(event)">${logoSvg(S.settings.logo)}</div>${esc(S.settings.appName||'Sales Dashboard')}</div>`;document.title=(S.settings.appName||'Sales Dashboard')+' – Zeit, Umsatz & Provision';
   document.getElementById('side').innerHTML=mk()+NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''}" onclick="if(VIEW==='${k}'){event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}">${ic(i)}${l}</a>`).join('')+`<div class="grow"></div><a href="#einstellungen" class="${VIEW==='einstellungen'?'on':''}">${ic('gear')}Einstellungen</a>`;
   const _due=(()=>{try{return fcDue()}catch(e){return false}})();document.getElementById('tabs').innerHTML=NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''} ${k==='forecast'&&_due?'dot':''}" onclick="if(VIEW==='${k}'){event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}">${ic(i)}${l}</a>`).join('');
-  document.getElementById('bar').innerHTML=`${mk()}<div class="sp"></div><button class="ibtn" onclick="cycleTheme()" aria-label="Design wechseln" title="Design: ${({auto:'Automatisch',light:'Hell',dark:'Dunkel'})[S.settings.theme||'auto']}">${ic(({auto:'auto',light:'sun',dark:'moon'})[S.settings.theme||'auto'])}</button><button class="ibtn ${VIEW==='einstellungen'?'acc':''}" onclick="VIEW==='einstellungen'?goBack():go('einstellungen')" aria-label="${VIEW==='einstellungen'?'Einstellungen schließen':'Einstellungen'}">${ic(VIEW==='einstellungen'?'x':'gear')}</button>`;
+  {const sb0=document.getElementById('syncbar');if(sb0&&sb0.parentNode&&sb0.parentNode.id==='bar')document.querySelector('.wrap').insertBefore(sb0,document.getElementById('view'))}
+  document.getElementById('bar').innerHTML=`${mk()}<span id="syncslot"></span><div class="sp"></div><button class="ibtn" onclick="cycleTheme()" aria-label="Design wechseln" title="Design: ${({auto:'Automatisch',light:'Hell',dark:'Dunkel'})[S.settings.theme||'auto']}">${ic(({auto:'auto',light:'sun',dark:'moon'})[S.settings.theme||'auto'])}</button><button class="ibtn ${VIEW==='einstellungen'?'acc':''}" onclick="VIEW==='einstellungen'?goBack():go('einstellungen')" aria-label="${VIEW==='einstellungen'?'Einstellungen schließen':'Einstellungen'}">${ic(VIEW==='einstellungen'?'x':'gear')}</button>`;
+  {const sl=document.getElementById('syncslot'),sb=document.getElementById('syncbar');if(sl&&sb)sl.replaceWith(sb)}
 }
 function head(extra=''){
   const monthViews=['zeit','umsatz','forecast','gehalt','aktiv'];
@@ -1670,6 +1703,35 @@ const QUOTES_FREE=['Akku laden. Der Montag kommt von allein.','Der beste Abschlu
 const QUOTES_WORK=['Jeder Call bringt dich näher an die 70 %.','Ein Nein ist nur der Weg zum nächsten Ja.','Pipeline füllen, Takt halten.','Heute ist ein guter Tag für einen Abschluss.','Fokus auf die nächsten zwei Deals.','Kleine Schritte, große Quote.','Erst zuhören, dann abschließen.','Dranbleiben schlägt Talent.'];
 function lastWorkday(m){const n=dim(m);for(let i=n;i>=1;i--){const x=dayInfo(`${m}-${pad(i)}`);if(!x.weekend&&!x.hol&&!x.sp)return x.k}return null}
 function workdaysLeft(m,from){let n=0;monthDays(m).forEach(x=>{if(x.k<from||x.weekend||x.hol||x.sp)return;if(x.e&&isFree(x.e.type))return;n+=(x.e&&x.e.type==='halb')?.5:1});return n}
+/* ---------- Startseite: Layout ---------- */
+const HB_DEF=[['entry','Heute eintragen','main'],['umsatz','Umsatz','main'],['ziel','Tagesziel','main'],['mis','Missionen','main'],['qa','Schnellzugriff','main'],['fri','Wochenrückblick (Fr–So)','main'],['tempo','Tempo & Pace-Kurve','more'],['deals','Letzte Verträge','more'],['tiles','Kennzahlen','more'],['week','Letzte 5 Arbeitstage','more'],['strip','Zielerreichung Jahr','more']];
+const HB_NAME=Object.fromEntries(HB_DEF.map(([id,l])=>[id,l]));
+function homeLay(){const L=S.settings.homeLay||{};const place={};HB_DEF.forEach(([id,,p])=>place[id]=(L.place||{})[id]||p);return{custom:!!L.custom,order:(L.order&&L.order.length?[...L.order,...HB_DEF.map(x=>x[0]).filter(id=>!L.order.includes(id))]:HB_DEF.map(x=>x[0])),place}}
+function homeAutoOrder(){const tk=todayK();const di=dayInfo(tk);const e=di.e||{};const wd=!di.weekend&&!di.hol&&!di.sp&&!(e.type&&isFree(e.type));const h=new Date().getHours();
+  if(restState())return['umsatz','fri','ziel','mis','qa','entry'];
+  if(wd&&!e.start)return['entry','ziel','mis','umsatz','qa','fri'];
+  if(h<12)return['ziel','mis','umsatz','qa','entry','fri'];
+  return['umsatz','ziel','mis','qa','entry','fri']}
+function homeSplit(){const L=homeLay();let main=[],more=[];
+  const order=L.custom?L.order:[...homeAutoOrder(),...L.order.filter(id=>!homeAutoOrder().includes(id))];
+  order.forEach(id=>{const p=L.place[id];if(p==='main')main.push(id);else if(p==='more')more.push(id)});return{main,more}}
+function homeMoreToggle(){S.settings.homeMore=!S.settings.homeMore;save();render()}
+function hlSet(id,p){const L=S.settings.homeLay=S.settings.homeLay||{};L.place=L.place||{};L.place[id]=p;save();render()}
+function hlMove(id,d){const L=S.settings.homeLay=S.settings.homeLay||{};const o=homeLay().order;const i=o.indexOf(id),j=i+d;if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];L.order=o;L.custom=true;save();render()}
+function hlAuto(on){const L=S.settings.homeLay=S.settings.homeLay||{};L.custom=!on;save();render()}
+function hlReset(){S.settings.homeLay={};save();render();toast('Startseite zurückgesetzt','ok')}
+function homeLayPanel(){const L=homeLay();const o=L.custom?L.order:L.order;
+  return `<div class="row" style="margin-bottom:10px"><div><b style="font-weight:600">Automatisch nach Tageszeit</b><div class="lbl">Morgens Tagesziel oben, nachmittags Umsatz</div></div><span class="sp"></span><div class="seg pill"><button class="${L.custom?'':'on'}" onclick="hlAuto(true)">An</button><button class="${L.custom?'on':''}" onclick="hlAuto(false)">Aus</button></div></div>
+  <div class="hl-list">${o.map((id,i)=>`<div class="hl-row"><div class="hl-mv"><button onclick="hlMove('${id}',-1)" ${i===0?'disabled':''} aria-label="Nach oben">▲</button><button onclick="hlMove('${id}',1)" ${i===o.length-1?'disabled':''} aria-label="Nach unten">▼</button></div><span class="hl-n">${HB_NAME[id]}</span><div class="seg pill hl-seg">${[['main','Oben'],['more','Mehr'],['off','Aus']].map(([p,l])=>`<button class="${L.place[id]===p?'on':''}" onclick="hlSet('${id}','${p}')">${l}</button>`).join('')}</div></div>`).join('')}</div>
+  <p class="hint" style="margin:10px 0 0">„Mehr“ heißt: unten im aufklappbaren Bereich. Mit ▲▼ legst du eine eigene Reihenfolge fest, dann ist die Tageszeit-Automatik aus.</p>
+  <button class="btn sm" style="margin-top:10px" onclick="hlReset()">Standard wiederherstellen</button>`}
+function streaksHtml(){const mSt=monthStreak(),tSt=timeStreak(),miSt=missionStreak();
+  return `<div class="streaks">${mSt?`<span>🔥 ${mSt} ${mSt===1?'Monat':'Monate'} über 70 %</span>`:''}${tSt?`<span>⏱️ ${tSt} ${tSt===1?'Tag':'Tage'} erfasst</span>`:''}${miSt?`<span>✅ ${miSt} ${miSt===1?'Tag':'Tage'} Missionen</span>`:''}<a href="#verlauf" onclick="setTimeout(()=>document.getElementById('badges')?.scrollIntoView({behavior:'smooth'}),400)">🏅 ${earnedBadges().length}/${BADGES.length} Abzeichen</a></div>`}
+/* Datumszeile in der Heute-Karte */
+function dateLine(){const d0=new Date(),tk=todayK(),m=ymOf(d0);const left=workdaysLeft(m,tk);const isFinal=lastWorkday(m)===tk;
+  return `<div class="rs-date"><span>${WDL[d0.getDay()].slice(0,2)}, ${d0.getDate()}. ${MONS[d0.getMonth()]} · KW ${isoWeek(d0)}</span><span>${isFinal?'🏁 Finaltag':`${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'} übrig`}</span></div>`}
+function startNow(){const n=new Date();todaySet('start',pad(n.getHours())+':'+pad(n.getMinutes()))}
+
 function dayTile(){
   const d0=new Date(),tk=todayK(),m=ymOf(d0),di=dayInfo(tk),e=S.days[tk];
   const doy=Math.floor((d0-new Date(d0.getFullYear(),0,0))/864e5);
@@ -1685,14 +1747,14 @@ function dayTile(){
   else {status='Arbeitstag, Soll '+fmtN(+S.settings.sollTag)+' h';icon='brief'}
   if(!quote)quote=free?QUOTES_FREE[doy%QUOTES_FREE.length]:(d0.getDay()===5?'Freitag! Noch ein starker Call, dann Wochenende.':QUOTES_WORK[doy%QUOTES_WORK.length]);
   const se=season(d0);
-  return `<div class="daytile ${isFinal?'final':''}">${seasonFx(se)}
+  const canStart=!free&&!(e&&e.start);
+  return `<div class="daytile dt-c ${isFinal?'final':''}">${seasonFx(se)}
     <div class="dtop"><span>KW ${isoWeek(d0)}</span><span class="sp"></span><span>${MON[d0.getMonth()]} ${d0.getFullYear()}</span></div>
-    <div class="dmain"><div><div class="dw">${WDL[d0.getDay()]}</div><div class="dd">${d0.toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'})}</div></div><div class="dico">${ic(icon)}</div></div>
-    <div class="dchip">${free?ic('check'):ic('clock')}${free?'Heute ist frei':status}</div>${free?`<span class="dsub">${status}</span>`:''}
-    <div class="dstats"><div>${ic('brief')}<span><b>${left?one(left):'0'}</b> ${left===1?'Arbeitstag':'Arbeitstage'} übrig</span></div><div>${ic('plane')}<span><b>${one(vacM)}</b> ${vacM===1?'Urlaubstag':'Urlaubstage'} im ${MON[d0.getMonth()]}</span></div></div>
-    <div class="dnote">Urlaub und Feiertage sind bei den Arbeitstagen schon abgezogen.</div>
-    ${!free&&!isFinal&&left>0&&left<=5?`<div class="endspurt">⏳ Endspurt: noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'} im ${MON[d0.getMonth()]}</div>`:''}
-    ${isFinal?`<div class="finalbar">${ic('flag')}<div><b>Finaltag</b><span>Letzter Tag für Umsatz im ${MON[d0.getMonth()]}. Alles, was heute unterschrieben wird, zählt noch.</span></div></div>`:`<div class="dq">„${quote}“</div>`}
+    <div class="dmain"><div><div class="dw">${WDL[d0.getDay()]}<span class="dd">${d0.getDate()}. ${MON[d0.getMonth()]}</span></div></div><div class="dico">${ic(icon)}</div></div>
+    <div class="dchips"><span class="dchip">${free?ic('check'):ic('clock')}${free?'Heute ist frei':status}</span><span class="dch2" title="Urlaub und Feiertage sind schon abgezogen">${ic('brief')}<b>${left?one(left):'0'}</b> ${left===1?'Arbeitstag':'Arbeitstage'} übrig</span>${vacM?`<span class="dch2">${ic('plane')}<b>${one(vacM)}</b> Urlaub</span>`:''}</div>
+    ${free?`<div class="dsub2">${status}</div>`:''}
+    ${isFinal?`<div class="finalbar">${ic('flag')}<div><b>Finaltag</b><span>Alles, was heute unterschrieben wird, zählt noch im ${MON[d0.getMonth()]}.</span></div></div>`:!free&&left>0&&left<=5?`<div class="endspurt">⏳ Endspurt: noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'}</div>`:''}
+    ${canStart?`<button class="dstart" onclick="startNow()">${ic('clock')} Arbeitsbeginn jetzt eintragen <b>${pad(d0.getHours())}:${pad(d0.getMinutes())}</b></button>`:`<div class="dq">„${quote}“</div>`}
   </div>`;
 }
 /* ---------- Aktivität: Demo-Calls & Opportunities (Tagesziel) ---------- */
@@ -1734,7 +1796,7 @@ function workState(now){now=now||new Date();const tk=ymd(now);const di=dayInfo(t
 function hhmm(m){m=((Math.round(m)%1440)+1440)%1440;return pad(Math.floor(m/60))+':'+pad(m%60)}
 function workCard(){const s=workState();if(!s)return '';const a=actOf(s.tk),g=actGoal(s.tk);const hpD=hpDone(s.tk);const fig=(l,v)=>`<div><small>${l}</small><b>${v}</b></div>`;
   const done=s.left<=0;const hr=new Date().getHours();const kick=hr<11?'Guten Morgen':hr<14?'Arbeitstag läuft':'Endspurt';
-  return `<div class="rest-card rs-work"><div class="rs-sun"></div>
+  return `<div class="rest-card rs-work"><div class="rs-sun"></div>${dateLine()}
     <div class="rs-top"><span class="rs-emo">${done?'🏁':hr<11?'☀️':hr<14?'💼':'🔥'}</span><div><div class="rs-kick">${kick}</div><h2 class="rs-h">Seit ${s.e.start} Uhr dabei</h2><div class="rs-sub"><span id="workClock">${hm(s.w)}</span> gearbeitet</div></div></div>
     <div class="wk-bar"><i id="workBar" style="width:${Math.round(s.pct*100)}%"></i></div>
     <div class="wk-row"><span>${done?'Soll erreicht ✓':`Soll ${fmtN(s.soll)} h`}</span><span id="workEnd">${done?`seit ${hhmm(s.endMin)} Uhr`:`Feierabend ca. <b>${hhmm(s.endMin)} Uhr</b>`}</span></div>
@@ -1761,7 +1823,7 @@ function restCard(){const r=restState();if(!r)return '';const now=new Date();con
     emo='✈️';kick='Urlaub';head='Abschalten erlaubt';sub=`Noch ${n} ${n===1?'Urlaubstag':'Urlaubstage'} am Stück`;foot=nx?`<div class="rs-next">Zurück am ${WDL[nx.wd]}, ${pD(nx.k).toLocaleDateString('de-DE',{day:'numeric',month:'long'})}</div>`:''}
   else if(r.t==='krank'){emo='🫖';kick='Krank gemeldet';head='Gute Besserung'+nm;sub='Heute zählt nur, dass du wieder fit wirst.'}
   const fe=festOf();if(fe){if(fe.id==='nye'){sub=`Noch <span id="restClock">${restDur(nyeLeft())}</span> bis ${now.getFullYear()+1} 🎆`;cls+=' rs-nye'}else if(fe.m==='xmas')cls+=' rs-xmas';else if(fe.m==='kamelle')cls+=' rs-kar';else if(fe.id==='ny')cls+=' rs-nye';else if(fe.id==='bday')cls+=' rs-bday';if(fe.id==='nye'||(r.t!=='eve'&&r.t!=='vacgo')){head=fe.t;kick=fe.s}emo=`<span onclick="festPlay(true)" style="cursor:pointer">${fe.emo}</span>`}
-  return `<div class="rest-card rs-${cls}"><div class="rs-sky"><i></i><i></i><i></i><i></i><i></i></div>
+  return `<div class="rest-card rs-${cls}"><div class="rs-sky"><i></i><i></i><i></i><i></i><i></i></div>${dateLine()}
     <div class="rs-top"><span class="rs-emo">${emo}</span><div><div class="rs-kick">${kick}</div><h2 class="rs-h">${head}</h2>${sub?`<div class="rs-sub">${sub}</div>`:''}</div></div>
     ${body}${foot}<div class="rs-note">Alles bleibt eintragbar, falls doch noch was reinkommt.</div></div>`}
 setInterval(()=>{const el=document.getElementById('restClock');if(!el||document.hidden)return;const r=restState();if(!r)return;const now=new Date();
@@ -2092,61 +2154,7 @@ function vHome(){
   const dw=d0.getDay();const showFri=(dw===5&&d0.getHours()>=12)||dw===6||dw===0;const fri=showFri?(()=>{const mon=new Date(d0);mon.setDate(d0.getDate()-((dw+6)%7));const ks=[...Array(5)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return ymd(d)});const ds=S.deals.filter(x=>!x.retro&&ks.includes(x.date));return {n:ds.filter(x=>+x.amount>0).length,sum:ds.reduce((a,x)=>a+ +x.amount,0),h:ks.reduce((a,k)=>a+(worked(S.days[k]||{})||0),0),mis:ks.reduce((a,k)=>a+missionState(k).filter(Boolean).length,0)}})():null;
 
   const prevW=(()=>{const d=new Date(d0);for(let i=0;i<14;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start&&x.end)return dayInfo(ymd(d))}return null})();
-  return `
-  <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={bday:'Happy Birthday',nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',vacgo:'Schönen Urlaub',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();if(document.documentElement.classList.contains('xmon')&&(!rs||rs.t==='eve'||rs.t==='we'))return rs&&rs.t==='eve'?'🌙':'🎄';return rs?({eve:'🌙',vacgo:'🏖️',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
-  ${saveOk?'':`<div class="warn" style="margin-bottom:14px">${ic('alert')} Daten können hier nicht gespeichert werden. Bitte Backup nutzen.</div>`}
-  <div class="streaks">${mSt?`<span>🔥 ${mSt} ${mSt===1?'Monat':'Monate'} über 70 %</span>`:''}${tSt?`<span>⏱️ ${tSt} ${tSt===1?'Tag':'Tage'} erfasst</span>`:''}${miSt?`<span>✅ ${miSt} ${miSt===1?'Tag':'Tage'} Missionen</span>`:''}<a href="#verlauf" onclick="setTimeout(()=>document.getElementById('badges')?.scrollIntoView({behavior:'smooth'}),400)">🏅 ${earnedBadges().length}/${BADGES.length} Abzeichen</a></div>
-  ${restCard()||workCard()}
-  <div class="bento">
-    ${dayTile()}
-    <a class="hero" href="#umsatz">
-      <div class="row"><span class="hl">${ic('target')} Umsatz ${MON[d0.getMonth()]}</span><span class="sp"></span>${r.pct>=70?`<span class="hchip ok">${ic('check')} Provision aktiv</span>`:`<span class="hchip">Provision ab 70 %</span>`}</div>
-      <div class="hrow">
-        ${ringG(r.pct)}
-        <div class="hfig">
-          <div><small>Ist-Umsatz</small><b>${fmtE(r.tot)}</b></div>
-          <div><small>Ziel</small><b>${fmtE(r.target)}</b></div>
-          <div><small>${nextLv?`bis ${nextLv} %`:'Stand'}</small><b class="y">${nextLv?fmtE(r.target*nextLv/100-r.tot):'über 200 %'}</b></div>
-        </div>
-      </div>
-      ${rail(r.pct,[70,100],true)}
-      <div class="hsplit"><span><i style="background:#F9DC4A"></i>Inbound ${fmtE(r.inb)}</span><span><i style="background:#fff"></i>Outbound ${fmtE(r.out)}</span>${perDayNeed?`<span>${fmtE(perDayNeed)} pro Arbeitstag bis 70 %</span>`:''}</div>
-    </a>
-    ${carryBanner()}
-    ${vacCard()}
-    ${hpCard()}
-    ${actCard()}
-    <div class="qa">
-      <button onclick="dealSheet()"><span>${ic('target')}</span>Umsatz</button>
-      <button onclick="leadSheet()"><span>${ic('users')}</span>Leads</button>
-      <button onclick="rangeSheet()"><span>${ic('plane')}</span>Urlaub</button>
-      <button onclick="editDay(todayK())"><span>${ic('clock')}</span>Arbeitszeit</button>
-    </div>
-    ${fri?`<div class="panel friday"><div class="fr-emo">${fri.sum>0?'🙌':'🌤️'}</div><div><div class="ptl">Deine Woche</div><div class="lbl">${fri.n} ${fri.n===1?'Deal':'Deals'}, ${fmtE(fri.sum)} Umsatz, ${hm(fri.h)} gearbeitet, ${fri.mis} Missionen</div><div class="fr-msg">${fri.sum>0?'Starke Woche. Genieß das Wochenende!':'Neue Woche, neue Chance. Erst mal abschalten!'}</div></div></div>`:''}
-    <div class="panel tempo">
-      <div class="row"><div class="ptl">${ic('zap','class="pi"')}Tempo ${MON[d0.getMonth()]}</div><span class="sp"></span><div class="amp ${T.st}"><i></i><i></i><i></i></div></div>
-      <div class="tp-l ${T.st}">${T.lbl}</div>${T.txt?`<div class="lbl">${T.txt}</div>`:''}
-      ${paceChart(m)}${paceSummary()}
-      ${WG.goal?`<div class="wg"><div class="row"><span class="lbl">Wochenziel</span><span class="sp"></span><b class="num">${fmtE(WG.got)} <span class="mut" style="font-weight:500">von ${fmtE(WG.goal)}</span></b></div><div class="wgb"><i style="width:${Math.min(100,WG.got/WG.goal*100)}%"></i></div><div class="lbl" style="margin-top:6px">${WG.got>=WG.goal?'Wochenziel geschafft 🎉':`noch ${fmtE(WG.goal-WG.got)} diese Woche`}</div></div>`:''}
-    </div>
-    <div class="bcol bcol-md">
-    ${workday?misPanel(tk):''}
-    <div class="panel deals">
-      <div class="row"><div class="ptl">${ic('brief','class="pi"')}Letzte Verträge</div><span class="sp"></span><button class="chip acc" onclick="dealSheet()">${ic('plus')} Umsatz</button></div>
-      ${deals.length?deals.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${esc(dealName(d))}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount)}</div></div>`).join(''):`<div class="empty">Noch keine Verträge.</div>`}
-    </div>
-    </div>
-    <a class="tile" href="#zeit"><div class="ti" style="--tc:${total>=0?'var(--green)':'var(--red)'}">${ic('clock')}</div><div class="tl">Stundenkonto</div><div class="tv ${total>=0?'pos':'neg'}">${sgn(total)}<small> h</small></div><div class="ts">${st.missing?`<span class="neg">${st.missing} Tag(e) offen</span>`:`Monat ${sgn(st.saldo)} h`}</div></a>
-    <a class="tile" href="#forecast"><div class="ti" style="--tc:var(--tY)">${ic('scope')}</div><div class="tl">Forecast</div><div class="tv">${fmtN(fc.pct)}<small> %</small></div><div class="ts">${fmtE(fc.exp)} erwartet</div></a>
-    <a class="tile" href="#gehalt"><div class="ti" style="--tc:var(--amber)">${ic('wallet')}</div><div class="tl">Auszahlung ${MONS[pD(addM(m,1)).getMonth()]}</div><div class="tv">${fmtE(sal.total)}</div><div class="ts">variabel ${fmtE(sal.total-sal.base)}</div></a>
-    <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--u)">${ic('plane')}</div><div class="tl">Urlaub übrig</div><div class="tv">${one(u.total-u.used)}<small> Tage</small></div><div class="ts">${nextU?`nächster in ${nextUDays} Tagen`:`${one(u.used)} von ${u.total} verplant`}</div></a>
-    <a class="tile" href="#umsatz"><div class="ti" style="--tc:var(--in)">${ic('users')}</div><div class="tl">Leads</div><div class="tv">${leadSum}</div><div class="ts">im ${MON[d0.getMonth()]}</div></a>
-    <a class="tile" href="#umsatz"><div class="ti" style="--tc:var(--k)">${ic('brief')}</div><div class="tl">Abschlüsse</div><div class="tv">${r.ds.length}</div><div class="ts">${r.ds.length?`Ø ${fmtE(r.tot/r.ds.length)} je Vertrag`:'noch keiner im Monat'}</div></a>
-    <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--s)">${ic('coffee')}</div><div class="tl">Ø Arbeitstag</div><div class="tv">${hm(avgDay)}</div><div class="ts">${workedDays.length} Tage erfasst</div></a>
-    <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--h)">${ic('cal')}</div><div class="tl">Arbeitstage übrig</div><div class="tv">${one(left)}</div><div class="ts">inklusive heute</div></a>
-
-
-    <div class="panel today">
+  const B={entry:`    <div class="panel today">
       <div class="row"><div><div class="ptl">${ic(locked?'lock':'edit','class="pi"')}${locked?'Heute':'Heute eintragen'}</div><div class="lbl">${locked?'Heute ist frei':'Soll '+fmtN(soll)+' Stunden'}</div></div><span class="sp"></span>${locked?'':`<button class="chip" onclick="editDay('${tk}')">Details</button>`}</div>
       ${locked?`<div class="freebox lockbox">${ic(di.hol?'flag':'sun')}<div><b>${di.hol||'Wochenende'}</b><div class="lbl">Heute wird nicht gearbeitet. Die Erfassung ist gesperrt.</div></div></div>`:`
       <div class="seg tseg" style="margin-top:14px">${['arbeit','koeln','halb','urlaub','krank'].map(t=>`<button class="${(S.days[tk]?type:'')===t?'on':''}" onclick="todaySet('type','${t}')">${ic(TYPES[t].i)}${TYPES[t].l}</button>`).join('')}</div>
@@ -2160,23 +2168,60 @@ function vHome(){
       ${e.pauses&&e.pauses.length>1?`<div class="tq-sum">${e.pauses.join(' + ')} = <b>${e.pause} min</b>${e.pause>=60?' · '+hm(e.pause/60):''}<button onclick="todayPauseUndo()">Rückgängig</button></div>`:''}
       <div class="tq"><span class="lbl">Pause fest</span>${[0,15,30,45,60].map(p=>`<button class="${(+e.pause||0)===p&&e.start?'on':''}" onclick="todaySet('pause',${p})">${p}</button>`).join('')}<span class="sp"></span>${prevW?`<button class="cp" onclick="copyPrev()">${ic('copy')} Wie ${WD[prevW.wd]}</button>`:''}</div>
       <div class="tres"><div><small>Gearbeitet</small><b>${w!=null?hm(w):'–'}</b></div><div><small>Saldo heute</small><b class="${w!=null?(w-soll>=0?'pos':'neg'):''}">${w!=null?sgn(w-soll)+' h':'–'}</b></div><div><small>5 Arbeitstage</small><b>${hm(weekSum)}</b></div></div>${w!=null&&e.end?`<button class="btn sm block eod-btn" onclick="eodShow()">🌙 Tagesbilanz ansehen</button>`:''}`}`}
-    </div>
-
-    <div class="bcol bcol-ws">
-    <div class="panel week">
+    </div>`,umsatz:`    <a class="hero" href="#umsatz">
+      <div class="row"><span class="hl">${ic('target')} Umsatz ${MON[d0.getMonth()]}</span><span class="sp"></span>${r.pct>=70?`<span class="hchip ok">${ic('check')} Provision aktiv</span>`:`<span class="hchip">Provision ab 70 %</span>`}</div>
+      <div class="hrow">
+        ${ringG(r.pct)}
+        <div class="hfig">
+          <div><small>Ist-Umsatz</small><b>${fmtE(r.tot)}</b></div>
+          <div><small>Ziel</small><b>${fmtE(r.target)}</b></div>
+          <div><small>${nextLv?`bis ${nextLv} %`:'Stand'}</small><b class="y">${nextLv?fmtE(r.target*nextLv/100-r.tot):'über 200 %'}</b></div>
+        </div>
+      </div>
+      ${rail(r.pct,[70,100],true)}
+      <div class="hsplit"><span><i style="background:#F9DC4A"></i>Inbound ${fmtE(r.inb)}</span><span><i style="background:#fff"></i>Outbound ${fmtE(r.out)}</span>${perDayNeed?`<span>${fmtE(perDayNeed)} pro Arbeitstag bis 70 %</span>`:''}</div>
+    </a>`,ziel:actCard(),mis:(workday?misPanel(tk):''),qa:`    <div class="qa">
+      <button onclick="dealSheet()"><span>${ic('target')}</span>Umsatz</button>
+      <button onclick="leadSheet()"><span>${ic('users')}</span>Leads</button>
+      <button onclick="rangeSheet()"><span>${ic('plane')}</span>Urlaub</button>
+      <button onclick="editDay(todayK())"><span>${ic('clock')}</span>Arbeitszeit</button>
+    </div>`,fri:`${fri?`<div class="panel friday"><div class="fr-emo">${fri.sum>0?'🙌':'🌤️'}</div><div><div class="ptl">Deine Woche</div><div class="lbl">${fri.n} ${fri.n===1?'Deal':'Deals'}, ${fmtE(fri.sum)} Umsatz, ${hm(fri.h)} gearbeitet, ${fri.mis} Missionen</div><div class="fr-msg">${fri.sum>0?'Starke Woche. Genieß das Wochenende!':'Neue Woche, neue Chance. Erst mal abschalten!'}</div></div></div>`:''}`,tempo:`    <div class="panel tempo">
+      <div class="row"><div class="ptl">${ic('zap','class="pi"')}Tempo ${MON[d0.getMonth()]}</div><span class="sp"></span><div class="amp ${T.st}"><i></i><i></i><i></i></div></div>
+      <div class="tp-l ${T.st}">${T.lbl}</div>${T.txt?`<div class="lbl">${T.txt}</div>`:''}
+      ${paceChart(m)}${paceSummary()}
+      ${WG.goal?`<div class="wg"><div class="row"><span class="lbl">Wochenziel</span><span class="sp"></span><b class="num">${fmtE(WG.got)} <span class="mut" style="font-weight:500">von ${fmtE(WG.goal)}</span></b></div><div class="wgb"><i style="width:${Math.min(100,WG.got/WG.goal*100)}%"></i></div><div class="lbl" style="margin-top:6px">${WG.got>=WG.goal?'Wochenziel geschafft 🎉':`noch ${fmtE(WG.goal-WG.got)} diese Woche`}</div></div>`:''}
+    </div>`,deals:`    <div class="panel deals">
+      <div class="row"><div class="ptl">${ic('brief','class="pi"')}Letzte Verträge</div><span class="sp"></span><button class="chip acc" onclick="dealSheet()">${ic('plus')} Umsatz</button></div>
+      ${deals.length?deals.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${esc(dealName(d))}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount)}</div></div>`).join(''):`<div class="empty">Noch keine Verträge.</div>`}
+    </div>`,tiles:`    <a class="tile" href="#zeit"><div class="ti" style="--tc:${total>=0?'var(--green)':'var(--red)'}">${ic('clock')}</div><div class="tl">Stundenkonto</div><div class="tv ${total>=0?'pos':'neg'}">${sgn(total)}<small> h</small></div><div class="ts">${st.missing?`<span class="neg">${st.missing} Tag(e) offen</span>`:`Monat ${sgn(st.saldo)} h`}</div></a>
+    <a class="tile" href="#forecast"><div class="ti" style="--tc:var(--tY)">${ic('scope')}</div><div class="tl">Forecast</div><div class="tv">${fmtN(fc.pct)}<small> %</small></div><div class="ts">${fmtE(fc.exp)} erwartet</div></a>
+    <a class="tile" href="#gehalt"><div class="ti" style="--tc:var(--amber)">${ic('wallet')}</div><div class="tl">Auszahlung ${MONS[pD(addM(m,1)).getMonth()]}</div><div class="tv">${fmtE(sal.total)}</div><div class="ts">variabel ${fmtE(sal.total-sal.base)}</div></a>
+    <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--u)">${ic('plane')}</div><div class="tl">Urlaub übrig</div><div class="tv">${one(u.total-u.used)}<small> Tage</small></div><div class="ts">${nextU?`nächster in ${nextUDays} Tagen`:`${one(u.used)} von ${u.total} verplant`}</div></a>
+    <a class="tile" href="#umsatz"><div class="ti" style="--tc:var(--in)">${ic('users')}</div><div class="tl">Leads</div><div class="tv">${leadSum}</div><div class="ts">im ${MON[d0.getMonth()]}</div></a>
+    <a class="tile" href="#umsatz"><div class="ti" style="--tc:var(--k)">${ic('brief')}</div><div class="tl">Abschlüsse</div><div class="tv">${r.ds.length}</div><div class="ts">${r.ds.length?`Ø ${fmtE(r.tot/r.ds.length)} je Vertrag`:'noch keiner im Monat'}</div></a>
+    <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--s)">${ic('coffee')}</div><div class="tl">Ø Arbeitstag</div><div class="tv">${hm(avgDay)}</div><div class="ts">${workedDays.length} Tage erfasst</div></a>
+    <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--h)">${ic('cal')}</div><div class="tl">Arbeitstage übrig</div><div class="tv">${one(left)}</div><div class="ts">inklusive heute</div></a>`,week:`    <div class="panel week">
       <div class="row"><div class="ptl">${ic('trend','class="pi"')}Letzte 5 Arbeitstage</div><span class="sp"></span><span class="lbl">Soll ${fmtN(S.settings.sollTag)} h</span></div>
       <div class="wk"><div class="goal" style="bottom:${(+S.settings.sollTag/maxH)*112+19}px"></div>
       ${week.map(x=>{const h=x.w||0;const fr=x.e&&isFree(x.e.type);return `<div class="c ${x.k===tk?'today':''}" onclick="editDay('${x.k}')" data-tip="${WDL[x.wd]}, ${dLabel(x.k)}<br>${fr?TYPES[x.e.type].l:x.w!=null?hm(x.w):'kein Eintrag'}"><em>${fr?'':x.w!=null?hm(x.w).replace('m','').replace('h ',':'):''}</em><i class="${fr?'u':h?'':'off'}" style="height:${fr?18:Math.max(4,h/maxH*112)}px"></i><small>${WD[x.wd]}</small></div>`}).join('')}
       </div>
-    </div>
-
-    <a class="panel strip" href="#verlauf">
+    </div>`,strip:`    <a class="panel strip" href="#verlauf">
       <div class="row"><div class="ptl">${ic('grid','class="pi"')}Zielerreichung ${y}</div><span class="sp"></span><span class="lbl">Verlauf ${ic('right','style="width:14px;height:14px;vertical-align:-2px"')}</span></div>
       <div class="sg">${strip.map(h=>`<div class="sc ${h.v==null?'e':heatCls(h.v)} ${h.live?'live':''}"><b>${h.v==null?'':Math.round(h.v)+'<small> %</small>'}</b><span>${MONS[h.i]}</span></div>`).join('')}</div>
-    </a>
-    </div>
-
-  </div>`;
+    </a>`};
+  const HS=homeSplit();const moreOpen=!!S.settings.homeMore;
+  return `
+  <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={bday:'Happy Birthday',nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',vacgo:'Schönen Urlaub',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();if(document.documentElement.classList.contains('xmon')&&(!rs||rs.t==='eve'||rs.t==='we'))return rs&&rs.t==='eve'?'🌙':'🎄';return rs?({eve:'🌙',vacgo:'🏖️',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
+  ${saveOk?'':`<div class="warn" style="margin-bottom:14px">${ic('alert')} Daten können hier nicht gespeichert werden. Bitte Backup nutzen.</div>`}
+  ${restCard()||workCard()||dayTile()}
+  <div class="bento">
+    ${carryBanner()}
+    ${vacCard()}
+    ${hpCard()}
+    ${HS.main.map(id=>B[id]).join('')}
+  </div>
+  ${HS.more.length?`<button class="more-tg ${moreOpen?'on':''}" onclick="homeMoreToggle()"><span>${moreOpen?'Weniger anzeigen':'Mehr anzeigen'}</span><small>${HS.more.map(id=>({tempo:'Tempo',deals:'Verträge',tiles:'Kennzahlen',week:'5 Tage',strip:'Jahr',entry:'Zeit',umsatz:'Umsatz',ziel:'Tagesziel',mis:'Missionen',qa:'Schnellzugriff',fri:'Woche'})[id]).join(' · ')}</small><span class="mt-ch">›</span></button>
+  ${moreOpen?`<div class="bento more-b">${HS.more.map(id=>B[id]).join('')}</div>`:''}`:''}`;
 }
 const dealName=d=>d.name||(d.retro?(d.channel==='in'?'Inbound gesamt':'Outbound gesamt'):(d.channel==='in'?'Inbound-Vertrag':'Outbound-Vertrag'));
 
@@ -2253,11 +2298,13 @@ function vZeit(){
   const y=CUR.slice(0,4); const u=urlaubYear(y);
   // nach Kalenderwochen gruppieren
   const weeks=[];st.days.forEach(x=>{const w=isoWeek(x.d);let g=weeks[weeks.length-1];if(!g||g.w!==w){g={w,days:[],sum:0};weeks.push(g)}g.days.push(x);g.sum+=x.w||0});
+  const ZT=subCur('zeit',['mon','tage']);
   const tk=todayK(),tdi=dayInfo(tk),tE=!!S.days[tk],tFree=!tE&&(tdi.weekend||tdi.hol||tdi.sp);
   const todayBtn=tFree?`<button class="addbtn" disabled style="opacity:.45;box-shadow:none;cursor:default">${ic('lock')}${tdi.weekend?'Wochenende':tdi.sp||tdi.hol||'Heute frei'}</button>`:`<button class="addbtn" onclick="editDay('${tk}')">${ic(tE?'edit':'plus')}${tE?'Heute bearbeiten':'Zeit erfassen'}</button>`;
   return `${head(`${todayBtn}<button class="ibtn" onclick="rangeSheet()" aria-label="Zeitraum eintragen">${ic('range')}</button><button class="ibtn" onclick="exportSheet()" aria-label="Exportieren">${ic('down')}</button>`)}
-  ${zeitOverview(CUR,st,carry,end)}
-  ${calendar(CUR)}
+  ${subBar('zeit',[['mon','Übersicht'],['tage','Alle Tage']],ZT)}
+  ${ZT==='mon'?`${zeitOverview(CUR,st,carry,end)}
+  ${calendar(CUR)}`:''}
   <div class="panel" style="margin-top:14px;display:none">
     <div class="figs wrap4" style="--n:4">
       <div><div class="lbl">Gearbeitet</div><div class="v">${hm(st.ist)}</div><div class="s">${dec2(st.ist)} h dezimal</div></div>
@@ -2266,9 +2313,8 @@ function vZeit(){
       <div><div class="lbl">Stundenkonto</div><div class="v ${end>=0?'pos':'neg'}">${end!=null?sgn(end)+' h':'–'}</div><div class="s">${end==null?'':end<0?'muss ausgeglichen werden':'geht in den Folgemonat'}</div></div>
     </div>
   </div>
-  <div class="sh" style="margin-bottom:0"><h2>Alle Tage</h2></div>
-  <div class="weeks">${weeks.map(g=>`<div><div class="wkh">KW ${g.w}<span class="sp"></span><b class="num">${hm(g.sum)}</b></div><div class="days">${g.days.map(x=>dayRow(x,u)).join('')}</div></div>`).join('')}</div>
-  <p class="hint" style="margin:16px 4px 0">Urlaub ${y}: ${one(u.used)} von ${u.total} Tagen verplant, davon ${S.settings.urlaubVorher[y]||0} vor dem Start der App. Kommende Tage zählen erst, wenn sie vorbei sind. Ein vergangener Arbeitstag ohne Eintrag zählt mit minus ${fmtN(S.settings.sollTag)} Stunden.</p>`;
+  ${ZT==='tage'?`<div class="weeks">${weeks.map(g=>`<div><div class="wkh">KW ${g.w}<span class="sp"></span><b class="num">${hm(g.sum)}</b></div><div class="days">${g.days.map(x=>dayRow(x,u)).join('')}</div></div>`).join('')}</div>
+  <p class="hint" style="margin:16px 4px 0">Urlaub ${y}: ${one(u.used)} von ${u.total} Tagen verplant, davon ${S.settings.urlaubVorher[y]||0} vor dem Start der App. Kommende Tage zählen erst, wenn sie vorbei sind. Ein vergangener Arbeitstag ohne Eintrag zählt mit minus ${fmtN(S.settings.sollTag)} Stunden.</p>`:''}`;
 }
 function dayRow(x,u){
   const e=x.e; let cls=x.type, t1='', t2='', rv='', slim=false; const tk=todayK();
@@ -2620,10 +2666,17 @@ function fcSubSheet(){const m=ymOf(new Date());const sw=subThisWeek();const base
    <div class="wk-sec"><button onclick="fcCopy()">${ic('copy')}<span>Text kopieren</span></button>${navigator.share?`<button onclick="fcShare()">${ic('share')}<span>Teilen</span></button>`:''}${sw?`<button onclick="fcUnsubmit()">${ic('storno')}<span>Zurücknehmen</span></button>`:''}</div>
    ${hist.length?`<div class="fd-h" style="margin-top:18px">Abgaben im ${MON[pD(m).getMonth()]}</div><div class="list">${hist.map(h=>`<div class="li"><div class="t"><b>${dLabel(h.date)}</b><small>${new Date(h.ts).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr</small></div><div class="v">${fmtE(h.exp)}<small class="mut" style="display:block;text-align:right;font-size:11.5px">${fmtN(h.pct,0)} %</small></div></div>`).join('')}</div>`:''}`)}
 
+/* ---------- Unterreiter ---------- */
+function subCur(v,ids){let c;try{c=localStorage.getItem('sub_'+v)}catch(e){}return ids.includes(c)?c:ids[0]}
+function subSet(v,id){try{localStorage.setItem('sub_'+v,id)}catch(e){}render();const t=document.querySelector('.subtabs');if(t&&t.getBoundingClientRect().top<0)window.scrollTo({top:Math.max(0,scrollY+t.getBoundingClientRect().top-70),behavior:'smooth'})}
+function subBar(v,items,cur){return `<div class="subtabs">${items.map(([id,l,n])=>`<button class="${cur===id?'on':''}" onclick="subSet('${v}','${id}')">${l}${n?`<em>${n}</em>`:''}</button>`).join('')}</div>`}
 function vForecast(){
   const F=forecast(CUR); const P=S.fcParams; const sal=salaryWith(CUR,F.exp);
   const set=f=>`onchange="fcSet('${f}',this.value)"`; const v=n=>n?String(n).replace('.',','):'';
+  const ST=subCur('forecast',['ueb','opps','gew']);const nO=(()=>{try{return openItems(CUR).length}catch(e){return 0}})();
   return `${head()}
+  ${subBar('forecast',[['ueb','Übersicht'],['opps','Opps',nO||''],['gew','Gewichtung']],ST)}
+  ${ST==='ueb'?`
   ${CUR===ymOf(new Date())?carryBanner():''}
   ${weekCard(CUR)}
   <div class="cols two fc-cols">
@@ -2647,11 +2700,11 @@ function vForecast(){
       <div class="fr"><div><b>Neue Opps</b><small>1 pro Woche à ${fmtE(P.weekValue)}, zählt ${P.weekRate} %</small></div><input class="inp num fcf" id="fc-weeks" inputmode="decimal" enterkeyhint="done" value="${String(F.weeks).replace('.',',')}" ${set('weeks')} onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"><div class="w">${F.autoWeeks?'Wochen ohne Urlaub, ':'Wochen, '}ergibt ${fmtE(F.wN,2)}</div></div>
     </div>
   </div>
-  ${funnelPanel(CUR)}
-  ${agingPanel(CUR)}
+  ${funnelPanel(CUR)}`:''}
+  ${ST==='opps'?`${agingPanel(CUR)||'<div class="empty-s">Keine offenen Opps in diesem Monat.</div>'}
   ${laterPanel(CUR)}
-  ${CUR===ymOf(new Date())?lostPanel():''}
-  <div class="sh"><h2>Gewichtung</h2></div>
+  ${CUR===ymOf(new Date())?lostPanel():''}`:''}
+  ${ST==='gew'?`
   <div class="panel">
     <div class="grid3 r">
       <div class="field"><label>Offer created in %</label><input class="inp" type="number" value="${F.oR}" onchange="S.fcParams.offerRate=+this.value;save();render()"></div>
@@ -2661,7 +2714,7 @@ function vForecast(){
       <div class="field"><label>Neue Opp in %</label><input class="inp" type="number" value="${P.weekRate}" onchange="S.fcParams.weekRate=+this.value;save();render()"></div>
     </div>
     ${F.autoWeeks?'':`<button class="btn sm" style="margin-top:12px" onclick="delete S.forecast['${CUR}'].weeks;save();render()">Wochen wieder automatisch rechnen</button>`}
-  </div>`;
+  </div>`:''}`;
 }
 function fcSet(f,v){const cv=calcEval(v);if(cv!=null)v=String(cv);S.forecast[CUR]=S.forecast[CUR]||{};S.forecast[CUR][f]=v===''?(f==='weeks'?null:0):numIn(v);if((f==='weeks'||f==='closed')&&v==='')delete S.forecast[CUR][f];save();render()}
 function salaryWith(m,amount){const backup=S.deals;const extra=amount-rev(m).tot;S.deals=[...backup,{id:'tmp',date:`${m}-28`,amount:Math.max(0,extra),channel:'in',name:''}];const s=salary(m);S.deals=backup;return s}
@@ -2713,8 +2766,10 @@ function vGehalt(){
   const row=(n,l,sub,v)=>`<div class="cr"><div class="n">${n}</div><div><b>${l}</b>${sub?`<small>${sub}</small>`:''}</div><div class="v">${v}</div></div>`;
   const parts=[['Grundgehalt',s.base,'#E9EAEE'],['Provision',s.provision,'#F9DC4A'],['Boni',s.planBonus+s.bigBonus,'#F6C700'],['Kompensation',s.comp,'#4BE39A']];
   const tot=Math.max(1,s.total);
-  const sliderMax=Math.max(s.target*2.5,s.neu*1.2,1000);
+  const sliderMax=Math.max(s.target*2.5,s.neu*1.2,1000);const GT=subCur('gehalt',['aus','wi','par']);
   return `${head()}
+  ${subBar('gehalt',[['aus','Auszahlung'],['wi','Was wäre wenn'],['par','Parameter']],GT)}
+  ${GT==='aus'?`
   ${CUR<S.settings.startMonth?`<div class="warn" style="background:var(--accSoft);color:var(--ink);margin-bottom:14px">${ic('alert')} Das Gehalt rechnet die App ab ${mLabel(S.settings.startMonth)}. Frühere Monate dienen nur zur Orientierung.</div>`:''}
   <div class="cols two">
     <div class="hero payhero">
@@ -2765,16 +2820,16 @@ function vGehalt(){
     <table class="tbl"><tr><th>Monat</th><th class="r">Provision + Boni</th><th class="r">Arbeitstage</th><th class="r">pro Tag</th></tr>
     ${s.hist.map(h=>`<tr class="click" onclick="provSheet('${h.k}')"><td>${mLabel(h.k)}${S.salary.provHist[h.k]!=null?' <span class="chip" style="height:22px;font-size:11.5px">manuell</span>':''}</td><td class="r">${fmtE(h.v,2)}</td><td class="r">${h.wd}</td><td class="r">${fmtE(h.wd?h.v/h.wd:0,2)}</td></tr>`).join('')}
     <tr><td>Ø</td><td class="r">${fmtE(s.hist.reduce((a,h)=>a+h.v,0)/3,2)}</td><td class="r">${fmtN(s.hist.reduce((a,h)=>a+h.wd,0)/3,1)}</td><td class="r">${fmtE(s.perDay,2)}</td></tr></table>
-  </details>
-
-  <details class="panel det" style="margin-top:14px"><summary>${ic('gear','class="pi"')}Parameter${ic('right','class="chev"')}</summary>
+  </details>`:''}
+  ${GT==='par'?`
+  <div class="panel">
     <div class="grid3 r" style="margin-top:10px">
       ${[['base','Grundgehalt in €'],['variable','Variabel bei 100 % in €'],['bigThreshold','Big-Deal-Schwelle in €'],['bigRate','Big-Deal-Bonus in %'],['planRate','Erfolgsplan-Bonus in %']].map(([k,l])=>`<div class="field"><label>${l}</label><input class="inp" type="number" step="any" value="${P[k]}" onchange="S.salary.${k}=+this.value;save();render()"></div>`).join('')}
     </div>
     <div class="grp" style="margin-top:20px">Übererfüllungs-Provisionssatz</div>
     <div class="stack" style="margin-top:8px">${tiers.map((t,i)=>`<div class="grid2"><div class="field"><label>ab Zielerreichung in %</label><input class="inp" type="number" value="${t.from}" onchange="S.salary.tiers[${i}].from=+this.value;save();render()"></div><div class="field"><label>Aufschlag in %</label><input class="inp" type="number" step="any" value="${t.rate}" onchange="S.salary.tiers[${i}].rate=+this.value;save();render()"></div></div>`).join('')}</div>
-  </details>
-  <div class="sh" style="margin-top:32px"><h2>${ic('zap','class="pi"')}Was wäre wenn?</h2><span class="sp"></span><span class="meta">Umsatz verschieben</span></div>
+  </div>`:''}
+  ${GT==='wi'?`<div class="sh" style="margin-top:6px"><h2>${ic('zap','class="pi"')}Was wäre wenn?</h2><span class="sp"></span><span class="meta">Umsatz verschieben</span></div>
   <div class="panel whatif">
     <div class="row" style="align-items:flex-end;flex-wrap:wrap;gap:12px">
       <div><div class="lbl">Umsatz im ${MON[pD(CUR).getMonth()]}</div><div class="mid" id="wiA">${fmtE(s.neu)}</div><div class="lbl" id="wiP">${fmtP(s.att,1)} vom Ziel</div></div>
@@ -2785,7 +2840,7 @@ function vGehalt(){
     <div class="quick">${[70,100,130,150].map(p=>`<button onclick="const r=document.querySelector('.range');r.value=${Math.round(s.target*p/100)};whatIf(r.value)">${p} %</button>`).join('')}<button onclick="const r=document.querySelector('.range');r.value=${Math.round(s.neu)};whatIf(r.value)">Ist</button></div>
   </div>
 
-`;
+`:''}`;
 }
 function whatIf(v){v=+v;const s0=salary(CUR);const s=salaryWith(CUR,v);const t=s.target||1;
   document.getElementById('wiA').textContent=fmtE(v);document.getElementById('wiP').textContent=fmtP(v/t*100,1)+' vom Ziel';
@@ -2830,6 +2885,7 @@ function vVerlauf(){
   const diff=curA&&prevA?curA.v-prevA.v:null;
   const maxAvg=Math.max(100,...valid.map(a=>a.v));
   return `${head()}
+  ${streaksHtml()}
   <div class="panel" style="margin-bottom:14px">
     <div class="ptl">${ic('trend','class="pi"')}Ø Zielerreichung pro Jahr</div>
     <div class="lbl" style="margin-top:2px">Durchschnitt aller Monate eines Jahres. Die gestrichelte Linie markiert 100 %.</div>
@@ -2914,6 +2970,7 @@ function vSettings(){
       </div>
       <p class="hint" style="margin-bottom:0">Die Sperre schützt vor neugierigen Blicken. Face ID funktioniert in der GitHub-Version auf iPhone und iPad.</p>
     </div>
+    <div class="panel" id="homelay"><div class="ptl" style="margin-bottom:12px">${ic('home','class="pi"')}Startseite anpassen</div>${homeLayPanel()}</div>
     <div class="panel">
       <div class="row" style="margin-bottom:12px"><div class="ptl">${ic('zap','class="pi"')}Tagesstart</div><span class="sp"></span><div class="seg pill"><button class="${S.settings.kickoff!==false?'on':''}" onclick="S.settings.kickoff=true;save();render()">An</button><button class="${S.settings.kickoff===false?'on':''}" onclick="S.settings.kickoff=false;save();render()">Aus</button></div></div>
       <p class="hint" style="margin-top:0">Einmal am Tag beim ersten Öffnen: dein Stand, eine Mission für den Tag und ein Spruch zum Loslegen.</p>
@@ -3608,8 +3665,8 @@ function setSync(st,err){syncState=st;if(st==='ok')syncAt=Date.now();if(err!=nul
 function agoTxt(t){if(!t)return '';const s=Math.round((Date.now()-t)/1000);return s<5?'gerade eben':s<60?`vor ${s} s`:s<3600?`vor ${Math.floor(s/60)} min`:`vor ${Math.floor(s/3600)} h`}
 function paintSync(){const el=document.getElementById('syncbar');if(!el)return;
   const off=syncOn()&&!navigator.onLine;const st=off?'offline':syncState;
-  const m={ok:['ok','cloudok',`<b>Live</b> · synchronisiert ${agoTxt(syncAt)}`],saving:['busy','cloud','Speichert in der Cloud …'],local:['loc','device','Nur auf diesem Gerät gespeichert'],offline:['warn','cloudoff',dirty||pendingPush?'<b>Offline</b> · Änderungen warten auf Upload':'<b>Offline</b> · Stand von '+(syncAt?agoTxt(syncAt):'zuvor')],error:['err','cloudoff','Sync-Fehler · antippen für Details']}[st]||['loc','device','Nur auf diesem Gerät gespeichert'];
-  el.className='syncbar '+m[0];el.innerHTML=`<span class="sd"></span>${ic(m[1])}<span>${m[2]}</span>`;
+  const m={ok:['ok','cloudok',`<b>Live</b>`],saving:['busy','cloud','Speichert in der Cloud …'],local:['loc','device','Nur auf diesem Gerät gespeichert'],offline:['warn','cloudoff',dirty||pendingPush?'<b>Offline</b> · Änderungen warten auf Upload':'<b>Offline</b> · Stand von '+(syncAt?agoTxt(syncAt):'zuvor')],error:['err','cloudoff','Sync-Fehler · antippen für Details']}[st]||['loc','device','Nur auf diesem Gerät gespeichert'];
+  el.className='syncbar '+m[0];el.title=st==='ok'?'Synchronisiert '+agoTxt(syncAt):m[2].replace(/<[^>]+>/g,'');el.innerHTML=`<span class="sd"></span><span>${st==='ok'?m[2]:st==='saving'?'Speichert…':st==='local'?'Lokal':st==='offline'?'<b>Offline</b>':'<b>Sync-Fehler</b>'}</span>`;
   const cs=document.getElementById('cbsync');if(cs){cs.className='cb-s '+m[0];cs.innerHTML=ic(m[1]);cs.title=m[2].replace(/<[^>]+>/g,'')}}
 setInterval(()=>{if(!document.hidden)paintSync()},10000);
 /* Kompakte Kopfzeile wie bei iOS-Apps: erscheint beim Scrollen */
