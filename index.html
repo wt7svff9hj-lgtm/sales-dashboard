@@ -1008,6 +1008,11 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.curtg{display:flex;gap:6px;margin-top:8px}.curtg button{flex:1;height:34px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--ink2);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+.curtg button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.fxh{margin-top:6px;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums}.fxh:empty{display:none}.fxh b{color:var(--ink)}.fxh button{border:0;background:none;color:var(--ink2);text-decoration:underline;font:inherit;padding:0;cursor:pointer}
+.chf{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:6px;background:#E4202A;color:#fff;font-size:10.5px;font-weight:700;vertical-align:2px;letter-spacing:.02em}
+
 .subtabs{display:flex;gap:4px;padding:4px;margin:0 0 16px;border-radius:14px;background:var(--paper);box-shadow:var(--shadow);position:sticky;top:calc(env(safe-area-inset-top) + 50px);z-index:5}
 @media (min-width:1000px){.subtabs{top:10px;max-width:520px}}
 .subtabs button{flex:1;border:0;background:transparent;height:36px;border-radius:10px;font:inherit;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
@@ -1299,8 +1304,8 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='70';const APP_DATE='2026-11-10';
-const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
+const APP_VERSION='72';const APP_SEMVER='3.1.1';const APP_DATE='2026-11-11';
+const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
 async function checkUpdate(manual){
@@ -1309,14 +1314,14 @@ async function checkUpdate(manual){
   UPD_BUSY=true;
   try{
     const r=await fetch(location.pathname+'?u='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;
-    const m=(await r.text()).match(/const APP_VERSION='(\d+)'/);const nv=m?+m[1]:0;
+    const tx=await r.text();const m=tx.match(/const APP_VERSION='(\d+)'/);const nv=m?+m[1]:0;const sv=(tx.match(/const APP_SEMVER='([\d.]+)'/)||[])[1]||nv;
     if(nv>+APP_VERSION){
       let tries=0;try{tries=+(sessionStorage.getItem('upd_'+nv)||0);sessionStorage.setItem('upd_'+nv,tries+1)}catch(e){}
-      if(tries>=2){if(manual)toast('Version '+nv+' ist online, kommt gleich an');return}
+      if(tries>=2){if(manual)toast('Version '+sv+' ist online, kommt gleich an');return}
       if(typeof dirty!=='undefined'&&dirty){try{clearTimeout(pushTimer);await pushNow()}catch(e){}}
-      toast('Update auf Version '+nv+' …');
+      toast('Update auf Version '+sv+' …');
       setTimeout(()=>location.replace(location.pathname+'?v='+nv+location.hash),800);
-    }else if(manual)toast('Du hast die neueste Version ('+APP_VERSION+')');
+    }else if(manual)toast('Du hast die neueste Version ('+APP_SEMVER+')');
   }catch(e){if(manual)toast('Update-Prüfung fehlgeschlagen')}
   finally{UPD_BUSY=false}
 }
@@ -1970,7 +1975,7 @@ let OPST='offer';
 function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.find(x=>x.id===id):null;OPST=o?((o.stage==='won'||o.stage==='lost')?'__keep':(o.stage||'')):'offer';const cmN=ymOf(new Date());OPFM=o?(o.fm||OPK.slice(0,7)):(OPK.slice(0,7)<cmN?cmN:OPK.slice(0,7));
   const fmOpts=[cmN,addM(cmN,1),addM(cmN,2)];if(!fmOpts.includes(OPFM))fmOpts.unshift(OPFM);
   openSheet(`${sheetHead(id?'Opportunity bearbeiten':'Opportunity geschrieben')}
-   <div class="field"><label>Wert der Opportunity in €</label><input class="inp" id="opa" inputmode="decimal" placeholder="z. B. 2.400" value="${o&&o.amount?(+o.amount).toLocaleString('de-DE',{maximumFractionDigits:2}):''}" style="font-size:24px;height:58px;font-weight:600" oninput="opHint()" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('opn').focus()}"></div>
+   <div class="field"><label for="opa">Wert der Opportunity in ${o&&o.cur==='CHF'?'CHF':'€'}</label><input class="inp" id="opa" inputmode="decimal" placeholder="z. B. 2.400" value="${o&&o.amount?(o.cur==='CHF'?+o.orig:+o.amount).toLocaleString('de-DE',{maximumFractionDigits:2}):''}" style="font-size:24px;height:58px;font-weight:600" oninput="opHint();curHint('opa')" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('opn').focus()}">${curField('opa',o&&o.cur,o&&o.orig)}</div>
    <div class="grid2" style="margin-top:14px"><div class="field"><label>Kunde</label><input class="inp" id="opn" placeholder="Name des Kunden" value="${o?esc(o.name||''):''}" onkeydown="if(event.key==='Enter'){event.preventDefault();saveOp()}"></div><div class="field"><label>Datum</label><input class="inp" type="date" id="opd" value="${OPK}"></div></div>
    <div class="field" style="margin-top:14px"><label>Stage im Forecast</label><div class="seg op-stage">${[['offer','Offer created'],['proposal','Proposal sent'],['expected','Expected'],['signed','Signed'],['','Nicht im Forecast']].map(([k2,l2])=>`<button class="${(o?(o.stage||''):'offer')===k2?'on':''}" onclick="OPST='${k2}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on');opHint()">${l2}</button>`).join('')}</div><div class="hint" id="ophint" style="margin-top:6px"></div></div>
    <div class="field" id="opfmw" style="margin-top:14px;${o&&!OPEN_ST.includes(o.stage)?'display:none':''}"><label>Forecast für</label><div class="seg op-fm">${fmOpts.map(m2=>`<button class="${OPFM===m2?'on':''}" onclick="OPFM='${m2}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on');opHint()">${m2===cmN?'Diesen Monat':MON[pD(m2).getMonth()]}</button>`).join('')}</div></div>
@@ -1979,7 +1984,28 @@ function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.f
    <div class="row" style="margin-top:18px;gap:8px">${id?`<button class="btn danger" onclick="closeSheet();actOpDel('${OPK}','${id}')" aria-label="Löschen">${ic('trash')}</button>`:''}<button class="btn pri block" onclick="saveOp()">${id?'Speichern':'+1 Opp eintragen'}</button></div>`);
   opHint();if(!id)setTimeout(()=>{const i=document.getElementById('opa');i&&i.focus()},350)}
 let OPFM=null;
-function opHint(){const h=document.getElementById('ophint');if(!h)return;if(OPST==='__keep'){h.innerHTML='';return}const a=Math.abs(numIn((document.getElementById('opa')||{}).value||'')||0);const P=S.fcParams;const rate={offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:100}[OPST];
+/* ---------- Währung: CHF-Eingabe ---------- */
+const chfRate=()=>{const r=+S.settings.chfRate;return r>0?r:1.07};
+let CURSEL={};
+function curField(id,cur,orig){CURSEL[id]=cur==='CHF'?'CHF':'EUR';setTimeout(()=>curHint(id),0);
+  return `<div class="curtg" id="${id}_ct"><button type="button" class="${CURSEL[id]==='EUR'?'on':''}" onclick="curPick('${id}','EUR')">€ Euro</button><button type="button" class="${CURSEL[id]==='CHF'?'on':''}" onclick="curPick('${id}','CHF')">🇨🇭 CHF</button></div><div class="fxh" id="${id}_fx"></div>`}
+function curPick(id,c){const el=document.getElementById(id);const prev=CURSEL[id];CURSEL[id]=c;document.querySelectorAll(`#${id}_ct button`).forEach((b,i)=>b.classList.toggle('on',(i===0)===(c==='EUR')));
+  if(el&&el.value&&prev!==c){const v=Math.abs(numIn(el.value)||0);if(v){const nv=c==='CHF'?v/chfRate():v*chfRate();el.value=nv.toLocaleString('de-DE',{maximumFractionDigits:2})}}
+  const lb=document.querySelector(`label[for="${id}"]`);if(lb)lb.textContent=lb.textContent.replace(/in (€|CHF)/,'in '+(c==='CHF'?'CHF':'€'));
+  curHint(id);el&&el.dispatchEvent(new Event('input'));el&&el.focus()}
+function curHint(id){const h=document.getElementById(id+'_fx');if(!h)return;if(CURSEL[id]!=='CHF'){h.innerHTML='';return}const v=Math.abs(numIn((document.getElementById(id)||{}).value||'')||0);
+  h.innerHTML=`${v?`≈ <b>${fmtE(v*chfRate(),2)}</b> · `:''}Kurs 1 CHF = ${fmtN(chfRate(),4)} € <button type="button" onclick="fxSheet()">ändern</button>`}
+function toEUR(id){const v=numIn((document.getElementById(id)||{}).value||'');if(v==null||isNaN(v))return v;return CURSEL[id]==='CHF'?Math.round(v*chfRate()*100)/100:v}
+function curMeta(id){const v=Math.abs(numIn((document.getElementById(id)||{}).value||'')||0);return CURSEL[id]==='CHF'&&v?{cur:'CHF',orig:v,fx:chfRate()}:null}
+function curApply(o,m){if(m){o.cur=m.cur;o.orig=m.orig;o.fx=m.fx}else{delete o.cur;delete o.orig;delete o.fx}return o}
+const chfTag=o=>o&&o.cur==='CHF'?`<span class="chf" title="${fmtN(o.orig,2)} CHF zum Kurs ${fmtN(o.fx||chfRate(),4)}">CHF</span>`:'';
+function fxSheet(){openSheet(`${sheetHead('Wechselkurs CHF')}<p class="hint" style="margin-top:-6px">Wird beim Eintragen in Euro umgerechnet. Gespeicherte Werte behalten ihren Kurs vom Eintragen.</p>
+  <div class="field"><label>1 CHF = … €</label><input class="inp" id="fxr" inputmode="decimal" value="${fmtN(chfRate(),4)}" style="font-size:22px;height:54px;font-weight:600"></div>
+  <div class="hint" id="fxst" style="margin-top:8px"></div>
+  <div class="row" style="gap:10px;margin-top:14px"><button class="btn" style="flex:1" onclick="fxLive()">Aktuellen Kurs laden</button><button class="btn pri" style="flex:1" onclick="fxSave()">Speichern</button></div>`)}
+async function fxLive(){const st=document.getElementById('fxst');st.textContent='Lade Kurs …';try{const r=await fetch('https://api.frankfurter.app/latest?from=CHF&to=EUR');const j=await r.json();const v=j.rates&&j.rates.EUR;if(!v)throw 0;document.getElementById('fxr').value=fmtN(v,4);st.textContent=`EZB-Referenzkurs vom ${new Date(j.date).toLocaleDateString('de-DE')}`}catch(e){st.textContent='Kurs konnte nicht geladen werden. Bitte von Hand eintragen.'}}
+function fxSave(){const v=numIn(document.getElementById('fxr').value);if(!(v>0)){toast('Bitte einen gültigen Kurs eintragen');return}S.settings.chfRate=v;S.settings.chfAt=todayK();save();closeSheet();render();toast(`Kurs gespeichert: 1 CHF = ${fmtN(v,4)} €`,'ok')}
+function opHint(){const h=document.getElementById('ophint');if(!h)return;if(OPST==='__keep'){h.innerHTML='';return}const a=Math.abs(toEUR('opa')||0);const P=S.fcParams;const rate={offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:100}[OPST];
   if(OPST==='won'){h.innerHTML='Wird aus dem Forecast genommen. Danach öffnet sich direkt „Umsatz eintragen“ mit Betrag und Kunde.';return}
   if(OPST==='lost'){h.innerHTML='Wird aus dem Forecast genommen und zählt nicht mehr zur Pipeline.';return}
   const fw=document.getElementById('opfmw');if(fw)fw.style.display=OPEN_ST.includes(OPST)?'':'none';
@@ -2013,21 +2039,21 @@ function itemAge(x){if(x.opp){const f=oppFind(x.opp);if(f)return oppAge({...f.o,
 function openItems(m){const F=S.forecast[m]||{};const out=[];['signed','expected','proposal','offer'].forEach(st=>{((F.items||{})[st]||[]).forEach((x,i)=>out.push({...x,st,i,age:itemAge(x)}))});return out}
 function agingPanel(m){const it=openItems(m);if(!it.length)return '';const nm=MON[pD(addM(m,1)).getMonth()];const stale=it.filter(x=>x.age!=null&&x.age>=14).length;
   return `<div class="sh"><h2>Offene Opps</h2><span class="sp"></span><span class="meta">${stale?`<span class="age old">${stale} seit 14+ Tagen</span>`:it.length+' im '+MON[pD(m).getMonth()]}</span></div>
-  <div class="panel flush"><div class="list">${it.map(x=>`<div class="li oi"><div class="t" onclick="${x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`itemSheet('${m}','${x.st}',${x.i})`}" style="cursor:pointer"><b>${x.opp?'🎯 ':''}${esc(x.n||'Opp')}</b><small><select class="st-sel" onclick="event.stopPropagation()" onchange="fcItemStage('${m}','${x.st}',${x.i},this.value)" aria-label="Stage ändern">${['offer','proposal','expected','signed'].map(k=>`<option value="${k}" ${k===x.st?'selected':''}>${FCN[k]}</option>`).join('')}</select>${x.age!=null?' '+ageChip(x.age):''}</small></div><div class="v" onclick="${x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`itemSheet('${m}','${x.st}',${x.i})`}" style="cursor:pointer">${fmtE(x.v)}${x.vh&&x.vh.length?`<small class="vh">${x.v>x.vh[x.vh.length-1].v?'▲':'▼'} vorher ${fmtE(x.vh[x.vh.length-1].v)}</small>`:''}</div>
+  <div class="panel flush"><div class="list">${it.map(x=>`<div class="li oi"><div class="t" onclick="${x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`itemSheet('${m}','${x.st}',${x.i})`}" style="cursor:pointer"><b>${x.opp?'🎯 ':''}${esc(x.n||'Opp')}${chfTag(x)}</b><small><select class="st-sel" onclick="event.stopPropagation()" onchange="fcItemStage('${m}','${x.st}',${x.i},this.value)" aria-label="Stage ändern">${['offer','proposal','expected','signed'].map(k=>`<option value="${k}" ${k===x.st?'selected':''}>${FCN[k]}</option>`).join('')}</select>${x.age!=null?' '+ageChip(x.age):''}</small></div><div class="v" onclick="${x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`itemSheet('${m}','${x.st}',${x.i})`}" style="cursor:pointer">${fmtE(x.v)}${x.vh&&x.vh.length?`<small class="vh">${x.v>x.vh[x.vh.length-1].v?'▲':'▼'} vorher ${fmtE(x.vh[x.vh.length-1].v)}</small>`:''}</div>
     <div class="oi-a">${m>ymOf(new Date())?`<button class="mv" onclick="fcItemAct('${m}','${x.st}',${x.i},'pull')" aria-label="Zurückholen" title="In den ${MON[pD(ymOf(new Date())).getMonth()]} holen">${ic('left')}</button>`:''}<button class="ok" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')" aria-label="Gewonnen" title="Gewonnen">${ic('check')}</button><button class="mv" onclick="fcItemAct('${m}','${x.st}',${x.i},'push')" aria-label="In den ${nm} schieben" title="In den ${nm} schieben">${ic('right')}</button><button class="no" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')" aria-label="Closed Lost" title="Closed Lost">${ic('x')}</button></div></div>`).join('')}</div></div>
   <p class="hint" style="margin-top:8px">✓ gewonnen (öffnet „Umsatz eintragen“) · → in den ${nm} schieben · ✕ Closed Lost. Alter = Tage seit dem letzten Stage-Wechsel, orange ab 14, rot ab 30 Tagen.</p>`}
 function laterPanel(m){if(m!==ymOf(new Date()))return '';const rows=[];[1,2,3].forEach(d=>{const lm=addM(m,d);openItems(lm).forEach(x=>rows.push({...x,lm}))});if(!rows.length)return '';const sum=rows.reduce((a,x)=>a+(+x.v||0),0);
   return `<div class="sh"><h2>Später geplant</h2><span class="sp"></span><span class="meta">${rows.length} ${rows.length===1?'Opp':'Opps'} · ${fmtE(sum)}</span></div>
-  <div class="panel flush"><div class="list">${rows.map(x=>`<div class="li oi"><div class="t" onclick="${x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`CUR='${x.lm}';render()`}" style="cursor:pointer"><b>${x.opp?'🎯 ':''}${esc(x.n||'Opp')}</b><small><span class="age">${MON[pD(x.lm).getMonth()]}</span> ${FCN[x.st]}</small></div><div class="v">${fmtE(x.v)}</div>
+  <div class="panel flush"><div class="list">${rows.map(x=>`<div class="li oi"><div class="t" onclick="${x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`CUR='${x.lm}';render()`}" style="cursor:pointer"><b>${x.opp?'🎯 ':''}${esc(x.n||'Opp')}${chfTag(x)}</b><small><span class="age">${MON[pD(x.lm).getMonth()]}</span> ${FCN[x.st]}</small></div><div class="v">${fmtE(x.v)}</div>
     <div class="oi-a"><button class="mv lp-back" onclick="fcItemAct('${x.lm}','${x.st}',${x.i},'pull')" aria-label="In diesen Monat holen" title="In den ${MON[pD(m).getMonth()]} holen">${ic('left')}</button></div></div>`).join('')}</div></div>
   <p class="hint" style="margin-top:8px">Zählen im Forecast ihres Monats, nicht im ${MON[pD(m).getMonth()]}. ← holt eine Opp in den ${MON[pD(m).getMonth()]} zurück, wenn der Kunde doch früher will.</p>`}
 let IE=null;
 function itemSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];if(!x)return;IE={m,st,i};
-  openSheet(`${sheetHead('Opp bearbeiten')}<div class="field"><label>Vertragswert in €</label><input class="inp" id="iev" inputmode="decimal" value="${(+x.v).toLocaleString('de-DE',{maximumFractionDigits:2})}" style="font-size:24px;height:58px;font-weight:600" onkeydown="if(event.key==='Enter'){event.preventDefault();itemSave()}"></div>
+  openSheet(`${sheetHead('Opp bearbeiten')}<div class="field"><label for="iev">Vertragswert in ${x.cur==='CHF'?'CHF':'€'}</label><input class="inp" id="iev" inputmode="decimal" value="${(x.cur==='CHF'?+x.orig:+x.v).toLocaleString('de-DE',{maximumFractionDigits:2})}" style="font-size:24px;height:58px;font-weight:600" oninput="curHint('iev')" onkeydown="if(event.key==='Enter'){event.preventDefault();itemSave()}">${curField('iev',x.cur,x.orig)}</div>
    <div class="field" style="margin-top:14px"><label>Kunde</label><input class="inp" id="ien" value="${esc(x.n||'')}"></div>
    ${x.vh&&x.vh.length?`<p class="hint" style="margin-top:10px">Wertverlauf: ${[...x.vh.map(h=>fmtE(h.v)+' ('+dLabel(h.d)+')'),fmtE(x.v)+' (jetzt)'].join(' → ')}</p>`:''}
    <button class="btn pri block" style="margin-top:16px" onclick="itemSave()">Speichern</button>`);setTimeout(()=>{const e=document.getElementById('iev');if(e){e.focus();e.select()}},300)}
-function itemSave(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st][i];const nv=Math.abs(numIn(document.getElementById('iev').value)||0);const nn=document.getElementById('ien').value.trim();
+function itemSave(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st][i];const cm=curMeta('iev');let nv=Math.abs(toEUR('iev')||0);if(cm&&x.cur==='CHF'&&Math.abs(x.orig-cm.orig)<.01)nv=+x.v;curApply(x,cm);const nn=document.getElementById('ien').value.trim();
   if(nv&&Math.abs(nv-x.v)>=.01){x.vh=x.vh||[];x.vh.push({d:todayK(),v:+x.v});const dl=nv-x.v;x.v=nv;toast(`Wert ${dl>0?'erhöht':'gesenkt'}: ${sgnE(dl)}`,'ok')}if(nn)x.n=nn;fcRecalc(F,st);save();closeSheet();render()}
 function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);x.since=todayK();
   let it=F.items[ns];if(!it||!it.length){it=[];if(+F[ns])it.push({v:+F[ns],n:'Bisheriger Wert'})}it.push(x);F.items[ns]=it;fcRecalc(F,ns);
@@ -2060,7 +2086,7 @@ function fcItemAct(m,st,i,act){const F=S.forecast[m];if(!F||!F.items||!F.items[s
   if(f){f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK()}
   const ce=closedLog(act==='won'?'won':'lost',x,m,st);
   save();render();
-  if(act==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');setTimeout(()=>dealSheet(null,false,{amount:x.v,name:x.n&&x.n!=='Bisheriger Wert'?x.n:''}),300)}else fxLost(ce)}
+  if(act==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');setTimeout(()=>dealSheet(null,false,{amount:x.v,name:x.n&&x.n!=='Bisheriger Wert'?x.n:'',...(x.cur?{cur:x.cur,orig:x.orig}:{})}),300)}else fxLost(ce)}
 function oppAction(act){const f=oppFind(OPID);if(!f)return;const m=f.o.fm||f.k.slice(0,7);const F=S.forecast[m];let st=null,i=-1;if(F&&F.items)Object.keys(F.items).some(k=>{const j=F.items[k].findIndex(x=>x.opp===OPID);if(j>=0){st=k;i=j;return true}});closeSheet();
   if(st){fcItemAct(m,st,i,act);return}
   if(act==='push'||act==='pull'){toast('Diese Opp steht in keinem Forecast');return}
@@ -2089,28 +2115,28 @@ function funnelPanel(m){const cur=ymOf(new Date());if(m!==cur)return '';const r=
 
 /* Opp ↔ Forecast-Einzelwerte verknüpfen */
 function fcOppUnlink(id,only){Object.keys(S.forecast||{}).forEach(m=>{if(only&&m!==only)return;const F=S.forecast[m];if(!F||!F.items)return;Object.keys(F.items).forEach(st=>{const before=F.items[st].length;F.items[st]=F.items[st].filter(x=>x.opp!==id);if(F.items[st].length!==before){F[st]=F.items[st].reduce((a,x)=>a+(+x.v||0),0);if(!F.items[st].length)delete F.items[st]}})})}
-function fcOppLink(o,date){if(!OPEN_ST.includes(o.stage)||!(+o.amount))return;const m=date.slice(0,7);S.forecast[m]=S.forecast[m]||{};const F=S.forecast[m];F.items=F.items||{};let it=F.items[o.stage];if(!it||!it.length){it=[];if(+F[o.stage])it.push({v:+F[o.stage],n:'Bisheriger Wert'})}it.push({v:+o.amount,n:o.name||'Opp',opp:o.id,since:o.stageSince||date,...(o.vh?{vh:o.vh}:{})});F.items[o.stage]=it;F[o.stage]=it.reduce((a,x)=>a+(+x.v||0),0)}
-function saveOp(){const amt=Math.abs(numIn(document.getElementById('opa').value)||0);const k=document.getElementById('opd').value||OPK;const name=document.getElementById('opn').value.trim();
+function fcOppLink(o,date){if(!OPEN_ST.includes(o.stage)||!(+o.amount))return;const m=date.slice(0,7);S.forecast[m]=S.forecast[m]||{};const F=S.forecast[m];F.items=F.items||{};let it=F.items[o.stage];if(!it||!it.length){it=[];if(+F[o.stage])it.push({v:+F[o.stage],n:'Bisheriger Wert'})}it.push({v:+o.amount,n:o.name||'Opp',opp:o.id,since:o.stageSince||date,...(o.vh?{vh:o.vh}:{}),...(o.cur?{cur:o.cur,orig:o.orig,fx:o.fx}:{})});F.items[o.stage]=it;F[o.stage]=it.reduce((a,x)=>a+(+x.v||0),0)}
+function saveOp(){const amt=Math.abs(toEUR('opa')||0);const cm=curMeta('opa');const k=document.getElementById('opd').value||OPK;const name=document.getElementById('opn').value.trim();
   if(OPST==='__keep'){const f=oppFind(OPID);OPST=f?f.o.stage:'';}
   if(OPEN_ST.includes(OPST)&&!amt){toast('Für den Forecast bitte einen Wert eintragen');document.getElementById('opa').focus();return}
   if(OPID&&k!==OPK)actSet(OPK,a=>{a.ops=a.ops.filter(o=>o.id!==OPID)});
   const prev=OPID?(oppFind(OPID)||{}).o:null;
-  const o={id:OPID||uid(),amount:amt||0,name};if(OPST)o.stage=OPST;
+  const o={id:OPID||uid(),amount:amt||0,name};if(OPST)o.stage=OPST;curApply(o,cm);if(prev&&cm&&prev.cur==='CHF'&&Math.abs(prev.orig-cm.orig)<.01){o.amount=+prev.amount;o.fx=prev.fx}
   o.stageSince=!prev?k:(prev.stage===OPST?(prev.stageSince||OPK):todayK());
   const pfm=prev?(prev.fm||OPK.slice(0,7)):null;o.fm=OPEN_ST.includes(OPST)&&OPFM?OPFM:(pfm||k.slice(0,7));if(pfm&&pfm!==o.fm)fcOppUnlink(o.id,pfm);
   if(prev&&Math.abs((+prev.amount||0)-o.amount)>=.01){o.vh=[...(prev.vh||[]),{d:todayK(),v:+prev.amount||0}]}else if(prev&&prev.vh)o.vh=prev.vh;
   fcOppUnlink(o.id,o.fm);if(OPEN_ST.includes(OPST))fcOppLink(o,o.fm+'-01');
   actSet(k,a=>{const i=a.ops.findIndex(x=>x.id===o.id);if(i>=0)a.ops[i]=o;else a.ops.push(o)});
   closeSheet();
-  if(OPST==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');render();setTimeout(()=>dealSheet(null,false,{amount:amt,name}),350);return}
+  if(OPST==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');render();setTimeout(()=>dealSheet(null,false,{amount:amt,name,...(o.cur?{cur:o.cur,orig:o.orig}:{})}),350);return}
   if(OPST==='lost'){toast('Opp als verloren markiert, aus dem Forecast entfernt');render();return}
-  if(!actHit(k)||OPID)toast(`${OPID?'Opp gespeichert':'Opp eingetragen'}${amt?', '+fmtE(amt):''}${OPST?' → '+FCN[OPST]:''}${OPEN_ST.includes(OPST)&&o.fm!==ymOf(new Date())?' im '+MON[pD(o.fm).getMonth()]:''}`,'ok');actPop('op');render()}
+  if(!actHit(k)||OPID)toast(`${OPID?'Opp gespeichert':'Opp eingetragen'}${o.amount?', '+fmtE(o.amount)+(o.cur==='CHF'?' ('+fmtN(o.orig)+' CHF)':''):''}${OPST?' → '+FCN[OPST]:''}${OPEN_ST.includes(OPST)&&o.fm!==ymOf(new Date())?' im '+MON[pD(o.fm).getMonth()]:''}`,'ok');actPop('op');render()}
 let ACTK=null;
 function actDaySheet(k,keep){ACTK=k;const a=actOf(k),g=actGoal(k);const html=`${sheetHead(`${WDN[pD(k).getDay()]}, ${pD(k).getDate()}. ${MONS[pD(k).getMonth()]}`)}
    <div id="actday"><div class="ac-body" style="margin-top:0"><div class="ac-ring">${actRings(a,g)}<div class="ac-mid">${actHit(k)?'<b class="ac-emo">🎯</b>':`<b class="num">${Math.min(a.demo,g.demo)+Math.min(a.ops.length,g.op)}<span>/${g.demo+g.op}</span></b>`}</div></div>
    <div class="ac-rows"><div class="ac-row"><div class="ac-lb"><span class="ac-ic demo">${ic('video')}</span>Demo-Calls</div><div class="ac-line"><b class="num">${a.demo}<span>/${g.demo}</span></b><span class="sp"></span><button class="ac-minus" onclick="actDemo('${k}',-1)" ${a.demo?'':'disabled'}>${ic('minus')}</button><button class="ac-plus demo" onclick="actDemo('${k}',1)">${ic('plus')}Demo</button></div></div>
    <div class="ac-row"><div class="ac-lb"><span class="ac-ic op">${ic('doc')}</span>Opportunities</div><div class="ac-line"><b class="num">${a.ops.length}<span>/${g.op}</span></b><span class="sp"></span><button class="ac-plus op" onclick="opSheet('${k}')">${ic('plus')}Opp</button></div></div></div></div>
-   ${a.ops.length?`<div class="list" style="margin-top:14px">${a.ops.map((o,i)=>`<div class="li" onclick="opSheet('${k}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity '+(i+1)}</b><small>antippen zum Bearbeiten</small></div><div class="v">${+o.amount?fmtE(o.amount):'<span class="mut">ohne Wert</span>'}</div></div>`).join('')}</div>`:''}</div>`;
+   ${a.ops.length?`<div class="list" style="margin-top:14px">${a.ops.map((o,i)=>`<div class="li" onclick="opSheet('${k}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity '+(i+1)}${chfTag(o)}</b><small>antippen zum Bearbeiten</small></div><div class="v">${+o.amount?fmtE(o.amount):'<span class="mut">ohne Wert</span>'}</div></div>`).join('')}</div>`:''}</div>`;
   openSheet(html)}
 const WDN=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
 function vAktiv(){const m=CUR,tk=todayK();const am=actMonth(m);const g=S.settings.actGoal||{demo:2,op:1};const days=monthDays(m);const lead=(pD(m+'-01').getDay()+6)%7;
@@ -2126,7 +2152,7 @@ function vAktiv(){const m=CUR,tk=todayK();const am=actMonth(m);const g=S.setting
     <div class="ac-cal"><div class="ac-ch">${['Mo','Di','Mi','Do','Fr','Sa','So'].map(x=>`<span>${x}</span>`).join('')}</div><div class="ac-cg">${'<i></i>'.repeat(lead)}${days.map(x=>{const wd=actWorkday(x.k),a=actOf(x.k),gg=actGoal(x.k);const fut=x.k>tk;return wd?`<button class="ac-cd ${actHit(x.k)?'hit':''} ${x.k===tk?'today':''} ${fut?'fut':''}" onclick="actDaySheet('${x.k}')">${actRings(a,gg,40)}<small>${+x.k.slice(8)}</small>${a.demo||a.ops.length?`<em>${a.demo}·${a.ops.length}</em>`:''}</button>`:`<div class="ac-cd off"><small>${+x.k.slice(8)}</small></div>`}).join('')}</div></div>
     <div class="ac-legend"><span><i class="lg-demo"></i>Demo-Calls (außen)</span><span><i class="lg-op"></i>Opportunities (innen)</span></div></div>
   <div><div class="sh ac-sh"><h2>Opportunities</h2><span class="sp"></span><button class="chip" onclick="opSheet('${m===ymOf(new Date())?tk:m+'-01'}')">${ic('plus')}Opp</button></div>
-  ${am.ops.length?`<div class="panel flush"><div class="list">${[...am.ops].sort((a,b)=>b.date.localeCompare(a.date)).map(o=>`<div class="li" onclick="opSheet('${o.date}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity'}</b><small>${dLabel(o.date)}${o.stage?' · '+FCN[o.stage]:''}${OPEN_ST.includes(o.stage)?' '+ageChip(oppAge(o)):''}</small>${mx&&+o.amount?`<div class="ac-bar"><i style="width:${(+o.amount/mx*100).toFixed(1)}%"></i></div>`:''}</div><div class="v">${+o.amount?fmtE(o.amount):'<span class="mut">ohne Wert</span>'}</div></div>`).join('')}</div></div>`:`<div class="panel"><p class="lbl" style="margin:0">Noch keine Opportunities in diesem Monat.</p></div>`}</div></div>
+  ${am.ops.length?`<div class="panel flush"><div class="list">${[...am.ops].sort((a,b)=>b.date.localeCompare(a.date)).map(o=>`<div class="li" onclick="opSheet('${o.date}','${o.id}')"><div class="ico op">${ic('doc')}</div><div class="t"><b>${o.name?esc(o.name):'Opportunity'}${chfTag(o)}</b><small>${dLabel(o.date)}${o.stage?' · '+FCN[o.stage]:''}${OPEN_ST.includes(o.stage)?' '+ageChip(oppAge(o)):''}</small>${mx&&+o.amount?`<div class="ac-bar"><i style="width:${(+o.amount/mx*100).toFixed(1)}%"></i></div>`:''}</div><div class="v">${+o.amount?fmtE(o.amount):'<span class="mut">ohne Wert</span>'}</div></div>`).join('')}</div></div>`:`<div class="panel"><p class="lbl" style="margin:0">Noch keine Opportunities in diesem Monat.</p></div>`}</div></div>
   <div class="panel" style="margin-top:14px"><div class="ptl" style="margin-bottom:12px">${ic('gear','class="pi"')}Dein Tagesziel</div>
     <div class="grid2"><div class="field"><label>Demo-Calls pro Tag</label><input class="inp" inputmode="numeric" value="${g.demo}" onchange="S.settings.actGoal={...(S.settings.actGoal||{demo:2,op:1}),demo:Math.max(1,parseInt(this.value)||2)};save();render();toast('Tagesziel gespeichert','ok')"></div>
     <div class="field"><label>Opportunities pro Tag</label><input class="inp" inputmode="numeric" value="${g.op}" onchange="S.settings.actGoal={...(S.settings.actGoal||{demo:2,op:1}),op:Math.max(1,parseInt(this.value)||1)};save();render();toast('Tagesziel gespeichert','ok')"></div></div>
@@ -2192,7 +2218,7 @@ function vHome(){
       ${WG.goal?`<div class="wg"><div class="row"><span class="lbl">Wochenziel</span><span class="sp"></span><b class="num">${fmtE(WG.got)} <span class="mut" style="font-weight:500">von ${fmtE(WG.goal)}</span></b></div><div class="wgb"><i style="width:${Math.min(100,WG.got/WG.goal*100)}%"></i></div><div class="lbl" style="margin-top:6px">${WG.got>=WG.goal?'Wochenziel geschafft 🎉':`noch ${fmtE(WG.goal-WG.got)} diese Woche`}</div></div>`:''}
     </div>`,deals:`    <div class="panel deals">
       <div class="row"><div class="ptl">${ic('brief','class="pi"')}Letzte Verträge</div><span class="sp"></span><button class="chip acc" onclick="dealSheet()">${ic('plus')} Umsatz</button></div>
-      ${deals.length?deals.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${esc(dealName(d))}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount)}</div></div>`).join(''):`<div class="empty">Noch keine Verträge.</div>`}
+      ${deals.length?deals.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${esc(dealName(d))}${chfTag(d)}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount)}</div></div>`).join(''):`<div class="empty">Noch keine Verträge.</div>`}
     </div>`,tiles:`    <a class="tile" href="#zeit"><div class="ti" style="--tc:${total>=0?'var(--green)':'var(--red)'}">${ic('clock')}</div><div class="tl">Stundenkonto</div><div class="tv ${total>=0?'pos':'neg'}">${sgn(total)}<small> h</small></div><div class="ts">${st.missing?`<span class="neg">${st.missing} Tag(e) offen</span>`:`Monat ${sgn(st.saldo)} h`}</div></a>
     <a class="tile" href="#forecast"><div class="ti" style="--tc:var(--tY)">${ic('scope')}</div><div class="tl">Forecast</div><div class="tv">${fmtN(fc.pct)}<small> %</small></div><div class="ts">${fmtE(fc.exp)} erwartet</div></a>
     <a class="tile" href="#gehalt"><div class="ti" style="--tc:var(--amber)">${ic('wallet')}</div><div class="tl">Auszahlung ${MONS[pD(addM(m,1)).getMonth()]}</div><div class="tv">${fmtE(sal.total)}</div><div class="ts">variabel ${fmtE(sal.total-sal.base)}</div></a>
@@ -2467,7 +2493,7 @@ function vUmsatz(){
   </div>
 
   <div class="sh"><h2>Verträge</h2><span class="sp"></span><button class="chip" onclick="monthCard('${CUR}')" style="margin-right:8px">📸 Monatskarte</button><span class="meta">${r.ds.length} im ${mn}</span></div>
-  <div class="panel flush">${r.ds.length?r.ds.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${esc(dealName(d))}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}, ${d.channel==='in'?'Inbound':'Outbound'}${+d.amount>+S.salary.bigThreshold?', Big Deal':''}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount,2)}${DV[d.id]!=null&&Math.abs(DV[d.id])>=.5?`<small class="dvl ${DV[d.id]<0?'neg':''}">${DV[d.id]>0?'+':'−'}${fmtE(Math.abs(DV[d.id]))} Gehalt</small>`:''}</div></div>`).join(''):`<div class="empty">Noch kein Umsatz im ${mn}.<br><button class="btn pri sm" style="margin-top:12px" onclick="dealSheet()">${ic('plus')} Ersten Vertrag eintragen</button></div>`}</div>
+  <div class="panel flush">${r.ds.length?r.ds.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${esc(dealName(d))}${chfTag(d)}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}, ${d.channel==='in'?'Inbound':'Outbound'}${+d.amount>+S.salary.bigThreshold?', Big Deal':''}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount,2)}${DV[d.id]!=null&&Math.abs(DV[d.id])>=.5?`<small class="dvl ${DV[d.id]<0?'neg':''}">${DV[d.id]>0?'+':'−'}${fmtE(Math.abs(DV[d.id]))} Gehalt</small>`:''}</div></div>`).join(''):`<div class="empty">Noch kein Umsatz im ${mn}.<br><button class="btn pri sm" style="margin-top:12px" onclick="dealSheet()">${ic('plus')} Ersten Vertrag eintragen</button></div>`}</div>
 
   <div class="cols half" style="margin-top:14px">
     <div class="panel">
@@ -2503,14 +2529,14 @@ function dealValHtml(v,amt,st){if(!v)return '';const sgn=x=>(x>=0?'+':'−')+fmt
   else if(!st&&v.att1>=130&&v.att0<130)note=`<div class="dv-note up">🚀 Knackt die 130 %: +10 % Provisionssatz auf den ganzen Monat.</div>`;
   return `<div class="dv ${v.total<0?'neg':''}"><div class="dv-top"><div><small>${st?'Kostet dich brutto':'Bringt dir brutto'}</small><b>${sgn(v.total)}</b></div><div class="dv-eff"><small>effektiv</small><b>${fmtN(eff,1)} %</b><small>vom Betrag</small></div></div>
     ${parts.length?`<div class="dv-parts">${parts.map(p=>`<span>${p[0]} <b>${sgn(p[1])}</b></span>`).join('')}</div>`:''}${note}<div class="dv-foot">mit der Auszahlung im ${MON[pD(pm).getMonth()]}</div></div>`}
-function updDealVal(){const el=document.getElementById('dlv');if(!el||!DL)return;const a=Math.abs(numIn(document.getElementById('dla').value)||0);const date=document.getElementById('dld').value||todayK();const m=date.slice(0,7);
+function updDealVal(){const el=document.getElementById('dlv');if(!el||!DL)return;const a=Math.abs(toEUR('dla')||0);const date=document.getElementById('dld').value||todayK();const m=date.slice(0,7);
   if(!a){el.innerHTML=payable(m)?`<div class="dv ghost"><small>Gib einen Betrag ein, dann siehst du, was er dir bringt.</small></div>`:'';return}
   const v=dealValue(m,DL.storno?-a:a,date,DL.id,DL.channel);el.innerHTML=v?dealValHtml(v,a,!!DL.storno):`<div class="dv ghost"><small>Für ${mLabel(m)} rechnet die App kein Gehalt${S.targets[m]?'':' (kein Monatsziel hinterlegt)'}.</small></div>`}
 let DL=null;
 function dIco(d){return d.storno?`<div class="ico st">${ic('storno')}</div>`:`<div class="ico ${d.channel}">${ic(d.channel==='in'?'inb':'outb')}</div>`}
 function dealSheet(id,storno,pre){
-  const d=id?{...S.deals.find(x=>x.id===id)}:{id:null,date:CUR===ymOf(new Date())?todayK():`${CUR}-01`,amount:pre&&pre.amount?pre.amount:'',channel:'out',name:pre&&pre.name?pre.name:'',storno:!!storno};DL=d;
-  const st=!!d.storno; const amt=d.amount!==''?String(Math.abs(+d.amount)).replace('.',','):'';
+  const d=id?{...S.deals.find(x=>x.id===id)}:{id:null,date:CUR===ymOf(new Date())?todayK():`${CUR}-01`,amount:pre&&pre.amount?pre.amount:'',channel:'out',name:pre&&pre.name?pre.name:'',storno:!!storno,...(pre&&pre.cur?{cur:pre.cur,orig:pre.orig}:{})};DL=d;
+  const st=!!d.storno; const amt=d.amount!==''?String(Math.abs(d.cur==='CHF'&&d.orig?+d.orig:+d.amount)).replace('.',','):'';
   const orig=st?S.deals.filter(x=>!x.storno&&!x.retro&&+x.amount>0&&x.id!==d.ref).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,40):[];
   const refD=d.ref?S.deals.find(x=>x.id===d.ref):null;
   openSheet(`${sheetHead(id?(st?'Storno bearbeiten':'Umsatz bearbeiten'):(st?'Storno eintragen':'Neuer Umsatz'))}
@@ -2518,7 +2544,7 @@ function dealSheet(id,storno,pre){
    ${st?`<p class="hint" style="margin:0 0 12px">Der Betrag wird im gewählten Monat vom Umsatz abgezogen. Der ursprüngliche Vertrag bleibt in seinem Monat stehen.</p>
    <div class="field" style="margin-bottom:14px"><label>Ursprünglicher Vertrag (optional, übernimmt Betrag)</label><select class="inp" id="dlr" onchange="pickRef(this.value)"><option value="">Nicht ausgewählt</option>${refD?`<option value="${refD.id}" selected>${esc(dealName(refD))}, ${dLabel(refD.date)}, ${fmtE(refD.amount,2)}</option>`:''}${orig.map(x=>`<option value="${x.id}">${esc(dealName(x))}, ${dLabel(x.date)}, ${fmtE(x.amount,2)}</option>`).join('')}</select></div>`:''}
    <div class="seg"><button class="${d.channel==='in'?'on':''}" id="dlci" onclick="DL.channel='in';this.classList.add('on');this.nextElementSibling.classList.remove('on')">${ic('inb')}Inbound</button><button class="${d.channel==='out'?'on':''}" id="dlco" onclick="DL.channel='out';this.classList.add('on');this.previousElementSibling.classList.remove('on')">${ic('outb')}Outbound</button></div>
-   <div class="field" style="margin-top:16px"><label>${st?'Storno-Betrag in € (wird abgezogen)':'Betrag (ARR) in €'}</label><div style="position:relative">${st?'<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:24px;font-weight:700;color:var(--red)">−</span>':''}<input class="inp" id="dla" inputmode="decimal" value="${amt}" placeholder="1.611,00" oninput="updDealVal()" style="font-size:24px;height:58px;font-weight:600;${st?'padding-left:36px;color:var(--red)':''}"></div></div>
+   <div class="field" style="margin-top:16px"><label for="dla">${st?'Storno-Betrag in '+(d.cur==='CHF'?'CHF':'€')+' (wird abgezogen)':'Betrag (ARR) in '+(d.cur==='CHF'?'CHF':'€')}</label><div style="position:relative">${st?'<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:24px;font-weight:700;color:var(--red)">−</span>':''}<input class="inp" id="dla" inputmode="decimal" value="${amt}" placeholder="1.611,00" oninput="updDealVal();curHint('dla')" style="font-size:24px;height:58px;font-weight:600;${st?'padding-left:36px;color:var(--red)':''}"></div>${curField('dla',d.cur,d.orig)}</div>
    <div class="grid2" style="margin-top:14px">
      <div class="field"><label>${st?'Datum der Abbuchung':'Datum'}</label><input class="inp" type="date" id="dld" value="${d.date}" onchange="updDealVal()"></div>
      <div class="field"><label>Kunde</label><input class="inp" id="dln" value="${esc(d.name)}" placeholder="Optional"></div>
@@ -2528,8 +2554,8 @@ function dealSheet(id,storno,pre){
   updDealVal();
 }
 function pickRef(v){DL.ref=v||null;const x=S.deals.find(d=>d.id===v);if(!x)return;setTimeout(updDealVal,0);document.getElementById('dla').value=String(+x.amount).replace('.',',');if(!document.getElementById('dln').value)document.getElementById('dln').value=x.name||'';DL.channel=x.channel;document.getElementById('dlci').classList.toggle('on',x.channel==='in');document.getElementById('dlco').classList.toggle('on',x.channel==='out')}
-function saveDeal(){let a=numIn(document.getElementById('dla').value);if(!a){toast('Bitte einen Betrag eingeben');return}const st=!!DL.storno;a=Math.abs(a);const dm=(document.getElementById('dld').value||todayK()).slice(0,7);const before=rev(dm).pct;const sBefore=dm>=S.settings.startMonth&&S.targets[dm]?salary(dm):null;const prevMax=Math.max(0,...S.deals.filter(x=>!x.retro&&x.id!==DL.id).map(x=>+x.amount));
-  const o={id:DL.id||uid(),date:document.getElementById('dld').value||todayK(),amount:st?-a:a,channel:DL.channel,name:document.getElementById('dln').value};if(st){o.storno=true;if(DL.ref)o.ref=DL.ref}
+function saveDeal(){let a=toEUR('dla');const cm=curMeta('dla');if(!a){toast('Bitte einen Betrag eingeben');return}const st=!!DL.storno;a=Math.abs(a);const dm=(document.getElementById('dld').value||todayK()).slice(0,7);const before=rev(dm).pct;const sBefore=dm>=S.settings.startMonth&&S.targets[dm]?salary(dm):null;const prevMax=Math.max(0,...S.deals.filter(x=>!x.retro&&x.id!==DL.id).map(x=>+x.amount));
+  const o={id:DL.id||uid(),date:document.getElementById('dld').value||todayK(),amount:st?-a:a,channel:DL.channel,name:document.getElementById('dln').value};curApply(o,cm);{const pv=DL.id&&S.deals.find(x=>x.id===DL.id);if(pv&&cm&&pv.cur==='CHF'&&Math.abs(pv.orig-cm.orig)<.01){o.amount=+pv.amount;o.fx=pv.fx}}if(st){o.storno=true;if(DL.ref)o.ref=DL.ref}
   const i=S.deals.findIndex(x=>x.id===o.id);if(i>=0)S.deals[i]=o;else S.deals.push(o);save();closeSheet();CUR=o.date.slice(0,7);render();
   if(st){const sA=dm>=S.settings.startMonth&&S.targets[dm]?salary(dm):null;const dp=sA&&sBefore?(sA.provision+sA.planBonus+sA.bigBonus)-(sBefore.provision+sBefore.planBonus+sBefore.bigBonus):0;toast(`Storno ${fmtE(-a,2)} erfasst${dp<-0.005?`, Provision ${fmtE(dp,2)}`:''}`,'ok');return}
   if(DL.id&&DL.amount==a){toast(`${fmtE(a,2)} gespeichert`,'ok');return}dealMoment(o,before,sBefore,+a>prevMax)}
@@ -3008,6 +3034,7 @@ function vSettings(){
         <button class="btn block" onclick="reportSheet()">${ic('cal')} Jahresauszug für die Steuer</button>
         <button class="btn block" onclick="CUR=ymOf(new Date());exportSheet()">${ic('clock')} Arbeitszeit-Nachweis Monat</button>
         <button class="btn block" onclick="netSheet()">${ic('wallet')} Netto-Schätzung &amp; Steuerdaten</button>
+        <button class="btn block" onclick="fxSheet()">🇨🇭 Wechselkurs CHF (${fmtN(chfRate(),2)} €)</button>
       </div>
       <div class="lbl" style="margin-bottom:12px">Cloud-Sync</div>
       <button class="btn block" style="margin-bottom:20px" onclick="syncSheet()">${ic(syncOn()?'cloudok':'cloud')} ${syncOn()?'Verbunden mit '+esc(SY.repo):'Mit GitHub verbinden'}</button>
@@ -3022,7 +3049,7 @@ function vSettings(){
       <p class="hint" style="margin-bottom:0">Hier kommt später die Synchronisierung über GitHub hin, damit iPhone und iPad dieselben Daten sehen.</p>
     </div>
   </div>
-  <p class="hint" style="text-align:center;margin-top:20px">Sales Dashboard, ${verTxt()}<br><button class="btn sm" style="margin-top:10px" onclick="checkUpdate(true)">Nach Update suchen</button></p>`;
+  <p class="hint" style="text-align:center;margin-top:20px">Sales Dashboard, ${verTxt()} <span style="opacity:.6">(Build ${APP_VERSION})</span><br><span style="font-size:12px;opacity:.75">Versionsnummer: große Umbauten · neue Funktionen · Korrekturen</span><br><button class="btn sm" style="margin-top:10px" onclick="checkUpdate(true)">Nach Update suchen</button></p>`;
 }
 function importFile(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>doImport(r.result);r.readAsText(f)}
 function doImport(txt){try{const o=JSON.parse(txt);if(!o.settings||!o.days)throw 0;try{localStorage.setItem(LS_KEY,JSON.stringify(o))}catch(_){} S=o;load();if(!saveOk)S=o;save();closeSheet();render();toast('Backup eingespielt')}catch(e){toast('Das ist keine gültige Backup-Datei')}}
