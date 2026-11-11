@@ -1009,6 +1009,21 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.cf-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 4px 2px}
+.cf-emo{font-size:62px;line-height:1;animation:bounce .8s cubic-bezier(.3,1.6,.5,1) both}
+.cf-wrap h2{margin:12px 0 0;font-size:26px;font-weight:750;font-stretch:var(--cond)}
+.cf-card{margin-top:14px;width:100%;padding:14px 16px;border-radius:16px;background:var(--canvas);display:flex;flex-direction:column;gap:3px}.cf-card b{font-size:17px}.cf-card span{color:var(--ink2);font-size:14px;font-variant-numeric:tabular-nums}
+.cf-wrap p{margin:12px 0 0;color:var(--ink2);font-size:14.5px;line-height:1.45}
+.cf-yes{margin-top:18px;width:100%;height:54px;border-radius:16px;border:0;font:inherit;font-size:17px;font-weight:750;cursor:pointer;background:#111318;color:#F9DC4A}
+.cf-wrap.won .cf-yes{background:#33C27F;color:#fff;box-shadow:0 10px 26px rgba(51,194,127,.3)}.cf-wrap.lost .cf-yes{background:#E5484D;color:#fff}
+html[data-theme=dark] .cf-yes{background:#F9DC4A;color:#111318}
+.cf-no{margin-top:8px;width:100%;height:46px;border:0;background:none;color:var(--ink2);font:inherit;font-size:15px;font-weight:650;cursor:pointer}
+.cf-chk{margin-top:14px;display:flex;gap:10px;align-items:flex-start;text-align:left;font-size:14px;padding:12px;border-radius:14px;background:rgba(229,72,77,.08)}.cf-chk input{width:20px;height:20px;flex:none;accent-color:#E5484D;margin-top:1px}
+.undo-l{display:block;width:100%;margin:-4px 0 12px;padding:10px 12px;border-radius:12px;border:1px dashed var(--line);background:none;color:var(--ink2);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;text-align:left}
+.cl-re{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--canvas);font-size:16px;cursor:pointer;margin-left:6px}
+#undobar{position:fixed;left:50%;bottom:calc(var(--safeB) + 86px);transform:translate(-50%,30px);opacity:0;pointer-events:none;z-index:95;display:flex;align-items:center;gap:14px;padding:10px 10px 10px 16px;border-radius:16px;background:#111318;color:#fff;font-size:14px;box-shadow:0 12px 30px rgba(0,0,0,.3);transition:all .3s;max-width:calc(100vw - 24px)}
+#undobar.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}#undobar button{border:0;background:#F9DC4A;color:#111318;font:inherit;font-weight:750;padding:8px 12px;border-radius:10px;cursor:pointer;white-space:nowrap}
+
 /* Opps-Seite */
 .op-hero{border-radius:26px;padding:20px;margin-bottom:16px;color:#fff;background:radial-gradient(120% 80% at 100% 0%,rgba(249,220,74,.22),transparent 55%),linear-gradient(160deg,#1A1D26,#0E1015);box-shadow:var(--shadow)}
 .oh-top{display:flex;align-items:flex-start;gap:12px}.oh-top>div{flex:1;min-width:0}.oh-top small{display:block;font-size:13px;color:rgba(255,255,255,.6);font-weight:600}.oh-top b{display:block;font-size:clamp(34px,10vw,44px);font-weight:750;font-stretch:var(--cond);letter-spacing:-.02em;line-height:1.05;margin-top:2px;font-variant-numeric:tabular-nums}.oh-top span{font-size:13.5px;color:rgba(255,255,255,.72)}
@@ -1028,11 +1043,11 @@ html.prelock .lock{display:block}
 .oc-steps i{display:block;height:6px;border-radius:99px;background:var(--line);transition:background .25s}
 .oc-steps span{font-size:11px;font-weight:650;color:var(--ink2);text-align:center}
 .oc-steps .past i{background:color-mix(in srgb,var(--c) 45%,transparent)}.oc-steps .on i{background:var(--c);box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 30%,transparent)}.oc-steps .on span{color:var(--ink);font-weight:800}
-.oc-acts{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px;margin-top:12px}
-.oc-acts button{height:40px;border-radius:12px;border:0;font:inherit;font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;white-space:nowrap}.oc-acts span{font-size:17px;line-height:1}
+.oc-acts{display:grid;grid-template-columns:1fr 1.12fr 1fr;gap:6px;margin-top:12px}
+.oc-acts button{height:40px;border-radius:12px;border:0;font:inherit;font-size:13px;padding:0 6px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;white-space:nowrap}.oc-acts span{font-size:17px;line-height:1}
 .oc-acts button:active{transform:scale(.96)}
 .oc-won{background:#33C27F;color:#fff;box-shadow:0 6px 16px rgba(51,194,127,.28)}
-.oc-mo{background:var(--raise,rgba(17,19,24,.06));color:var(--ink)}
+.oc-mo{background:var(--raise,rgba(17,19,24,.06));color:var(--ink)}.oc-mo svg{width:16px;height:16px;flex:none}
 .oc-lost{background:rgba(229,72,77,.1);color:#D9383E}
 html[data-theme=dark] .oc-lost{background:rgba(255,92,97,.14);color:#FF8A8D}
 .oc-stale{margin:0 0 6px;padding:11px 14px;border-radius:14px;background:rgba(242,179,61,.14);color:var(--ink);font-size:14px}
@@ -1422,7 +1437,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='78';const APP_SEMVER='3.4.0';const APP_DATE='2026-11-11';
+const APP_VERSION='81';const APP_SEMVER='3.4.3';const APP_DATE='2026-11-11';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1458,6 +1473,7 @@ const I={
  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
  target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8" fill="currentColor"/>',
  trend:'<path d="M4 16l5-5 4 4 7-7"/><path d="M15 8h5v5"/>',
+ arrowr:'<path d="M5 12h14M13 6l6 6-6 6"/>',
  funnel:'<path d="M3.5 4.5h17l-6.5 8v6l-4 2v-8z"/>',
  scope:'<path d="M4 19h16"/><path d="M6 15l3.5-5 3.5 3 5-7"/>',
  wallet:'<rect x="3.5" y="6.5" width="17" height="13" rx="3"/><path d="M3.5 10.5h17"/><path d="M16 15h1.5"/>',
@@ -2155,7 +2171,8 @@ function carryApply(){const cm=ymOf(new Date());S.forecast[cm]=S.forecast[cm]||{
 function carrySkip(){const cm=ymOf(new Date());S.forecast[cm]=S.forecast[cm]||{};S.forecast[cm].carried=true;save();render();toast('Okay, Forecast startet leer')}
 /* Opp-Alter-Panel im Forecast */
 function itemAge(x){if(x.opp){const f=oppFind(x.opp);if(f)return oppAge({...f.o,date:f.k})}return x.since?Math.max(0,Math.round((pD(todayK())-pD(x.since))/864e5)):null}
-function openItems(m){const F=S.forecast[m]||{};const out=[];['signed','expected','proposal','offer'].forEach(st=>{((F.items||{})[st]||[]).forEach((x,i)=>out.push({...x,st,i,age:itemAge(x)}))});return out}
+function fcNormalize(m){const F=S.forecast[m];if(!F)return;['signed','expected','proposal','offer'].forEach(st=>{if(+F[st]>0&&!(F.items&&F.items[st]&&F.items[st].length)){F.items=F.items||{};F.items[st]=[{v:+F[st],n:'Ohne Namen',since:m+'-01'}]}})}
+function openItems(m){fcNormalize(m);const F=S.forecast[m]||{};const out=[];['signed','expected','proposal','offer'].forEach(st=>{((F.items||{})[st]||[]).forEach((x,i)=>out.push({...x,st,i,age:itemAge(x)}))});return out}
 function agingPanel(m){const it=openItems(m);if(!it.length)return '';const nm=MON[pD(addM(m,1)).getMonth()];const stale=it.filter(x=>x.age!=null&&x.age>=14).length;
   return `<div class="sh"><h2>Offene Opps</h2><span class="sp"></span><span class="meta">${stale?`<span class="age old">${stale} seit 14+ Tagen</span>`:it.length+' im '+MON[pD(m).getMonth()]}</span></div>
   <div class="panel flush"><div class="list">${it.map(x=>`<div class="li oi"><div class="t" onclick="${x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`itemSheet('${m}','${x.st}',${x.i})`}" style="cursor:pointer"><b>${x.opp?'🎯 ':''}${esc(x.n||'Opp')}${chfTag(x)}</b><small><select class="st-sel" onclick="event.stopPropagation()" onchange="fcItemStage('${m}','${x.st}',${x.i},this.value)" aria-label="Stage ändern">${['offer','proposal','expected','signed'].map(k=>`<option value="${k}" ${k===x.st?'selected':''}>${FCN[k]}</option>`).join('')}</select>${x.age!=null?' '+ageChip(x.age):''}</small></div><div class="v" onclick="${x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`itemSheet('${m}','${x.st}',${x.i})`}" style="cursor:pointer">${fmtE(x.v)}${x.vh&&x.vh.length?`<small class="vh">${x.v>x.vh[x.vh.length-1].v?'▲':'▼'} vorher ${fmtE(x.vh[x.vh.length-1].v)}</small>`:''}</div>
@@ -2171,7 +2188,9 @@ function itemSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];if(!
   openSheet(`${sheetHead('Opp bearbeiten')}<div class="field"><label for="iev">Vertragswert in ${x.cur==='CHF'?'CHF':'€'}</label><input class="inp" id="iev" inputmode="decimal" value="${(x.cur==='CHF'?+x.orig:+x.v).toLocaleString('de-DE',{maximumFractionDigits:2})}" style="font-size:24px;height:58px;font-weight:600" oninput="curHint('iev')" onkeydown="if(event.key==='Enter'){event.preventDefault();itemSave()}">${curField('iev',x.cur,x.orig)}</div>
    <div class="field" style="margin-top:14px"><label>Kunde</label><input class="inp" id="ien" value="${esc(x.n||'')}"></div>
    ${x.vh&&x.vh.length?`<p class="hint" style="margin-top:10px">Wertverlauf: ${[...x.vh.map(h=>fmtE(h.v)+' ('+dLabel(h.d)+')'),fmtE(x.v)+' (jetzt)'].join(' → ')}</p>`:''}
-   <button class="btn pri block" style="margin-top:16px" onclick="itemSave()">Speichern</button>`);setTimeout(()=>{const e=document.getElementById('iev');if(e){e.focus();e.select()}},300)}
+   <button class="btn pri block" style="margin-top:16px" onclick="itemSave()">Speichern</button>
+   <button class="btn block" style="margin-top:8px;color:var(--red)" onclick="if(this.dataset.c){itemDel()}else{this.dataset.c=1;this.textContent='Wirklich löschen? Nochmal tippen'}">${ic('trash')} Eintrag löschen</button>`);setTimeout(()=>{const e=document.getElementById('iev');if(e){e.focus();e.select()}},300)}
+function itemDel(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);if(x&&x.opp){const f=oppFind(x.opp);if(f){delete f.o.stage}}save();closeSheet();render();toast(`${x&&x.n||'Eintrag'} gelöscht`,'ok')}
 function itemSave(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st][i];const cm=curMeta('iev');let nv=Math.abs(toEUR('iev')||0);if(cm&&x.cur==='CHF'&&Math.abs(x.orig-cm.orig)<.01)nv=+x.v;curApply(x,cm);const nn=document.getElementById('ien').value.trim();
   if(nv&&Math.abs(nv-x.v)>=.01){x.vh=x.vh||[];x.vh.push({d:todayK(),v:+x.v});const dl=nv-x.v;x.v=nv;toast(`Wert ${dl>0?'erhöht':'gesenkt'}: ${sgnE(dl)}`,'ok')}if(nn)x.n=nn;fcRecalc(F,st);save();closeSheet();render()}
 function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);x.since=todayK();
@@ -2179,7 +2198,7 @@ function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!
   if(x.opp){const f=oppFind(x.opp);if(f){f.o.stage=ns;f.o.stageSince=todayK()}}save();render();toast(`${x.n||'Opp'} → ${FCN[ns]}`,'ok')}
 function fcRecalc(F,st){const it=F.items[st]||[];F[st]=it.reduce((a,y)=>a+(+y.v||0),0);if(!it.length)delete F.items[st]}
 /* ---------- Closed Won / Closed Lost protokollieren + Motivations-Effekt ---------- */
-function closedLog(res,x,m,st){S.closed=S.closed||[];const e={id:uid(),res,date:todayK(),m,n:x.n||x.name||'Opp',v:+x.v||+x.amount||0,st:st||x.stage||'',opp:x.opp||x.id||null,iid:x.iid||null};S.closed.push(e);return e}
+function closedLog(res,x,m,st){S.closed=S.closed||[];const e={id:uid(),res,date:todayK(),m,n:x.n||x.name||'Opp',v:+x.v||+x.amount||0,st:st||x.stage||'',opp:x.opp||x.id||null,iid:x.iid||null,...(x.v!=null&&x.n!=null?{item:{...x}}:{}),...(x.cur?{cur:x.cur,orig:x.orig}:{})};S.closed.push(e);return e}
 function closedStats(){const c=S.closed||[];const won=c.filter(x=>x.res==='won').length,lost=c.filter(x=>x.res==='lost').length;const cm=ymOf(new Date());const lm=c.filter(x=>x.res==='lost'&&x.date.slice(0,7)===cm);
   const reasons={};c.filter(x=>x.res==='lost'&&x.reason).forEach(x=>reasons[x.reason]=(reasons[x.reason]||0)+1);
   return {won,lost,rate:won+lost?won/(won+lost)*100:null,lostM:lm.length,lostMV:lm.reduce((a,x)=>a+x.v,0),reasons:Object.entries(reasons).sort((a,b)=>b[1]-a[1])}}
@@ -2200,16 +2219,39 @@ function lostPanel(){const cs=closedStats();if(!cs.won&&!cs.lost)return '';const
   return `<div class="sh"><h2>Closed Won & Lost</h2></div><div class="panel"><div class="kr3"><div><small>Gewinnquote</small><b class="num">${cs.rate!=null?fmtN(cs.rate,0)+' %':'–'}</b><span>${cs.won} gewonnen, ${cs.lost} verloren</span></div><div><small>Closed Lost ${MONS[new Date().getMonth()]}</small><b class="num">${cs.lostM}</b><span>${fmtE(cs.lostMV)}</span></div><div><small>Häufigster Grund</small><b>${cs.reasons[0]?cs.reasons[0][0]:'–'}</b><span>${cs.reasons[0]?cs.reasons[0][1]+'×':'noch keine Gründe'}</span></div></div>
    ${c.length?`<div class="list" style="margin-top:10px">${c.map(x=>`<div class="li"><div class="t"><b>${esc(x.n)}</b><small>${dLabel(x.date)} · ${FCN[x.st]||''}${x.reason?' · '+x.reason:''}</small></div><div class="v mut">${fmtE(x.v)}</div></div>`).join('')}</div>`:''}</div>`}
 
-function fcItemAct(m,st,i,act){const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);const f=x.opp?oppFind(x.opp):null;
+function fcItemAct(m,st,i,act,ok){const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;if((act==='won'||act==='lost')&&!ok){oppConfirm({...F.items[st][i],st},act,()=>fcItemAct(m,st,i,act,true));return}const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);const f=x.opp?oppFind(x.opp):null;
   if(act==='push'||act==='pull'){const nm=act==='pull'?ymOf(new Date()):addM(m,1);S.forecast[nm]=S.forecast[nm]||{};const N=S.forecast[nm];N.items=N.items||{};let it=N.items[st];if(!it||!it.length){it=[];if(+N[st])it.push({v:+N[st],n:'Bisheriger Wert'})}it.push(x);N.items[st]=it;fcRecalc(N,st);if(f)f.o.fm=nm;save();render();toast(act==='pull'?`${x.n||'Opp'} zurück in den ${MON[pD(nm).getMonth()]} geholt`:`${x.n||'Opp'} → ${MON[pD(nm).getMonth()]} verschoben`,act==='pull'?'ok':'ok');return}
   if(f){f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK()}
   const ce=closedLog(act==='won'?'won':'lost',x,m,st);
   save();render();
-  if(act==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');setTimeout(()=>dealSheet(null,false,{amount:x.v,name:x.n&&x.n!=='Bisheriger Wert'?x.n:'',...(x.cur?{cur:x.cur,orig:x.orig}:{}),...(m>ymOf(new Date())?{date:m+'-01'}:{})}),300)}else fxLost(ce)}
+  if(act==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');setTimeout(()=>dealSheet(null,false,{closedId:ce.id,amount:x.v,name:x.n&&x.n!=='Bisheriger Wert'?x.n:'',...(x.cur?{cur:x.cur,orig:x.orig}:{}),...(m>ymOf(new Date())?{date:m+'-01'}:{})}),300)}else{fxLost(ce);setTimeout(()=>undoBar(`💔 ${esc(x.n||'Opp')} als verloren markiert`,()=>{document.getElementById('cfDel');oppReopen(ce.id)}),2200)}}
+/* ---------- Bestätigen & Rückgängig ---------- */
+function oppConfirm(x,act,go){const won=act==='won';
+  openSheet(`<div class="cf-wrap ${won?'won':'lost'}"><div class="cf-emo">${won?'🤝':'💔'}</div><h2>${won?'Deal gewonnen?':'Opp verloren?'}</h2>
+    <div class="cf-card"><b>${esc(x.n||'Opp')}${chfTag(x)}</b><span>${fmtE(x.v)}${x.st?' · '+FCN[x.st]:''}</span></div>
+    <p>${won?'Die Opp verlässt die Pipeline. Danach trägst du den Umsatz ein, für heute oder einen späteren Monat.':'Die Opp verlässt die Pipeline und wird als Closed Lost gezählt.'}</p>
+    <button class="cf-yes" id="cfYes">${won?'Ja, gewonnen 🎉':'Ja, verloren'}</button><button class="cf-no" onclick="closeSheet()">Abbrechen</button></div>`);
+  setTimeout(()=>{const b=document.getElementById('cfYes');if(b)b.onclick=()=>{closeSheet();setTimeout(go,180)}},0)}
+function closedDeal(e){return S.deals.find(d=>d.closedId===e.id)||S.deals.find(d=>!d.retro&&!d.storno&&d.date>=e.date&&(d.name||'')===(e.n||'')&&Math.abs(+d.amount-e.v)<.01)}
+function oppReopenSheet(id){const e=(S.closed||[]).find(x=>x.id===id);if(!e)return;const d=e.res==='won'?closedDeal(e):null;const st=e.st&&ST_ORDER.includes(e.st)?e.st:'expected';const cm=ymOf(new Date());const tm=(e.m||cm)<cm?cm:(e.m||cm);
+  openSheet(`<div class="cf-wrap"><div class="cf-emo">↩️</div><h2>Zurück in die Pipeline?</h2>
+    <div class="cf-card"><b>${esc(e.n)}${chfTag(e.item||e)}</b><span>${fmtE(e.v)} · war ${e.res==='won'?'gewonnen':'verloren'} am ${dLabel(e.date)}</span></div>
+    <p>Die Opp kommt zurück nach <b>${FCN[st]}</b> im ${MON[pD(tm).getMonth()]}.</p>
+    ${d?`<label class="cf-chk"><input type="checkbox" id="cfDel" checked><span>Umsatz-Eintrag „${esc(dealName(d))}“ über ${fmtE(d.amount)} vom ${dLabel(d.date)} ebenfalls löschen</span></label>`:''}
+    <button class="cf-yes" onclick="oppReopen('${id}')">Zurückholen</button><button class="cf-no" onclick="closeSheet()">Abbrechen</button></div>`)}
+function oppReopen(id){const ix=(S.closed||[]).findIndex(x=>x.id===id);if(ix<0)return;const e=S.closed[ix];const st=e.st&&ST_ORDER.includes(e.st)?e.st:'expected';const cm=ymOf(new Date());const tm=(e.m||cm)<cm?cm:(e.m||cm);
+  const del=document.getElementById('cfDel');if(del&&del.checked){const d=closedDeal(e);if(d)S.deals=S.deals.filter(z=>z.id!==d.id)}
+  const item=e.item?{...e.item}:{v:e.v,n:e.n,since:todayK(),...(e.opp?{opp:e.opp}:{}),...(e.iid?{iid:e.iid}:{})};
+  S.forecast[tm]=S.forecast[tm]||{};const F=S.forecast[tm];F.items=F.items||{};let it=F.items[st];if(!it||!it.length){it=[];if(+F[st])it.push({v:+F[st],n:'Bisheriger Wert'})}it.push(item);F.items[st]=it;fcRecalc(F,st);
+  if(e.opp){const f=oppFind(e.opp);if(f){f.o.stage=st;f.o.fm=tm}}
+  S.closed.splice(ix,1);save();closeSheet();render();toast(`↩️ ${e.n} ist wieder in ${FCN[st]}`,'ok')}
+function undoBar(txt,fn){let el=document.getElementById('undobar');if(!el){el=document.createElement('div');el.id='undobar';document.body.appendChild(el)}
+  el.innerHTML=`<span>${txt}</span><button>Rückgängig</button>`;el.querySelector('button').onclick=()=>{el.classList.remove('on');fn()};el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),9000)}
 function oppAction(act){const f=oppFind(OPID);if(!f)return;const m=f.o.fm||f.k.slice(0,7);const F=S.forecast[m];let st=null,i=-1;if(F&&F.items)Object.keys(F.items).some(k=>{const j=F.items[k].findIndex(x=>x.opp===OPID);if(j>=0){st=k;i=j;return true}});closeSheet();
   if(st){fcItemAct(m,st,i,act);return}
   if(act==='push'||act==='pull'){toast('Diese Opp steht in keinem Forecast');return}
-  f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK();const ce=closedLog(f.o.stage,{...f.o,opp:f.o.id},f.o.fm||f.k.slice(0,7),'');save();render();if(act==='won')setTimeout(()=>dealSheet(null,false,{amount:f.o.amount,name:f.o.name,...(f.o.cur?{cur:f.o.cur,orig:f.o.orig}:{}),...((f.o.fm||'')>ymOf(new Date())?{date:f.o.fm+'-01'}:{})}),300);else fxLost(ce)}
+  if((act==='won'||act==='lost')&&!oppAction._ok){oppConfirm({n:f.o.name,v:f.o.amount,st:f.o.stage,cur:f.o.cur,orig:f.o.orig},act,()=>{oppAction._ok=1;OPID=f.o.id;oppAction(act);oppAction._ok=0});return}
+  f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK();const ce=closedLog(f.o.stage,{...f.o,opp:f.o.id},f.o.fm||f.k.slice(0,7),'');save();render();if(act==='won')setTimeout(()=>dealSheet(null,false,{closedId:ce.id,amount:f.o.amount,name:f.o.name,...(f.o.cur?{cur:f.o.cur,orig:f.o.orig}:{}),...((f.o.fm||'')>ymOf(new Date())?{date:f.o.fm+'-01'}:{})}),300);else fxLost(ce)}
 /* Rückwärtsrechner */
 function funnelData(){const st=S.settings.startMonth;const cur=ymOf(new Date());let demos=0,opps=0,leads=0;Object.keys(S.act||{}).forEach(k=>{if(k.slice(0,7)<st)return;demos+=+S.act[k].demo||0;opps+=(S.act[k].ops||[]).length});
   (S.leads||[]).forEach(l=>{if(l.date.slice(0,7)>=st)leads+=+l.count||0});
@@ -2655,11 +2697,12 @@ function updDealVal(){const el=document.getElementById('dlv');if(!el||!DL)return
 let DL=null;
 function dIco(d){return d.storno?`<div class="ico st">${ic('storno')}</div>`:`<div class="ico ${d.channel}">${ic(d.channel==='in'?'inb':'outb')}</div>`}
 function dealSheet(id,storno,pre){
-  const d=id?{...S.deals.find(x=>x.id===id)}:{id:null,date:pre&&pre.date?pre.date:CUR===ymOf(new Date())?todayK():`${CUR}-01`,amount:pre&&pre.amount?pre.amount:'',channel:'out',name:pre&&pre.name?pre.name:'',storno:!!storno,...(pre&&pre.cur?{cur:pre.cur,orig:pre.orig}:{})};DL=d;
+  const d=id?{...S.deals.find(x=>x.id===id)}:{id:null,date:pre&&pre.date?pre.date:CUR===ymOf(new Date())?todayK():`${CUR}-01`,amount:pre&&pre.amount?pre.amount:'',channel:'out',name:pre&&pre.name?pre.name:'',storno:!!storno,...(pre&&pre.cur?{cur:pre.cur,orig:pre.orig}:{}),...(pre&&pre.closedId?{closedId:pre.closedId}:{})};DL=d;
   const st=!!d.storno; const amt=d.amount!==''?String(Math.abs(d.cur==='CHF'&&d.orig?+d.orig:+d.amount)).replace('.',','):'';
   const orig=st?S.deals.filter(x=>!x.storno&&!x.retro&&+x.amount>0&&x.id!==d.ref).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,40):[];
   const refD=d.ref?S.deals.find(x=>x.id===d.ref):null;
   openSheet(`${sheetHead(id?(st?'Storno bearbeiten':'Umsatz bearbeiten'):(st?'Storno eintragen':'Neuer Umsatz'))}
+   ${d.closedId&&!id?`<button class="undo-l" onclick="closeSheet();setTimeout(()=>oppReopenSheet('${d.closedId}'),250)">↩️ Doch nicht gewonnen? Zurück in die Pipeline</button>`:''}
    ${id?'':`<div class="seg" style="margin-bottom:12px"><button class="${st?'':'on'}" onclick="dealSheet(null,false)">${ic('plus')}Umsatz</button><button class="${st?'on':''}" onclick="dealSheet(null,true)">${ic('storno')}Storno</button></div>`}
    ${st?`<p class="hint" style="margin:0 0 12px">Der Betrag wird im gewählten Monat vom Umsatz abgezogen. Der ursprüngliche Vertrag bleibt in seinem Monat stehen.</p>
    <div class="field" style="margin-bottom:14px"><label>Ursprünglicher Vertrag (optional, übernimmt Betrag)</label><select class="inp" id="dlr" onchange="pickRef(this.value)"><option value="">Nicht ausgewählt</option>${refD?`<option value="${refD.id}" selected>${esc(dealName(refD))}, ${dLabel(refD.date)}, ${fmtE(refD.amount,2)}</option>`:''}${orig.map(x=>`<option value="${x.id}">${esc(dealName(x))}, ${dLabel(x.date)}, ${fmtE(x.amount,2)}</option>`).join('')}</select></div>`:''}
@@ -2675,7 +2718,7 @@ function dealSheet(id,storno,pre){
 }
 function pickRef(v){DL.ref=v||null;const x=S.deals.find(d=>d.id===v);if(!x)return;setTimeout(updDealVal,0);document.getElementById('dla').value=String(+x.amount).replace('.',',');if(!document.getElementById('dln').value)document.getElementById('dln').value=x.name||'';DL.channel=x.channel;document.getElementById('dlci').classList.toggle('on',x.channel==='in');document.getElementById('dlco').classList.toggle('on',x.channel==='out')}
 function saveDeal(){let a=toEUR('dla');const cm=curMeta('dla');if(!a){toast('Bitte einen Betrag eingeben');return}const st=!!DL.storno;a=Math.abs(a);const dm=(document.getElementById('dld').value||todayK()).slice(0,7);const before=rev(dm).pct;const sBefore=dm>=S.settings.startMonth&&S.targets[dm]?salary(dm):null;const prevMax=Math.max(0,...S.deals.filter(x=>!x.retro&&x.id!==DL.id).map(x=>+x.amount));
-  const o={id:DL.id||uid(),date:document.getElementById('dld').value||todayK(),amount:st?-a:a,channel:DL.channel,name:document.getElementById('dln').value};curApply(o,cm);{const pv=DL.id&&S.deals.find(x=>x.id===DL.id);if(pv&&cm&&pv.cur==='CHF'&&Math.abs(pv.orig-cm.orig)<.01){o.amount=+pv.amount;o.fx=pv.fx}}if(st){o.storno=true;if(DL.ref)o.ref=DL.ref}
+  const o={id:DL.id||uid(),date:document.getElementById('dld').value||todayK(),amount:st?-a:a,channel:DL.channel,name:document.getElementById('dln').value};curApply(o,cm);if(DL.closedId)o.closedId=DL.closedId;{const pv=DL.id&&S.deals.find(x=>x.id===DL.id);if(pv&&cm&&pv.cur==='CHF'&&Math.abs(pv.orig-cm.orig)<.01){o.amount=+pv.amount;o.fx=pv.fx}}if(st){o.storno=true;if(DL.ref)o.ref=DL.ref}
   const i=S.deals.findIndex(x=>x.id===o.id);if(i>=0)S.deals[i]=o;else S.deals.push(o);save();closeSheet();CUR=o.date.slice(0,7);render();
   if(st){const sA=dm>=S.settings.startMonth&&S.targets[dm]?salary(dm):null;const dp=sA&&sBefore?(sA.provision+sA.planBonus+sA.bigBonus)-(sBefore.provision+sBefore.planBonus+sBefore.bigBonus):0;toast(`Storno ${fmtE(-a,2)} erfasst${dp<-0.005?`, Provision ${fmtE(dp,2)}`:''}`,'ok');return}
   if(DL.id&&DL.amount==a){toast(`${fmtE(a,2)} gespeichert`,'ok');return}dealMoment(o,before,sBefore,+a>prevMax)}
@@ -2826,13 +2869,13 @@ function fcItemMoveTo(m,st,i,nm){if(nm===m)return;const F=S.forecast[m];if(!F||!
   const f=x.opp?oppFind(x.opp):null;if(f)f.o.fm=nm;save();closeSheet();render();
   toast(nm===ymOf(new Date())?`🎯 ${x.n||'Opp'} zurück in den ${MON[pD(nm).getMonth()]}`:`📅 ${x.n||'Opp'} → ${MON[pD(nm).getMonth()]} ${pD(nm).getFullYear()}`,'ok')}
 function oppMonthSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];if(!x)return;const cm=ymOf(new Date());const ms=[0,1,2,3,4,5].map(d=>addM(cm,d));
-  openSheet(`${sheetHead('In welchen Monat?')}<p class="hint" style="margin-top:-6px"><b>${esc(x.n||'Opp')}</b> · ${fmtE(x.v)} · ${FCN[st]}. Die Opp zählt dann im Forecast des gewählten Monats.</p>
+  openSheet(`${sheetHead('Verschieben in …')}<p class="hint" style="margin-top:-6px"><b>${esc(x.n||'Opp')}</b> · ${fmtE(x.v)} · ${FCN[st]}. Die Opp zählt dann im Forecast des gewählten Monats.</p>
   <div class="om-grid">${ms.map(mm=>`<button class="${mm===m?'on':''}" onclick="fcItemMoveTo('${m}','${st}',${i},'${mm}')"><b>${MON[pD(mm).getMonth()]}</b><small>${mm===cm?'dieser Monat':pD(mm).getFullYear()}</small></button>`).join('')}</div>`)}
 function oppCard(m,x){const cm=ymOf(new Date());const open=x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`itemSheet('${m}','${x.st}',${x.i})`;const si=ST_ORDER.indexOf(x.st);
   return `<div class="oc" style="--sc:${ST_COL[x.st]}">
     <div class="oc-top" onclick="${open}"><div class="oc-n"><b>${esc(x.n||'Opp')}${chfTag(x)}</b><small>${x.age!=null?ageChip(x.age):''}${m!==cm?`<span class="oc-m">📅 ${MON[pD(m).getMonth()]}</span>`:''}</small></div><div class="oc-v"><b>${fmtE(x.v)}</b><small>gewichtet ${fmtE((+x.v||0)*stRate(x.st)/100)}</small></div></div>
     <div class="oc-steps">${ST_ORDER.map((s,j)=>`<button class="${j<si?'past':j===si?'on':''}" style="--c:${ST_COL[s]}" onclick="fcItemStage('${m}','${x.st}',${x.i},'${s}')" aria-label="${FCN[s]}"><i></i><span>${ST_SHORT[s]}</span></button>`).join('')}</div>
-    <div class="oc-acts"><button class="oc-won" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')"><span>🤝</span>Gewonnen</button><button class="oc-mo" onclick="oppMonthSheet('${m}','${x.st}',${x.i})"><span>📅</span>Monat</button><button class="oc-lost" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')"><span>💔</span>Verloren</button></div>
+    <div class="oc-acts"><button class="oc-won" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')"><span>🤝</span>Gewonnen</button><button class="oc-mo" onclick="oppMonthSheet('${m}','${x.st}',${x.i})">Verschieben${ic('arrowr')}</button><button class="oc-lost" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')"><span>💔</span>Verloren</button></div>
   </div>`}
 function oppGroups(m,items){return [...ST_ORDER].reverse().map(st=>{const it=items.filter(x=>x.st===st);if(!it.length)return '';const sum=it.reduce((a,x)=>a+(+x.v||0),0);
   return `<div class="og-h"><i style="background:${ST_COL[st]}"></i><b>${FCN[st]}</b><span>${it.length} · ${fmtE(sum)}</span><em>${stRate(st)} %</em></div>${it.map(x=>oppCard(m,x)).join('')}`}).join('')}
@@ -2855,7 +2898,7 @@ function vOpps(){const cm=ymOf(new Date());const OT=subCur('opps',['now','later'
   ${OT==='closed'?closedView():''}`}
 function closedView(){const cs=closedStats();const c=(S.closed||[]).slice().reverse().slice(0,25);
   return `<div class="panel"><div class="kr3"><div><small>Gewinnquote</small><b class="num">${cs.rate!=null?fmtN(cs.rate,0)+' %':'–'}</b><span>${cs.won} gewonnen, ${cs.lost} verloren</span></div><div><small>Closed Lost ${MONS[new Date().getMonth()]}</small><b class="num">${cs.lostM}</b><span>${fmtE(cs.lostMV)}</span></div><div><small>Häufigster Grund</small><b>${cs.reasons[0]?cs.reasons[0][0]:'–'}</b><span>${cs.reasons[0]?cs.reasons[0][1]+'×':'noch keine Gründe'}</span></div></div></div>
-  ${c.length?`<div class="panel flush" style="margin-top:14px"><div class="list">${c.map(x=>`<div class="li"><div class="ico ${x.res==='won'?'won':'lost'}" style="font-size:20px;display:grid;place-items:center">${x.res==='won'?'🤝':'💔'}</div><div class="t"><b>${esc(x.n||'Opp')}${chfTag(x)}</b><small>${dLabel(x.date)} · ${x.res==='won'?'Gewonnen':'Verloren'}${x.reason?' · '+x.reason:''}</small></div><div class="v ${x.res==='won'?'':'mut'}">${fmtE(x.v)}</div></div>`).join('')}</div></div>`:'<div class="empty-s" style="margin-top:14px">Noch keine abgeschlossenen Opps.</div>'}`}
+  ${c.length?`<div class="panel flush" style="margin-top:14px"><div class="list">${c.map(x=>`<div class="li"><div class="ico ${x.res==='won'?'won':'lost'}" style="font-size:20px;display:grid;place-items:center">${x.res==='won'?'🤝':'💔'}</div><div class="t"><b>${esc(x.n||'Opp')}${chfTag(x)}</b><small>${dLabel(x.date)} · ${x.res==='won'?'Gewonnen':'Verloren'}${x.reason?' · '+x.reason:''}</small></div><div class="v ${x.res==='won'?'':'mut'}">${fmtE(x.v)}</div><button class="cl-re" onclick="oppReopenSheet('${x.id}')" aria-label="Zurückholen" title="Zurück in die Pipeline">↩️</button></div>`).join('')}</div></div>`:'<div class="empty-s" style="margin-top:14px">Noch keine abgeschlossenen Opps.</div>'}`}
 function vForecast(){
   const F=forecast(CUR); const P=S.fcParams; const sal=salaryWith(CUR,F.exp);
   const set=f=>`onchange="fcSet('${f}',this.value)"`; const v=n=>n?String(n).replace('.',','):'';
