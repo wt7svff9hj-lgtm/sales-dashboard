@@ -1455,7 +1455,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='85';const APP_SEMVER='3.5.1';const APP_DATE='2026-11-11';
+const APP_VERSION='86';const APP_SEMVER='3.5.2';const APP_DATE='2026-11-11';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1946,7 +1946,7 @@ function weekRecap(k){const d=pD(k);const mon=new Date(d);mon.setDate(d.getDate(
     rv+=S.deals.filter(z=>z.date===xk&&!z.retro&&!z.storno).reduce((s,z)=>s+ +z.amount,0)}
   return{hrs,demo,ops,rv,days,kw:kwOf(ymd(mon))}}
 function restDur(min){min=Math.max(0,Math.round(min));const d=Math.floor(min/1440),h=Math.floor(min%1440/60),m=min%60;return d?`${d} ${d===1?'Tag':'Tage'} ${h}h`:h?`${h}h ${pad(m)}m`:`${m} min`}
-function restNextStart(nx){if(!nx)return null;let st='08:00';const d=new Date();for(let i=0;i<10;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start){st=x.start;break}}const t=pD(nx.k);const [h,m]=st.split(':');t.setHours(+h,+m,0,0);return{t,st}}
+function restNextStart(nx){if(!nx)return null;const st=S.settings.startTime||'08:00';const t=pD(nx.k);const [h,m]=st.split(':');t.setHours(+h,+m,0,0);return{t,st}}
 /* ---------- Arbeitstag läuft ---------- */
 function workState(now){now=now||new Date();const tk=ymd(now);const di=dayInfo(tk);const e=di.e;if(!e||isFree(e.type)||!e.start||e.end)return null;const nm=now.getHours()*60+now.getMinutes();const st=toMin(e.start);if(nm<st)return null;
   const soll=di.soll||(+S.settings.sollTag||8);let p=+e.pause||0;const pAss=!p&&soll>6;if(pAss)p=30;const el=nm-st;const w=Math.max(0,(el-((+e.pause||0)||(pAss&&el>360?30:0)))/60);const endMin=st+soll*60+p;
@@ -3235,6 +3235,7 @@ function vSettings(){
       <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><span class="lbl">Vorschau:</span><button class="btn sm" onclick="showGate(null,'we')">Wochenende</button><button class="btn sm" onclick="showGate(null,'urlaub')">Urlaub</button><button class="btn sm" onclick="showGate(null,'hol')">Feiertag</button><button class="btn sm" onclick="showGate(null,'eve')">Feierabend</button></div>
       <div class="row" style="margin-top:10px"><div><b style="font-weight:600">Auch nach Feierabend</b><div class="lbl">Sobald dein eingetragenes Arbeitsende erreicht ist</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.gateEve!==false?'on':''}" onclick="S.settings.gateEve=true;save();render()">An</button><button class="${S.settings.gateEve!==false?'':'on'}" onclick="S.settings.gateEve=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Urlaubs-Vorwarnung ✈️</b><div class="lbl">5 Arbeitstage vor dem Urlaub auf Home</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.vacWarn!==false?'on':''}" onclick="S.settings.vacWarn=true;save();render()">An</button><button class="${S.settings.vacWarn!==false?'':'on'}" onclick="S.settings.vacWarn=false;save();render()">Aus</button></div></div>
+      <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Üblicher Arbeitsbeginn</b><div class="lbl">Für „Weiter morgen ab …“ und die Countdowns</div></div><span class="sp"></span><input class="inp" type="time" style="width:110px" value="${S.settings.startTime||'08:00'}" onchange="S.settings.startTime=this.value||'08:00';save();toast('Arbeitsbeginn gespeichert','ok')"></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">High-Prio-Erinnerung ⚡</b><div class="lbl">Bleibt auf Home stehen, bis du sie abhakst</div></div><span class="sp"></span><div class="seg pill"><button class="${hpOn()?'on':''}" onclick="S.settings.hiprio=true;save();render()">An</button><button class="${hpOn()?'':'on'}" onclick="S.settings.hiprio=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Feierabend-Bilanz 🌙</b><div class="lbl">Zusammenfassung, sobald du das Ende für heute einträgst</div></div><span class="sp"></span><div class="seg pill"><button class="${eodOn()?'on':''}" onclick="S.settings.eod=true;save();render()">An</button><button class="${eodOn()?'':'on'}" onclick="S.settings.eod=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Saison-Motive</b><div class="lbl">Dezente Deko zu Advent, Silvester, Karneval, Ostern & Co.</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.season!==false?'on':''}" onclick="S.settings.season=true;save();render()">An</button><button class="${S.settings.season===false?'on':''}" onclick="S.settings.season=false;save();render()">Aus</button></div></div>
