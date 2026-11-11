@@ -1009,6 +1009,22 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.oh-figs div{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 6px}.oh-figs small{white-space:nowrap}.oh-figs b{font-size:18px;margin-top:3px}
+.oh-add,.oh-add span{color:#111318!important}
+.lane{margin:16px 0;border-radius:24px;background:color-mix(in srgb,var(--sc) 9%,var(--canvas));border:1.5px solid color-mix(in srgb,var(--sc) 30%,transparent);overflow:hidden}
+.lane-h{display:flex;align-items:center;gap:8px;padding:12px 14px;background:color-mix(in srgb,var(--sc) 16%,transparent);border-bottom:1.5px solid color-mix(in srgb,var(--sc) 22%,transparent)}
+.lane-n{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:15px;color:color-mix(in srgb,var(--sc) 70%,var(--ink))}.lane-n i{width:11px;height:11px;border-radius:50%;background:var(--sc);box-shadow:0 0 0 3px color-mix(in srgb,var(--sc) 25%,transparent)}
+.lane-c{font-size:12px;font-weight:800;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--sc);color:#fff;display:inline-grid;place-items:center}
+.lane-s{font-weight:750;font-size:14.5px;font-variant-numeric:tabular-nums}
+.lane-h em{font-style:normal;font-size:12px;font-weight:800;padding:4px 9px;border-radius:99px;background:var(--paper);color:color-mix(in srgb,var(--sc) 75%,var(--ink))}
+.lane-b{padding:8px}.lane-h .sp{flex:1}.lane-b .oc:last-child{margin-bottom:0}
+.oc-badge{display:inline-block;margin-bottom:5px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:7px;background:color-mix(in srgb,var(--sc) 15%,transparent);color:color-mix(in srgb,var(--sc) 80%,var(--ink))}
+.is-st{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.is-st button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px 8px;border-radius:14px;border:1.5px solid var(--line);background:var(--paper);font:inherit;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer}
+.is-st i{width:12px;height:12px;border-radius:50%;background:var(--c)}.is-st small{font-size:11px;color:var(--ink2);font-weight:600}
+.is-st button.on{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--paper));box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 30%,transparent)}
+.is-mo{display:flex;flex-wrap:wrap;gap:6px}.is-mo button{flex:1 0 auto;height:36px;padding:0 12px;border-radius:11px;border:1px solid var(--line);background:var(--paper);font:inherit;font-size:13px;font-weight:650;color:var(--ink2);cursor:pointer}.is-mo button.on{background:#F9DC4A;border-color:#F9DC4A;color:#111318}
+.is-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.is-acts button{height:46px;border-radius:14px;border:0;font:inherit;font-size:14.5px;font-weight:750;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+
 .cf-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 4px 2px}
 .cf-emo{font-size:62px;line-height:1;animation:bounce .8s cubic-bezier(.3,1.6,.5,1) both}
 .cf-wrap h2{margin:12px 0 0;font-size:26px;font-weight:750;font-stretch:var(--cond)}
@@ -1043,7 +1059,7 @@ html[data-theme=dark] .cf-yes{background:#F9DC4A;color:#111318}
 .oc-steps i{display:block;height:6px;border-radius:99px;background:var(--line);transition:background .25s}
 .oc-steps span{font-size:11px;font-weight:650;color:var(--ink2);text-align:center}
 .oc-steps .past i{background:color-mix(in srgb,var(--c) 45%,transparent)}.oc-steps .on i{background:var(--c);box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 30%,transparent)}.oc-steps .on span{color:var(--ink);font-weight:800}
-.oc-acts{display:grid;grid-template-columns:1fr 1.12fr 1fr;gap:6px;margin-top:12px}
+.oc-acts{display:grid;grid-template-columns:1fr 1fr 48px;gap:6px;margin-top:12px}
 .oc-acts button{height:40px;border-radius:12px;border:0;font:inherit;font-size:13px;padding:0 6px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;white-space:nowrap}.oc-acts span{font-size:17px;line-height:1}
 .oc-acts button:active{transform:scale(.96)}
 .oc-won{background:#33C27F;color:#fff;box-shadow:0 6px 16px rgba(51,194,127,.28)}
@@ -1439,7 +1455,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='82';const APP_SEMVER='3.4.4';const APP_DATE='2026-11-11';
+const APP_VERSION='83';const APP_SEMVER='3.4.5';const APP_DATE='2026-11-11';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2186,15 +2202,23 @@ function laterPanel(m){if(m!==ymOf(new Date()))return '';const rows=[];[1,2,3].f
     <div class="oi-a"><button class="mv lp-back" onclick="fcItemAct('${x.lm}','${x.st}',${x.i},'pull')" aria-label="In diesen Monat holen" title="In den ${MON[pD(m).getMonth()]} holen">${ic('left')}</button></div></div>`).join('')}</div></div>
   <p class="hint" style="margin-top:8px">Zählen im Forecast ihres Monats, nicht im ${MON[pD(m).getMonth()]}. ← holt eine Opp in den ${MON[pD(m).getMonth()]} zurück, wenn der Kunde doch früher will.</p>`}
 let IE=null;
-function itemSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];if(!x)return;IE={m,st,i};
+let IST=null,IMO=null;
+function itemSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];if(!x)return;IE={m,st,i};IST=st;IMO=m;const cm=ymOf(new Date());const ms=[0,1,2,3,4,5].map(d=>addM(cm,d));if(!ms.includes(m))ms.unshift(m);
+  const pick=(grp,val,fn)=>`onclick="${fn}='${val}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on')"`;
   openSheet(`${sheetHead('Opp bearbeiten')}<div class="field"><label for="iev">Vertragswert in ${x.cur==='CHF'?'CHF':'€'}</label><input class="inp" id="iev" inputmode="decimal" value="${(x.cur==='CHF'?+x.orig:+x.v).toLocaleString('de-DE',{maximumFractionDigits:2})}" style="font-size:24px;height:58px;font-weight:600" oninput="curHint('iev')" onkeydown="if(event.key==='Enter'){event.preventDefault();itemSave()}">${curField('iev',x.cur,x.orig)}</div>
    <div class="field" style="margin-top:14px"><label>Kunde</label><input class="inp" id="ien" value="${esc(x.n||'')}"></div>
+   <div class="field" style="margin-top:16px"><label>Stage</label><div class="is-st">${ST_ORDER.map(k=>`<button type="button" class="${k===st?'on':''}" style="--c:${ST_COL[k]}" ${pick('st',k,'IST')}><i></i>${ST_SHORT[k]}<small>${stRate(k)} %</small></button>`).join('')}</div></div>
+   <div class="field" style="margin-top:14px"><label>Forecast-Monat</label><div class="is-mo">${ms.map(mm=>`<button type="button" class="${mm===m?'on':''}" ${pick('mo',mm,'IMO')}>${mm===cm?'Diesen Monat':MONS[pD(mm).getMonth()]+(pD(mm).getFullYear()!==pD(cm).getFullYear()?' '+String(pD(mm).getFullYear()).slice(2):'')}</button>`).join('')}</div></div>
    ${x.vh&&x.vh.length?`<p class="hint" style="margin-top:10px">Wertverlauf: ${[...x.vh.map(h=>fmtE(h.v)+' ('+dLabel(h.d)+')'),fmtE(x.v)+' (jetzt)'].join(' → ')}</p>`:''}
    <button class="btn pri block" style="margin-top:16px" onclick="itemSave()">Speichern</button>
+   <div class="is-acts"><button class="oc-won" onclick="closeSheet();setTimeout(()=>fcItemAct('${m}','${st}',${i},'won'),200)"><span>🤝</span>Gewonnen</button><button class="oc-lost" onclick="closeSheet();setTimeout(()=>fcItemAct('${m}','${st}',${i},'lost'),200)"><span>💔</span>Verloren</button></div>
    <button class="btn block" style="margin-top:8px;color:var(--red)" onclick="if(this.dataset.c){itemDel()}else{this.dataset.c=1;this.textContent='Wirklich löschen? Nochmal tippen'}">${ic('trash')} Eintrag löschen</button>`);setTimeout(()=>{const e=document.getElementById('iev');if(e){e.focus();e.select()}},300)}
 function itemDel(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);if(x&&x.opp){const f=oppFind(x.opp);if(f){delete f.o.stage}}save();closeSheet();render();toast(`${x&&x.n||'Eintrag'} gelöscht`,'ok')}
 function itemSave(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st][i];const cm=curMeta('iev');let nv=Math.abs(toEUR('iev')||0);if(cm&&x.cur==='CHF'&&Math.abs(x.orig-cm.orig)<.01)nv=+x.v;curApply(x,cm);const nn=document.getElementById('ien').value.trim();
-  if(nv&&Math.abs(nv-x.v)>=.01){x.vh=x.vh||[];x.vh.push({d:todayK(),v:+x.v});const dl=nv-x.v;x.v=nv;toast(`Wert ${dl>0?'erhöht':'gesenkt'}: ${sgnE(dl)}`,'ok')}if(nn)x.n=nn;fcRecalc(F,st);save();closeSheet();render()}
+  if(nv&&Math.abs(nv-x.v)>=.01){x.vh=x.vh||[];x.vh.push({d:todayK(),v:+x.v});const dl=nv-x.v;x.v=nv;toast(`Wert ${dl>0?'erhöht':'gesenkt'}: ${sgnE(dl)}`,'ok')}if(nn)x.n=nn;
+  const f=x.opp?oppFind(x.opp):null;if(f){f.o.amount=x.v;if(nn)f.o.name=nn;curApply(f.o,x.cur?{cur:x.cur,orig:x.orig,fx:x.fx}:null)}
+  let tst=IST||st,tm=IMO||m;if(tst!==st||tm!==m){F.items[st].splice(i,1);fcRecalc(F,st);if(tst!==st)x.since=todayK();S.forecast[tm]=S.forecast[tm]||{};const N=S.forecast[tm];N.items=N.items||{};let it=N.items[tst];if(!it||!it.length){it=[];if(+N[tst])it.push({v:+N[tst],n:'Bisheriger Wert'})}it.push(x);N.items[tst]=it;fcRecalc(N,tst);if(f){f.o.stage=tst;f.o.fm=tm;if(tst!==st)f.o.stageSince=todayK()}
+    toast(`${x.n||'Opp'} → ${FCN[tst]}${tm!==m?' · '+MON[pD(tm).getMonth()]:''}`,'ok')}else fcRecalc(F,st);save();closeSheet();render()}
 function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);x.since=todayK();
   let it=F.items[ns];if(!it||!it.length){it=[];if(+F[ns])it.push({v:+F[ns],n:'Bisheriger Wert'})}it.push(x);F.items[ns]=it;fcRecalc(F,ns);
   if(x.opp){const f=oppFind(x.opp);if(f){f.o.stage=ns;f.o.stageSince=todayK()}}save();render();toast(`${x.n||'Opp'} → ${FCN[ns]}`,'ok')}
@@ -2863,7 +2887,7 @@ function subSet(v,id){try{localStorage.setItem('sub_'+v,id)}catch(e){}render();c
 function subBar(v,items,cur){return `<div class="subtabs">${items.map(([id,l,n])=>`<button class="${cur===id?'on':''}" onclick="subSet('${v}','${id}')">${l}${n?`<em>${n}</em>`:''}</button>`).join('')}</div>`}
 /* ---------- Opps-Seite ---------- */
 const ST_ORDER=['offer','proposal','expected','signed'];
-const ST_COL={offer:'#9AA3B5',proposal:'#5AA9F0',expected:'#F2B33D',signed:'#33C27F'};
+const ST_COL={offer:'#8B7CF6',proposal:'#2F8CF0',expected:'#F28C28',signed:'#1FAF6B'};
 const ST_SHORT={offer:'Offer',proposal:'Proposal',expected:'Expected',signed:'Signed'};
 function stRate(st){const P=S.fcParams;return {offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:100}[st]||0}
 function fcItemMoveTo(m,st,i,nm){if(nm===m)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);
@@ -2873,14 +2897,14 @@ function fcItemMoveTo(m,st,i,nm){if(nm===m)return;const F=S.forecast[m];if(!F||!
 function oppMonthSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];if(!x)return;const cm=ymOf(new Date());const ms=[0,1,2,3,4,5].map(d=>addM(cm,d));
   openSheet(`${sheetHead('Verschieben in …')}<p class="hint" style="margin-top:-6px"><b>${esc(x.n||'Opp')}</b> · ${fmtE(x.v)} · ${FCN[st]}. Die Opp zählt dann im Forecast des gewählten Monats.</p>
   <div class="om-grid">${ms.map(mm=>`<button class="${mm===m?'on':''}" onclick="fcItemMoveTo('${m}','${st}',${i},'${mm}')"><b>${MON[pD(mm).getMonth()]}</b><small>${mm===cm?'dieser Monat':pD(mm).getFullYear()}</small></button>`).join('')}</div>`)}
-function oppCard(m,x){const cm=ymOf(new Date());const open=x.opp?`const f=oppFind('${x.opp}');if(f)opSheet(f.k,'${x.opp}')`:`itemSheet('${m}','${x.st}',${x.i})`;const si=ST_ORDER.indexOf(x.st);
+function oppCard(m,x){const cm=ymOf(new Date());const open=`itemSheet('${m}','${x.st}',${x.i})`;const si=ST_ORDER.indexOf(x.st);
   return `<div class="oc" style="--sc:${ST_COL[x.st]}">
-    <div class="oc-top" onclick="${open}"><div class="oc-n"><b>${esc(x.n||'Opp')}${chfTag(x)}</b><small>${x.age!=null?ageChip(x.age):''}${m!==cm?`<span class="oc-m">📅 ${MON[pD(m).getMonth()]}</span>`:''}</small></div><div class="oc-v"><b>${fmtE(x.v)}</b><small>gewichtet ${fmtE((+x.v||0)*stRate(x.st)/100)}</small></div></div>
+    <div class="oc-top" onclick="${open}"><div class="oc-n"><span class="oc-badge">${ST_SHORT[x.st]}</span><b>${esc(x.n||'Opp')}${chfTag(x)}</b><small>${x.age!=null?ageChip(x.age):''}${m!==cm?`<span class="oc-m">📅 ${MON[pD(m).getMonth()]}</span>`:''}</small></div><div class="oc-v"><b>${fmtE(x.v)}</b><small>gewichtet ${fmtE((+x.v||0)*stRate(x.st)/100)}</small></div></div>
     <div class="oc-steps">${ST_ORDER.map((s,j)=>`<button class="${j<si?'past':j===si?'on':''}" style="--c:${ST_COL[s]}" onclick="fcItemStage('${m}','${x.st}',${x.i},'${s}')" aria-label="${FCN[s]}"><i></i><span>${ST_SHORT[s]}</span></button>`).join('')}</div>
-    <div class="oc-acts"><button class="oc-won" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')"><span>🤝</span>Gewonnen</button><button class="oc-mo" onclick="oppMonthSheet('${m}','${x.st}',${x.i})">Verschieben${ic('arrowr')}</button><button class="oc-lost" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')"><span>💔</span>Verloren</button></div>
+    <div class="oc-acts"><button class="oc-won" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')"><span>🤝</span>Gewonnen</button><button class="oc-mo" onclick="oppMonthSheet('${m}','${x.st}',${x.i})">Verschieben${ic('arrowr')}</button><button class="oc-lost" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')" aria-label="Verloren" title="Verloren"><span>💔</span></button></div>
   </div>`}
 function oppGroups(m,items){return [...ST_ORDER].reverse().map(st=>{const it=items.filter(x=>x.st===st);if(!it.length)return '';const sum=it.reduce((a,x)=>a+(+x.v||0),0);
-  return `<div class="og-h"><i style="background:${ST_COL[st]}"></i><b>${FCN[st]}</b><span>${it.length} · ${fmtE(sum)}</span><em>${stRate(st)} %</em></div>${it.map(x=>oppCard(m,x)).join('')}`}).join('')}
+  return `<section class="lane" style="--sc:${ST_COL[st]}"><div class="lane-h"><span class="lane-n"><i></i>${FCN[st]}</span><span class="lane-c">${it.length}</span><span class="sp"></span><span class="lane-s">${fmtE(sum)}</span><em>${stRate(st)} %</em></div><div class="lane-b">${it.map(x=>oppCard(m,x)).join('')}</div></section>`}).join('')}
 function vOpps(){const cm=ymOf(new Date());const OT=subCur('opps',['now','later','closed']);
   const now=openItems(cm);const later=[1,2,3,4,5].map(d=>({m:addM(cm,d),it:openItems(addM(cm,d))})).filter(g=>g.it.length);const nL=later.reduce((a,g)=>a+g.it.length,0);
   const all=[...now,...later.flatMap(g=>g.it)];const tot=all.reduce((a,x)=>a+(+x.v||0),0);const wNow=now.reduce((a,x)=>a+(+x.v||0)*stRate(x.st)/100,0);const totNow=now.reduce((a,x)=>a+(+x.v||0),0);
@@ -2892,7 +2916,7 @@ function vOpps(){const cm=ymOf(new Date());const OT=subCur('opps',['now','later'
     <div class="oh-top"><div><small>Pipeline ${MON[pD(cm).getMonth()]}</small><b>${fmtE(totNow)}</b><span>${now.length} ${now.length===1?'offene Opp':'offene Opps'} · gewichtet ${fmtE(wNow)}</span></div><button class="oh-add" onclick="opSheet()">${ic('plus')}<span>Neue Opp</span></button></div>
     <div class="oh-bar">${bySt.filter(b=>b.v>0).map(b=>`<i style="flex:${b.v};background:${ST_COL[b.st]}" title="${FCN[b.st]}"></i>`).join('')||'<i style="flex:1;background:rgba(255,255,255,.12)"></i>'}</div>
     <div class="oh-leg">${bySt.map(b=>`<span><i style="background:${ST_COL[b.st]}"></i>${ST_SHORT[b.st]} ${b.v?fmtE(b.v):'–'}</span>`).join('')}</div>
-    <div class="oh-figs"><div><small>Erwartung ${MONS[pD(cm).getMonth()]}</small><b>${fmtN(fc.pct)} %</b></div><div><small>Später geplant</small><b>${fmtE(tot-totNow)}</b></div><div><small>Gewinnquote</small><b>${cs.rate!=null?fmtN(cs.rate,0)+' %':'–'}</b></div></div>
+    <div class="oh-figs"><div><small>Erwartung</small><b>${fmtN(fc.pct)} %</b></div><div><small>Später</small><b>${fmtE(tot-totNow)}</b></div><div><small>Gewinnquote</small><b>${cs.rate!=null?fmtN(cs.rate,0)+' %':'–'}</b></div></div>
   </div>
   ${subBar('opps',[['now',MON[pD(cm).getMonth()],now.length||''],['later','Später',nL||''],['closed','Closed']],OT)}
   ${OT==='now'?(now.length?`${stale?`<div class="oc-stale">⏳ ${stale} ${stale===1?'Opp wartet':'Opps warten'} seit 14+ Tagen auf Bewegung. Kurz nachfassen?</div>`:''}${oppGroups(cm,now)}`:`<div class="empty-s">Keine offenen Opps im ${MON[pD(cm).getMonth()]}.<br><button class="btn pri sm" style="margin-top:12px" onclick="opSheet()">${ic('plus')} Neue Opp</button></div>`):''}
