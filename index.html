@@ -1008,6 +1008,13 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.rest-card.rs-work{background:linear-gradient(150deg,#FFB547 0%,#F08A3E 45%,#C2475E 100%)}
+.rs-sun{position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,236,170,.55),rgba(255,236,170,0) 65%);animation:sunp 6s ease-in-out infinite}
+@keyframes sunp{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.12);opacity:1}}
+.rs-sub em,.rs-figs b em{font-style:normal;font-size:.75em;color:rgba(255,255,255,.6);font-weight:600}
+.wk-bar{position:relative;margin-top:14px;height:8px;border-radius:99px;background:rgba(255,255,255,.22);overflow:hidden}.wk-bar i{display:block;height:100%;border-radius:99px;background:#fff;transition:width .8s ease}
+.wk-row{position:relative;display:flex;justify-content:space-between;gap:10px;margin-top:6px;font-size:13px;color:rgba(255,255,255,.85);font-variant-numeric:tabular-nums}.wk-row b{color:#fff}
+
 .vac{position:relative;overflow:hidden}
 .vac-fly{position:absolute;left:0;top:14px;z-index:2;font-size:30px;line-height:1;pointer-events:none;animation:vacx 2.6s cubic-bezier(.45,.05,.4,1) .5s both}
 .vac-fly i{position:absolute;right:100%;top:55%;height:2px;width:0;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(39,118,201,.55));animation:vact 2.6s ease .5s both}
@@ -1261,7 +1268,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='68';const APP_DATE='2026-11-10';
+const APP_VERSION='69';const APP_DATE='2026-11-10';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_VERSION} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1720,6 +1727,20 @@ function weekRecap(k){const d=pD(k);const mon=new Date(d);mon.setDate(d.getDate(
   return{hrs,demo,ops,rv,days,kw:kwOf(ymd(mon))}}
 function restDur(min){min=Math.max(0,Math.round(min));const d=Math.floor(min/1440),h=Math.floor(min%1440/60),m=min%60;return d?`${d} ${d===1?'Tag':'Tage'} ${h}h`:h?`${h}h ${pad(m)}m`:`${m} min`}
 function restNextStart(nx){if(!nx)return null;let st='08:00';const d=new Date();for(let i=0;i<10;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start){st=x.start;break}}const t=pD(nx.k);const [h,m]=st.split(':');t.setHours(+h,+m,0,0);return{t,st}}
+/* ---------- Arbeitstag läuft ---------- */
+function workState(now){now=now||new Date();const tk=ymd(now);const di=dayInfo(tk);const e=di.e;if(!e||isFree(e.type)||!e.start||e.end)return null;const nm=now.getHours()*60+now.getMinutes();const st=toMin(e.start);if(nm<st)return null;
+  const soll=di.soll||(+S.settings.sollTag||8);let p=+e.pause||0;const pAss=!p&&soll>6;if(pAss)p=30;const el=nm-st;const w=Math.max(0,(el-((+e.pause||0)||(pAss&&el>360?30:0)))/60);const endMin=st+soll*60+p;
+  return{tk,di,e,w,soll,endMin,pAss,pct:Math.min(1,w/soll),left:endMin-nm}}
+function hhmm(m){m=((Math.round(m)%1440)+1440)%1440;return pad(Math.floor(m/60))+':'+pad(m%60)}
+function workCard(){const s=workState();if(!s)return '';const a=actOf(s.tk),g=actGoal(s.tk);const hpD=hpDone(s.tk);const fig=(l,v)=>`<div><small>${l}</small><b>${v}</b></div>`;
+  const done=s.left<=0;const hr=new Date().getHours();const kick=hr<11?'Guten Morgen':hr<14?'Arbeitstag läuft':'Endspurt';
+  return `<div class="rest-card rs-work"><div class="rs-sun"></div>
+    <div class="rs-top"><span class="rs-emo">${done?'🏁':hr<11?'☀️':hr<14?'💼':'🔥'}</span><div><div class="rs-kick">${kick}</div><h2 class="rs-h">Seit ${s.e.start} Uhr dabei</h2><div class="rs-sub"><span id="workClock">${hm(s.w)}</span> gearbeitet</div></div></div>
+    <div class="wk-bar"><i id="workBar" style="width:${Math.round(s.pct*100)}%"></i></div>
+    <div class="wk-row"><span>${done?'Soll erreicht ✓':`Soll ${fmtN(s.soll)} h`}</span><span id="workEnd">${done?`seit ${hhmm(s.endMin)} Uhr`:`Feierabend ca. <b>${hhmm(s.endMin)} Uhr</b>`}</span></div>
+    <div class="rs-figs">${fig('Demos',`${a.demo}<em>/${g.demo}</em>`)}${fig('Opps',`${a.ops.length}<em>/${g.op}</em>`)}${fig('High-Prios',hpD?'✓':'offen')}</div>
+    ${s.pAss?`<div class="rs-note">Inkl. 30 min Pause. Trag deine Pausen ein, dann wird’s genauer.</div>`:''}</div>`}
+setInterval(()=>{const el=document.getElementById('workClock');if(!el||document.hidden)return;const s=workState();if(!s){render();return}el.textContent=hm(s.w);const b=document.getElementById('workBar');if(b)b.style.width=Math.round(s.pct*100)+'%'},30000);
 function restCard(){const r=restState();if(!r)return '';const now=new Date();const tk=todayK();const nm=S.settings.name?', '+esc(S.settings.name):'';
   let cls=r.t,emo,kick,head,sub='',body='',foot='';
   const nx=r.nx||eodNextWork(tk);const ns=restNextStart(nx);const until=ns?(ns.t-now)/6e4:null;
@@ -2075,7 +2096,7 @@ function vHome(){
   <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={bday:'Happy Birthday',nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',vacgo:'Schönen Urlaub',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();if(document.documentElement.classList.contains('xmon')&&(!rs||rs.t==='eve'||rs.t==='we'))return rs&&rs.t==='eve'?'🌙':'🎄';return rs?({eve:'🌙',vacgo:'🏖️',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
   ${saveOk?'':`<div class="warn" style="margin-bottom:14px">${ic('alert')} Daten können hier nicht gespeichert werden. Bitte Backup nutzen.</div>`}
   <div class="streaks">${mSt?`<span>🔥 ${mSt} ${mSt===1?'Monat':'Monate'} über 70 %</span>`:''}${tSt?`<span>⏱️ ${tSt} ${tSt===1?'Tag':'Tage'} erfasst</span>`:''}${miSt?`<span>✅ ${miSt} ${miSt===1?'Tag':'Tage'} Missionen</span>`:''}<a href="#verlauf" onclick="setTimeout(()=>document.getElementById('badges')?.scrollIntoView({behavior:'smooth'}),400)">🏅 ${earnedBadges().length}/${BADGES.length} Abzeichen</a></div>
-  ${restCard()}
+  ${restCard()||workCard()}
   <div class="bento">
     ${dayTile()}
     <a class="hero" href="#umsatz">
