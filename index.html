@@ -1009,6 +1009,7 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.dl-mq{display:flex;gap:6px;margin-top:6px}.dl-mq button{flex:1;height:30px;border-radius:9px;border:1px solid var(--line);background:transparent;color:var(--ink2);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}.dl-mq button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .g-eve .g-sky{background:linear-gradient(180deg,var(--gtop) 0,var(--gtop) calc(var(--safeT) + 2px),#1B1F4D calc(var(--safeT) + 90px),#2B2470 50%,#5B3A8F 85%,#C46A8A 100%)}
 .g-eve .g-sun{top:16%;left:76%;width:110px;height:110px;margin-left:-55px;background:radial-gradient(circle at 38% 40%,#FFF8DA 0,#F4E6A6 55%,#E7D07A 70%,rgba(231,208,122,0) 72%);box-shadow:0 0 60px 20px rgba(255,240,190,.25);animation:gmoon 8s ease-in-out infinite alternate;filter:none}
 .g-eve .g-sun{opacity:.55;width:200px;height:200px;margin-left:-100px;top:10%;background:radial-gradient(circle,rgba(255,244,200,.55) 0,rgba(255,244,200,.12) 45%,rgba(255,244,200,0) 70%);box-shadow:none}
@@ -1390,7 +1391,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='76';const APP_SEMVER='3.3.1';const APP_DATE='2026-11-11';
+const APP_VERSION='77';const APP_SEMVER='3.3.2';const APP_DATE='2026-11-11';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2172,11 +2173,11 @@ function fcItemAct(m,st,i,act){const F=S.forecast[m];if(!F||!F.items||!F.items[s
   if(f){f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK()}
   const ce=closedLog(act==='won'?'won':'lost',x,m,st);
   save();render();
-  if(act==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');setTimeout(()=>dealSheet(null,false,{amount:x.v,name:x.n&&x.n!=='Bisheriger Wert'?x.n:'',...(x.cur?{cur:x.cur,orig:x.orig}:{})}),300)}else fxLost(ce)}
+  if(act==='won'){toast('🎉 Gewonnen! Jetzt den Umsatz eintragen','ok');setTimeout(()=>dealSheet(null,false,{amount:x.v,name:x.n&&x.n!=='Bisheriger Wert'?x.n:'',...(x.cur?{cur:x.cur,orig:x.orig}:{}),...(m>ymOf(new Date())?{date:m+'-01'}:{})}),300)}else fxLost(ce)}
 function oppAction(act){const f=oppFind(OPID);if(!f)return;const m=f.o.fm||f.k.slice(0,7);const F=S.forecast[m];let st=null,i=-1;if(F&&F.items)Object.keys(F.items).some(k=>{const j=F.items[k].findIndex(x=>x.opp===OPID);if(j>=0){st=k;i=j;return true}});closeSheet();
   if(st){fcItemAct(m,st,i,act);return}
   if(act==='push'||act==='pull'){toast('Diese Opp steht in keinem Forecast');return}
-  f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK();const ce=closedLog(f.o.stage,{...f.o,opp:f.o.id},f.o.fm||f.k.slice(0,7),'');save();render();if(act==='won')setTimeout(()=>dealSheet(null,false,{amount:f.o.amount,name:f.o.name}),300);else fxLost(ce)}
+  f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK();const ce=closedLog(f.o.stage,{...f.o,opp:f.o.id},f.o.fm||f.k.slice(0,7),'');save();render();if(act==='won')setTimeout(()=>dealSheet(null,false,{amount:f.o.amount,name:f.o.name,...(f.o.cur?{cur:f.o.cur,orig:f.o.orig}:{}),...((f.o.fm||'')>ymOf(new Date())?{date:f.o.fm+'-01'}:{})}),300);else fxLost(ce)}
 /* Rückwärtsrechner */
 function funnelData(){const st=S.settings.startMonth;const cur=ymOf(new Date());let demos=0,opps=0,leads=0;Object.keys(S.act||{}).forEach(k=>{if(k.slice(0,7)<st)return;demos+=+S.act[k].demo||0;opps+=(S.act[k].ops||[]).length});
   (S.leads||[]).forEach(l=>{if(l.date.slice(0,7)>=st)leads+=+l.count||0});
@@ -2615,13 +2616,14 @@ function dealValHtml(v,amt,st){if(!v)return '';const sgn=x=>(x>=0?'+':'−')+fmt
   else if(!st&&v.att1>=130&&v.att0<130)note=`<div class="dv-note up">🚀 Knackt die 130 %: +10 % Provisionssatz auf den ganzen Monat.</div>`;
   return `<div class="dv ${v.total<0?'neg':''}"><div class="dv-top"><div><small>${st?'Kostet dich brutto':'Bringt dir brutto'}</small><b>${sgn(v.total)}</b></div><div class="dv-eff"><small>effektiv</small><b>${fmtN(eff,1)} %</b><small>vom Betrag</small></div></div>
     ${parts.length?`<div class="dv-parts">${parts.map(p=>`<span>${p[0]} <b>${sgn(p[1])}</b></span>`).join('')}</div>`:''}${note}<div class="dv-foot">mit der Auszahlung im ${MON[pD(pm).getMonth()]}</div></div>`}
+function dlMq(){const v=(document.getElementById('dld')||{}).value;document.querySelectorAll('.dl-mq button').forEach(b=>b.classList.toggle('on',b.dataset.v===v))}
 function updDealVal(){const el=document.getElementById('dlv');if(!el||!DL)return;const a=Math.abs(toEUR('dla')||0);const date=document.getElementById('dld').value||todayK();const m=date.slice(0,7);
   if(!a){el.innerHTML=payable(m)?`<div class="dv ghost"><small>Gib einen Betrag ein, dann siehst du, was er dir bringt.</small></div>`:'';return}
   const v=dealValue(m,DL.storno?-a:a,date,DL.id,DL.channel);el.innerHTML=v?dealValHtml(v,a,!!DL.storno):`<div class="dv ghost"><small>Für ${mLabel(m)} rechnet die App kein Gehalt${S.targets[m]?'':' (kein Monatsziel hinterlegt)'}.</small></div>`}
 let DL=null;
 function dIco(d){return d.storno?`<div class="ico st">${ic('storno')}</div>`:`<div class="ico ${d.channel}">${ic(d.channel==='in'?'inb':'outb')}</div>`}
 function dealSheet(id,storno,pre){
-  const d=id?{...S.deals.find(x=>x.id===id)}:{id:null,date:CUR===ymOf(new Date())?todayK():`${CUR}-01`,amount:pre&&pre.amount?pre.amount:'',channel:'out',name:pre&&pre.name?pre.name:'',storno:!!storno,...(pre&&pre.cur?{cur:pre.cur,orig:pre.orig}:{})};DL=d;
+  const d=id?{...S.deals.find(x=>x.id===id)}:{id:null,date:pre&&pre.date?pre.date:CUR===ymOf(new Date())?todayK():`${CUR}-01`,amount:pre&&pre.amount?pre.amount:'',channel:'out',name:pre&&pre.name?pre.name:'',storno:!!storno,...(pre&&pre.cur?{cur:pre.cur,orig:pre.orig}:{})};DL=d;
   const st=!!d.storno; const amt=d.amount!==''?String(Math.abs(d.cur==='CHF'&&d.orig?+d.orig:+d.amount)).replace('.',','):'';
   const orig=st?S.deals.filter(x=>!x.storno&&!x.retro&&+x.amount>0&&x.id!==d.ref).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,40):[];
   const refD=d.ref?S.deals.find(x=>x.id===d.ref):null;
@@ -2632,7 +2634,7 @@ function dealSheet(id,storno,pre){
    <div class="seg"><button class="${d.channel==='in'?'on':''}" id="dlci" onclick="DL.channel='in';this.classList.add('on');this.nextElementSibling.classList.remove('on')">${ic('inb')}Inbound</button><button class="${d.channel==='out'?'on':''}" id="dlco" onclick="DL.channel='out';this.classList.add('on');this.previousElementSibling.classList.remove('on')">${ic('outb')}Outbound</button></div>
    <div class="field" style="margin-top:16px"><label for="dla">${st?'Storno-Betrag in '+(d.cur==='CHF'?'CHF':'€')+' (wird abgezogen)':'Betrag (ARR) in '+(d.cur==='CHF'?'CHF':'€')}</label><div style="position:relative">${st?'<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:24px;font-weight:700;color:var(--red)">−</span>':''}<input class="inp" id="dla" inputmode="decimal" value="${amt}" placeholder="1.611,00" oninput="updDealVal();curHint('dla')" style="font-size:24px;height:58px;font-weight:600;${st?'padding-left:36px;color:var(--red)':''}"></div>${curField('dla',d.cur,d.orig)}</div>
    <div class="grid2" style="margin-top:14px">
-     <div class="field"><label>${st?'Datum der Abbuchung':'Datum'}</label><input class="inp" type="date" id="dld" value="${d.date}" onchange="updDealVal()"></div>
+     <div class="field"><label>${st?'Datum der Abbuchung':'Datum'}</label><input class="inp" type="date" id="dld" value="${d.date}" onchange="updDealVal();dlMq()"><div class="dl-mq">${[[todayK(),'Heute'],[addM(ymOf(new Date()),1)+'-01','Ab '+MON[pD(addM(ymOf(new Date()),1)).getMonth()]]].map(([v,l])=>`<button type="button" class="${d.date===v?'on':''}" data-v="${v}" onclick="document.getElementById('dld').value='${v}';updDealVal();dlMq()">${l}</button>`).join('')}</div></div>
      <div class="field"><label>Kunde</label><input class="inp" id="dln" value="${esc(d.name)}" placeholder="Optional"></div>
    </div>
    <div id="dlv" style="margin-top:14px"></div>
