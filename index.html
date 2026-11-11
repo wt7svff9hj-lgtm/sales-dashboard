@@ -1455,7 +1455,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='83';const APP_SEMVER='3.4.5';const APP_DATE='2026-11-11';
+const APP_VERSION='84';const APP_SEMVER='3.5.0';const APP_DATE='2026-11-11';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -3536,6 +3536,7 @@ function showKickoff(){
 /* ---------- Feierabend-Bilanz ---------- */
 const eodOn=()=>S.settings.eod!==false;
 function eodNextWork(k){const d=pD(k);for(let i=0;i<14;i++){d.setDate(d.getDate()+1);const x=dayInfo(ymd(d));if(!x.weekend&&!x.hol&&!x.sp&&!(x.e&&isFree(x.e.type)))return x}return null}
+function signedOn(k){const cm=k.slice(0,7);const out=[];[0,1,2,3,4,5].forEach(d=>{const m=addM(cm,d);fcNormalize(m);const it=((S.forecast[m]||{}).items||{}).signed||[];it.forEach(x=>{if(x.since===k)out.push({...x,m})})});return out}
 function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worked(e);if(w==null){toast('Für heute fehlt noch Beginn oder Ende');return}
   const d0=pD(k),m=k.slice(0,7);const a=actOf(k),g=actGoal(k);const hit=actHit(k);
   const P=S.fcParams;const rate=st=>({offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:100}[st]||0);
@@ -3544,8 +3545,10 @@ function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worke
   const r=rev(m);const fc=forecast(m);const saldo=w-di.soll;const bal=balanceNow();
   const mst=missionState(k);const mDone=mst.filter(Boolean).length;
   let nx=eodNextWork(k);const stale=openItems(ymOf(new Date())).filter(x=>x.age!=null&&x.age>=14);
+  const sgd=signedOn(k);const sgNow=sgd.filter(x=>x.m===m),sgLater=sgd.filter(x=>x.m!==m);
   let emo,head,msg;const vacB=S.settings.vacWarn!==false&&vacAhead(k);
   if(dSum>0){emo='🏆';head='Was für ein Tag';msg=`${deals.length===1?'Ein Abschluss':deals.length+' Abschlüsse'} über <b>${fmtE(dSum)}</b>. Damit stehst du bei <b>${fmtN(r.pct)} %</b>.`}
+  else if(sgd.length){emo='✍️';head=sgd.length===1?'Unterschrift im Kasten':`${sgd.length} Unterschriften im Kasten`;msg=`${sgd.length===1?'Ein Kunde hat':sgd.length+' Kunden haben'} heute unterschrieben, zusammen <b>${fmtE(sgd.reduce((a,x)=>a+(+x.v||0),0))}</b>. Fehlt nur noch die Einbuchung.`}
   else if(hit&&(a.demo>g.demo||ops.length>g.op)){emo='🔥';head='Mehr als geplant';msg='Tagesziel nicht nur geschafft, sondern übertroffen. So füllt sich die Pipeline.'}
   else if(hit){emo='🎯';head='Tagesziel geschafft';msg=`${a.demo} ${a.demo===1?'Demo':'Demos'} und ${ops.length} ${ops.length===1?'Opp':'Opps'}. Genau so baut sich der nächste Monat auf.`}
   else if(a.demo||ops.length){emo='💪';head='Feierabend';msg='Nicht jeder Tag ist ein Volltreffer. Was heute angestoßen wurde, zahlt später ein.'}
@@ -3574,6 +3577,8 @@ function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worke
       ${hpOn()?`<div class="eod-t">${hpDone(k)?`⚡ High-Prios erledigt um ${S.hiprio[k]} Uhr`:'⚡ High-Prios heute nicht abgehakt'}</div>`:''}
       ${ops.length?`<div class="eod-ops">${ops.map(o=>`<div><span>🎯 ${esc(o.name||'Opp')}${OPEN_ST.includes(o.stage)?`<small>${FCN[o.stage]}${o.fm&&o.fm!==m?' · '+MON[pD(o.fm).getMonth()]:''}</small>`:''}</span><b>${+o.amount?fmtE(+o.amount):'–'}</b></div>`).join('')}
         ${opSum?`<div class="eod-sum"><span>Neue Pipeline</span><b>${fmtE(opSum)}<small>gewichtet ${fmtE(opW)}</small></b></div>`:''}</div>`:''}</div>
+    ${sgd.length?`<div class="eod-sec eod-sg"><div class="kk-lbl">✍️ Heute auf Signed</div><div class="eod-ops">${sgd.map(x=>`<div><span>${esc(x.n||'Opp')}${chfTag(x)}<small>${x.m===m?`zählt im ${MON[pD(m).getMonth()]}`:`📅 kommt erst im ${MON[pD(x.m).getMonth()]}`}</small></span><b>${fmtE(x.v)}</b></div>`).join('')}
+      <div class="eod-sum"><span>${sgNow.length?`${MON[pD(m).getMonth()]}: ${fmtE(sgNow.reduce((a,x)=>a+(+x.v||0),0))}`:''}${sgNow.length&&sgLater.length?' · ':''}${sgLater.length?`später: ${fmtE(sgLater.reduce((a,x)=>a+(+x.v||0),0))}`:''}</span><b></b></div></div></div>`:''}
     <div class="eod-sec"><div class="kk-lbl">📈 Umsatz ${MON[d0.getMonth()]}</div><div class="kk-stats">
       <div><small>Heute</small><b>${dSum?'+'+fmtE(dSum):'–'}</b></div>
       <div><small>Quote</small><b>${fmtN(r.pct)} %</b></div>
