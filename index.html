@@ -1008,6 +1008,68 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.g-eve .g-sky{background:linear-gradient(180deg,var(--gtop) 0,var(--gtop) calc(var(--safeT) + 2px),#1B1F4D calc(var(--safeT) + 90px),#2B2470 50%,#5B3A8F 85%,#C46A8A 100%)}
+.g-eve .g-sun{top:16%;left:76%;width:110px;height:110px;margin-left:-55px;background:radial-gradient(circle at 38% 40%,#FFF8DA 0,#F4E6A6 55%,#E7D07A 70%,rgba(231,208,122,0) 72%);box-shadow:0 0 60px 20px rgba(255,240,190,.25);animation:gmoon 8s ease-in-out infinite alternate;filter:none}
+.g-eve .g-sun{opacity:.55;width:200px;height:200px;margin-left:-100px;top:10%;background:radial-gradient(circle,rgba(255,244,200,.55) 0,rgba(255,244,200,.12) 45%,rgba(255,244,200,0) 70%);box-shadow:none}
+@keyframes gmoon{from{transform:translateY(0)}to{transform:translateY(12px)}}
+.g-eve .g-cl{background:rgba(255,255,255,.12)}
+.g-stars{position:absolute;inset:0}.g-stars i{position:absolute;border-radius:50%;background:#fff;animation:twk 3s ease-in-out infinite}
+.g-shoot{position:absolute;top:12%;left:-10%;width:120px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#fff);transform:rotate(14deg);opacity:0;animation:gshoot 7s ease-in 2s infinite}
+@keyframes gshoot{0%{opacity:0;transform:translate(0,0) rotate(14deg)}3%{opacity:1}12%{opacity:0;transform:translate(70vw,18vh) rotate(14deg)}100%{opacity:0}}
+.g-eve .g-waves path{fill:rgba(255,255,255,.06)}.g-eve .g-waves .w3{fill:rgba(255,255,255,.1)}
+
+/* Freizeit-Tür */
+.gate{position:fixed;inset:0;z-index:88;display:none;overflow:hidden;color:#fff;--gtop:#EEF0F5}
+html[data-theme=dark] .gate{--gtop:#06070B}
+.gate.on{display:block;animation:gin .6s cubic-bezier(.2,.8,.2,1)}
+.gate.out{animation:gout .5s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes gin{from{opacity:0;transform:scale(1.06)}to{opacity:1;transform:none}}
+@keyframes gout{to{opacity:0;transform:scale(1.12);filter:blur(6px)}}
+.g-sky{position:absolute;inset:0;background:linear-gradient(180deg,var(--gtop) 0,var(--gtop) calc(var(--safeT) + 2px),#FFB26B calc(var(--safeT) + 90px),#FF6F7E 52%,#7A3FB8 100%)}
+.g-vac .g-sky{background:linear-gradient(180deg,var(--gtop) 0,var(--gtop) calc(var(--safeT) + 2px),#7FD8F5 calc(var(--safeT) + 90px),#2FA9D6 50%,#0E6BA8 100%)}
+.g-hol .g-sky{background:linear-gradient(180deg,var(--gtop) 0,var(--gtop) calc(var(--safeT) + 2px),#9BE3B6 calc(var(--safeT) + 90px),#2F9E7A 52%,#16506A 100%)}
+.g-sick .g-sky{background:linear-gradient(180deg,var(--gtop) 0,var(--gtop) calc(var(--safeT) + 2px),#C9C3F2 calc(var(--safeT) + 90px),#8A7FD6 55%,#3F3A7A 100%)}
+.g-sun{position:absolute;left:50%;top:44%;width:240px;height:240px;margin-left:-120px;border-radius:50%;background:radial-gradient(circle,#FFF3B0 0,#FFD15C 45%,rgba(255,180,80,0) 70%);animation:gsun 14s ease-in-out infinite alternate;filter:blur(1px)}
+.g-vac .g-sun{top:18%;left:78%;width:170px;height:170px;margin-left:-85px;animation:gsun2 10s ease-in-out infinite alternate}
+.g-hol .g-sun,.g-sick .g-sun{opacity:.55;top:22%}
+@keyframes gsun{from{transform:translateY(-30px) scale(1)}to{transform:translateY(40px) scale(1.08)}}
+@keyframes gsun2{from{transform:rotate(0) scale(1)}to{transform:rotate(25deg) scale(1.1)}}
+.g-cl{position:absolute;height:26px;border-radius:30px;background:rgba(255,255,255,.55);filter:blur(2px);animation:gcl 40s linear infinite}
+.g-cl::before{content:"";position:absolute;width:44%;height:180%;left:18%;top:-70%;border-radius:50%;background:inherit}
+.g-cl.c1{width:120px;top:calc(var(--safeT) + 70px);left:-140px}.g-cl.c2{width:90px;top:calc(var(--safeT) + 150px);left:-110px;animation-duration:55s;animation-delay:-20s;opacity:.7}.g-cl.c3{width:150px;top:calc(var(--safeT) + 30px);left:-160px;animation-duration:70s;animation-delay:-45s;opacity:.5}
+@keyframes gcl{to{transform:translateX(calc(100vw + 340px))}}
+.g-waves{position:absolute;left:0;right:0;bottom:0;width:200%;height:26vh;animation:gwv 14s linear infinite}
+.g-waves path{fill:rgba(255,255,255,.12)}.g-waves .w2{fill:rgba(255,255,255,.16);animation:gwv2 7s ease-in-out infinite alternate}.g-waves .w3{fill:rgba(255,255,255,.22)}
+@keyframes gwv{to{transform:translateX(-50%)}}@keyframes gwv2{to{transform:translateY(8px)}}
+.g-in{position:relative;z-index:2;height:100%;overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:calc(var(--safeT) + 24px) 26px calc(var(--safeB) + 24px);max-width:480px;margin:0 auto}
+.g-emo{font-size:76px;line-height:1;animation:gfl 4s ease-in-out infinite;filter:drop-shadow(0 10px 22px rgba(0,0,0,.25))}
+@keyframes gfl{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
+.g-k{margin-top:14px;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.g-h{margin:6px 0 0;font-size:clamp(34px,10vw,48px);line-height:1.02;font-weight:800;font-stretch:var(--cond);text-shadow:0 4px 24px rgba(0,0,0,.18)}
+.g-p{margin:10px 0 0;font-size:17px;line-height:1.4;opacity:.92;max-width:340px}
+.g-c{margin-top:14px;display:inline-block;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,.2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);font-weight:700;font-size:14.5px;font-variant-numeric:tabular-nums}
+.g-card{position:relative;background:#FFFDF7;color:#2A2A33;border-radius:10px;padding:26px 22px 22px;transform:rotate(-2.5deg);box-shadow:0 30px 60px rgba(0,40,80,.35),0 0 0 8px rgba(255,255,255,.65);animation:gcard 1s cubic-bezier(.2,1.4,.4,1) both;width:min(340px,100%)}
+@keyframes gcard{from{transform:rotate(-14deg) translateY(60px) scale(.8);opacity:0}to{transform:rotate(-2.5deg)}}
+.g-card .g-c{background:#E9F6FB;color:#0E6BA8}.g-card .g-k{color:#0E6BA8;opacity:1}.g-card .g-h{font-size:clamp(28px,8vw,36px);text-shadow:none}.g-card .g-p{color:#55555F}
+.g-stamp{position:absolute;right:14px;top:12px;width:52px;height:60px;border:3px dashed #E4505C;border-radius:4px;display:grid;place-items:center;transform:rotate(8deg);font-size:26px;background:#FFF2F3}
+.g-post{position:absolute;left:16px;top:16px;font-size:9.5px;font-weight:800;letter-spacing:.12em;color:#E4505C;border:2px solid #E4505C;border-radius:50%;width:74px;height:74px;display:grid;place-items:center;line-height:1.2;transform:rotate(-14deg);opacity:.75}
+.g-card .g-emo{margin-top:34px;font-size:64px}
+.g-q{margin-top:26px;font-size:15.5px;opacity:.95}.g-q b{font-weight:800}
+.g-hold{position:relative;margin-top:16px;width:118px;height:118px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .2s;box-shadow:0 0 0 calc(var(--p,0)*26px) rgba(255,255,255,calc(.18 - var(--p,0)*.18))}
+.g-hold.on{transform:scale(.94)}.g-hold.nope{animation:gnope .4s ease}
+@keyframes gnope{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.g-hold svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.g-tr{fill:none;stroke:rgba(255,255,255,.3);stroke-width:7}.g-pr{fill:none;stroke:#fff;stroke-width:7;stroke-linecap:round}
+.g-hi{font-size:40px;line-height:1;pointer-events:none;transition:transform .2s}.g-hold.on .g-hi{transform:scale(1.15)}
+.g-hl{margin-top:10px;font-size:14px;font-weight:700;opacity:.9;min-height:20px}
+.g-no{margin-top:18px;height:50px;padding:0 24px;border-radius:99px;border:0;background:#fff;color:#2A2A33;font:inherit;font-size:16px;font-weight:750;box-shadow:0 12px 30px rgba(0,0,0,.2);cursor:pointer}
+.g-no:active{transform:scale(.97)}
+.g-st{margin-top:18px;font-size:12.5px;opacity:.85;line-height:1.5;max-width:340px}.g-st b{font-weight:800}
+.g-bye{display:flex;flex-direction:column;align-items:center;animation:rise .5s ease both}
+.g-zz{margin-top:18px;font-size:28px;font-weight:800;opacity:.8}.g-zz span{display:inline-block;animation:gzz 2s ease-in-out infinite}.g-zz span:nth-child(1){animation-delay:.3s;font-size:22px}.g-zz span:nth-child(2){animation-delay:.6s;font-size:16px}
+@keyframes gzz{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-8px);opacity:1}}
+.g-link{margin-top:26px;border:0;background:none;color:#fff;opacity:.75;text-decoration:underline;font:inherit;font-size:14px;cursor:pointer}
+
 /* Helle Variante für Sperrbildschirm, Tagesstart und Feierabend (Statusleiste passt dann) */
 html[data-theme=light] .lock{background:radial-gradient(90% 60% at 50% 0%,rgba(249,220,74,.35),transparent 60%),#F4F5F8;color:#111318}
 html[data-theme=light] .lk-logo{box-shadow:0 14px 40px rgba(180,140,0,.25)}
@@ -1318,7 +1380,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
 <div class="tip" id="tip"></div>
 <div id="print"></div>
 <div id="lock" class="lock"></div>
-<div id="kick" class="kick"></div><div id="eod" class="kick eod"></div>
+<div id="kick" class="kick"></div><div id="eod" class="kick eod"></div><div id="gate" class="gate"></div>
 <div id="moment" class="kick moment"></div>
 <div id="wrap" class="wrapov"></div>
 <script>
@@ -1327,7 +1389,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='73';const APP_SEMVER='3.1.2';const APP_DATE='2026-11-11';
+const APP_VERSION='75';const APP_SEMVER='3.3.0';const APP_DATE='2026-11-11';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1753,8 +1815,8 @@ function homeLayPanel(){const L=homeLay();const o=L.custom?L.order:L.order;
   <div class="hl-list">${o.map((id,i)=>`<div class="hl-row"><div class="hl-mv"><button onclick="hlMove('${id}',-1)" ${i===0?'disabled':''} aria-label="Nach oben">▲</button><button onclick="hlMove('${id}',1)" ${i===o.length-1?'disabled':''} aria-label="Nach unten">▼</button></div><span class="hl-n">${HB_NAME[id]}</span><div class="seg pill hl-seg">${[['main','Oben'],['more','Mehr'],['off','Aus']].map(([p,l])=>`<button class="${L.place[id]===p?'on':''}" onclick="hlSet('${id}','${p}')">${l}</button>`).join('')}</div></div>`).join('')}</div>
   <p class="hint" style="margin:10px 0 0">„Mehr“ heißt: unten im aufklappbaren Bereich. Mit ▲▼ legst du eine eigene Reihenfolge fest, dann ist die Tageszeit-Automatik aus.</p>
   <button class="btn sm" style="margin-top:10px" onclick="hlReset()">Standard wiederherstellen</button>`}
-function streaksHtml(){const mSt=monthStreak(),tSt=timeStreak(),miSt=missionStreak();
-  return `<div class="streaks">${mSt?`<span>🔥 ${mSt} ${mSt===1?'Monat':'Monate'} über 70 %</span>`:''}${tSt?`<span>⏱️ ${tSt} ${tSt===1?'Tag':'Tage'} erfasst</span>`:''}${miSt?`<span>✅ ${miSt} ${miSt===1?'Tag':'Tage'} Missionen</span>`:''}<a href="#verlauf" onclick="setTimeout(()=>document.getElementById('badges')?.scrollIntoView({behavior:'smooth'}),400)">🏅 ${earnedBadges().length}/${BADGES.length} Abzeichen</a></div>`}
+function streaksHtml(){const mSt=monthStreak(),tSt=timeStreak(),miSt=missionStreak();const gs=gateStats();
+  return `<div class="streaks">${gs.clean?`<span>🏝️ ${gs.clean} ${gs.clean===1?'freier Tag':'freie Tage'} ohne App</span>`:''}${mSt?`<span>🔥 ${mSt} ${mSt===1?'Monat':'Monate'} über 70 %</span>`:''}${tSt?`<span>⏱️ ${tSt} ${tSt===1?'Tag':'Tage'} erfasst</span>`:''}${miSt?`<span>✅ ${miSt} ${miSt===1?'Tag':'Tage'} Missionen</span>`:''}<a href="#verlauf" onclick="setTimeout(()=>document.getElementById('badges')?.scrollIntoView({behavior:'smooth'}),400)">🏅 ${earnedBadges().length}/${BADGES.length} Abzeichen</a></div>`}
 /* Datumszeile in der Heute-Karte */
 function dateLine(){const d0=new Date(),tk=todayK(),m=ymOf(d0);const left=workdaysLeft(m,tk);const isFinal=lastWorkday(m)===tk;
   return `<div class="rs-date"><span>${WDL[d0.getDay()].slice(0,2)}, ${d0.getDate()}. ${MONS[d0.getMonth()]} · KW ${isoWeek(d0)}</span><span>${isFinal?'🏁 Finaltag':`${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'} übrig`}</span></div>`}
@@ -3026,6 +3088,9 @@ function vSettings(){
       <button class="btn pri block" onclick="maybeKickoff(true)">Jetzt ansehen 🚀</button>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Geburtstag 🎂</b><div class="lbl">Für eine kleine Überraschung</div></div><span class="sp"></span><input class="inp" style="width:96px;text-align:center" inputmode="numeric" placeholder="TT.MM." value="${(()=>{const b=S.settings.bday||'02-28';return b.slice(3)+'.'+b.slice(0,2)+'.'})()}" onchange="{const m=this.value.match(/(\d{1,2})\D+(\d{1,2})/);if(m){S.settings.bday=String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');save();toast('Geburtstag gespeichert','ok')}else toast('Bitte als TT.MM. eingeben')}"></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Im Unternehmen seit 🏅</b><div class="lbl">TT.MM. oder TT.MM.JJJJ für die Jahreszahl</div></div><span class="sp"></span><input class="inp" style="width:120px;text-align:center" inputmode="numeric" placeholder="01.09.2024" value="${(()=>{const j=S.settings.jobStart||'2020-09-01';const md=j.slice(-5);return md.slice(3)+'.'+md.slice(0,2)+'.'+(j.length>5?j.slice(0,4):'')})()}" onchange="{const m=this.value.match(/(\d{1,2})\D+(\d{1,2})(?:\D+(\d{4}))?/);if(m){S.settings.jobStart=(m[3]?m[3]+'-':'')+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');save();toast('Gespeichert','ok')}else toast('Bitte als TT.MM.JJJJ eingeben')}"></div>
+      <div class="row" style="margin-top:16px;flex-wrap:wrap;gap:10px"><div><b style="font-weight:600">Freizeit-Tür 🚪</b><div class="lbl">Am Wochenende, im Urlaub, an Feiertagen, an halben Urlaubstagen ab 12 Uhr und nach Feierabend</div></div><span class="sp"></span><div class="seg pill"><button class="${gateOn()?'on':''}" onclick="S.settings.gate=true;save();render()">An</button><button class="${gateOn()?'':'on'}" onclick="S.settings.gate=false;save();render()">Aus</button></div></div>
+      <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><span class="lbl">Vorschau:</span><button class="btn sm" onclick="showGate(null,'we')">Wochenende</button><button class="btn sm" onclick="showGate(null,'urlaub')">Urlaub</button><button class="btn sm" onclick="showGate(null,'hol')">Feiertag</button><button class="btn sm" onclick="showGate(null,'eve')">Feierabend</button></div>
+      <div class="row" style="margin-top:10px"><div><b style="font-weight:600">Auch nach Feierabend</b><div class="lbl">Sobald dein eingetragenes Arbeitsende erreicht ist</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.gateEve!==false?'on':''}" onclick="S.settings.gateEve=true;save();render()">An</button><button class="${S.settings.gateEve!==false?'':'on'}" onclick="S.settings.gateEve=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Urlaubs-Vorwarnung ✈️</b><div class="lbl">5 Arbeitstage vor dem Urlaub auf Home</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.vacWarn!==false?'on':''}" onclick="S.settings.vacWarn=true;save();render()">An</button><button class="${S.settings.vacWarn!==false?'':'on'}" onclick="S.settings.vacWarn=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">High-Prio-Erinnerung ⚡</b><div class="lbl">Bleibt auf Home stehen, bis du sie abhakst</div></div><span class="sp"></span><div class="seg pill"><button class="${hpOn()?'on':''}" onclick="S.settings.hiprio=true;save();render()">An</button><button class="${hpOn()?'':'on'}" onclick="S.settings.hiprio=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Feierabend-Bilanz 🌙</b><div class="lbl">Zusammenfassung, sobald du das Ende für heute einträgst</div></div><span class="sp"></span><div class="seg pill"><button class="${eodOn()?'on':''}" onclick="S.settings.eod=true;save();render()">An</button><button class="${eodOn()?'':'on'}" onclick="S.settings.eod=false;save();render()">Aus</button></div></div>
@@ -3654,7 +3719,66 @@ function yearSlides(y){const ms=[...Array(12)].map((_,i)=>`${y}-${pad(i+1)}`);co
    {html:`<div class="wr-k">Bester Monat</div><div class="wr-big">${best?fmtN(best.v)+' %':'–'}</div><p class="wr-p">${best?`Leistung im ${mLabel(best.src)}.`:''}</p>`,conf:true},
    {html:`<div class="wr-k">In Zahlen</div><div class="wr-stats"><div><b>${deals}</b><small>Verträge</small></div><div><b>${R.tot.work}</b><small>Arbeitstage</small></div><div><b>${fmtN(R.tot.hours)}</b><small>Stunden</small></div><div><b>${badges}</b><small>Abzeichen</small></div></div>`},
    {cls:'y',html:`<div class="wr-emo">🚀</div><div class="wr-k">Auf ein starkes ${+y+1}</div><p class="wr-p">Danke für ein Jahr voller Calls, Deals und Durchhaltevermögen.</p><button class="kk-go" style="background:#111318;color:#F9DC4A;margin-top:18px" onclick="event.stopPropagation();closeWrap()">Los geht's</button>`}]}
-function dailyFlow(){if(LOCKED)return;const pm=addM(ymOf(new Date()),-1);
+/* ---------- Freizeit-Tür (Wochenende, Urlaub, Feiertag) ---------- */
+const gateOn=()=>S.settings.gate!==false;
+function gateState(now){now=now||new Date();const k=ymd(now);const di=dayInfo(k);const e=di.e;const h=now.getHours();
+  if(e&&e.type==='urlaub')return{t:'urlaub',k};if(e&&e.type==='krank')return{t:'krank',k};if(e&&e.type==='feiertag')return{t:'hol',k,name:'Feiertag'};
+  if(di.weekend)return{t:'we',k};if(di.hol)return{t:'hol',k,name:di.hol};
+  if(e&&e.type==='halb'&&h>=12)return{t:'halb',k};if(di.sp&&h>=12&&!(e&&(e.type==='arbeit'||e.type==='koeln')&&!e.end))return{t:'sp',k,name:di.sp};
+  if(S.settings.gateEve!==false&&e&&!isFree(e.type)&&e.end&&worked(e)!=null&&h*60+now.getMinutes()>=toMin(e.end)){const nx=eodNextWork(k);return{t:'eve',k,key:k+'e',end:e.end,wk:nx&&(pD(nx.k)-pD(k))/864e5>1}}
+  return null}
+function gateFreeDay(k){const di=dayInfo(k);const e=di.e;return di.weekend||di.hol||!!di.sp||(e&&(isFree(e.type)||e.type==='halb'))}
+function gateBlock(k){const out=[k];const d=pD(k);for(let i=0;i<30;i++){d.setDate(d.getDate()-1);const x=ymd(d);if(gateFreeDay(x))out.unshift(x);else break}const f=pD(k);for(let i=0;i<30;i++){f.setDate(f.getDate()+1);const x=ymd(f);if(gateFreeDay(x))out.push(x);else break}return out}
+function gateStats(){const L=S.gateLog||{},K=S.gateSkip||{};const tk=todayK(),m=tk.slice(0,7);const bl=gateBlock(tk);
+  const blockVisits=bl.reduce((a,x)=>a+(L[x]||0),0);const monthVisits=Object.keys(L).filter(x=>x.startsWith(m)).reduce((a,x)=>a+L[x],0);
+  let clean=0;monthDays(m).forEach(x=>{if(x.k>=tk)return;if(gateFreeDay(x.k)&&!L[x.k])clean++});const skips=Object.keys(K).filter(x=>x.startsWith(m)).reduce((a,x)=>a+K[x],0);
+  return{blockVisits,monthVisits,clean,skips,bl}}
+function gatePassed(){const g=gateState();const key=g&&g.key||todayK();try{return localStorage.getItem('gate_'+key)==='1'}catch(e){return false}}
+function gateNeeded(){return gateOn()&&!gatePassed()&&!!gateState()}
+let GATE_CB=null,GATE_PREV=null,GATE_PT=null;
+function gateScene(g){const tk=todayK();const nx=eodNextWork(tk);const ns=restNextStart(nx);const until=ns?restDur((ns.t-new Date())/6e4):'';const d0=new Date();
+  const vacLeft=(()=>{let n=0;const d=new Date();for(let i=0;i<40;i++){const x=dayInfo(ymd(d));if(x.e&&x.e.type==='urlaub')n++;else if(x.e&&x.e.type==='halb')n+=.5;else if(!(x.weekend||x.hol))break;d.setDate(d.getDate()+1)}return n})();
+  const wd=WDL[d0.getDay()];
+  const S1={we:{cls:'g-we',emo:'🏖️',k:'Wochenende',h:`Es ist ${wd}.`,p:'Die Pipeline läuft auch ohne dich. Versprochen.',c:until?`Noch ${until} bis ${WDL[nx.wd]}`:''},
+    urlaub:{cls:'g-vac',emo:'🌴',k:'Urlaub',h:'Du hast Urlaub!',p:'Kunden, Forecast und Quote warten geduldig auf dich.',c:`Noch ${one(vacLeft)} ${vacLeft===1?'Urlaubstag':'Urlaubstage'}`},
+    halb:{cls:'g-vac',emo:'🍹',k:'Halber Urlaubstag',h:'Ab 12 Uhr ist Feierabend.',p:'Der Vormittag war Arbeit, der Rest gehört dir.',c:until?`Weiter ${WDL[nx.wd]} ab ${ns.st} Uhr`:''},
+    hol:{cls:'g-hol',emo:'🎈',k:'Feiertag',h:g.name||'Feiertag',p:'Heute zählt nur eins: frei haben.',c:until?`Noch ${until} bis ${WDL[nx.wd]}`:''},
+    sp:{cls:'g-hol',emo:g.name==='Silvester'?'🥂':'🎄',k:g.name,h:'Ab 12 Uhr ist frei.',p:'Genieß die Feiertage, die Zahlen laufen nicht weg.',c:''},
+    eve:{cls:'g-eve',emo:g.wk?'🎉':'🌙',k:g.wk?'Wochenende beginnt':'Feierabend',h:g.wk?'Ab ins Wochenende!':`Seit ${g.end||'–'} Uhr frei.`,p:(()=>{const a=actOf(tk);const w=worked((S.days[tk]||{}));return `Der Tag ist im Kasten: ${w!=null?hm(w):'–'}, ${a.demo} ${a.demo===1?'Demo':'Demos'}, ${a.ops.length} ${a.ops.length===1?'Opp':'Opps'}. Morgen geht's weiter.`})(),c:until?`Noch ${until} bis ${WDL[nx.wd]} ${ns.st} Uhr`:''},
+    krank:{cls:'g-sick',emo:'🫖',k:'Krank gemeldet',h:'Gute Besserung!',p:'Heute zählt nur, dass du wieder fit wirst. Leg das Handy weg.',c:''}}[g.t];
+  return S1}
+function showGate(cb,preview){const g=preview?{t:preview,k:todayK(),name:preview==='hol'?'Tag der Deutschen Einheit':null,end:(S.days[todayK()]||{}).end||'17:00'}:gateState();if(!g){cb&&cb();return}GATE_CB=cb||null;GATE_PREV=!!preview;GATE_PT=preview||null;
+  const sc=gateScene(g);const st=gateStats();const el=document.getElementById('gate');const vac=g.t==='urlaub'||g.t==='halb';
+  const nth=(g.t==='eve'?((S.gateLog||{})[g.k+'e']||0):st.blockVisits)+1;
+  el.className='gate on '+sc.cls;
+  el.innerHTML=`<div class="g-sky"><div class="g-sun"></div><i class="g-cl c1"></i><i class="g-cl c2"></i><i class="g-cl c3"></i>${g.t==='eve'?`<div class="g-stars">${[...Array(36)].map((_,i)=>`<i style="left:${(i*37)%100}%;top:${4+(i*23)%55}%;animation-delay:${(i*0.37)%3}s;width:${1+(i%3)}px;height:${1+(i%3)}px"></i>`).join('')}</div><i class="g-shoot"></i>`:''}</div>
+  <svg class="g-waves" viewBox="0 0 1200 200" preserveAspectRatio="none"><path class="w1" d="M0 80 Q150 40 300 80 T600 80 T900 80 T1200 80 V200 H0Z"/><path class="w2" d="M0 110 Q150 70 300 110 T600 110 T900 110 T1200 110 V200 H0Z"/><path class="w3" d="M0 140 Q150 105 300 140 T600 140 T900 140 T1200 140 V200 H0Z"/></svg>
+  <div class="g-in">
+    ${vac?`<div class="g-card"><div class="g-stamp"><span>✈️</span></div><div class="g-post">GRÜSSE AUS DEM<br>URLAUB</div>
+      <div class="g-emo">${sc.emo}</div><div class="g-k">${sc.k}</div><h2 class="g-h">${sc.h}</h2><p class="g-p">${sc.p}</p>${sc.c?`<div class="g-c">${sc.c}</div>`:''}</div>`
+    :`<div class="g-emo">${sc.emo}</div><div class="g-k">${sc.k}</div><h2 class="g-h">${sc.h}</h2><p class="g-p">${sc.p}</p>${sc.c?`<div class="g-c">${sc.c}</div>`:''}`}
+    <div class="g-q">${nth>1?`Das wäre dein <b>${nth}. Besuch</b> ${vac?'in diesem Urlaub':g.t==='we'?'an diesem Wochenende':g.t==='eve'?'nach Feierabend':'heute'} 👀`:'Willst du wirklich rein?'}</div>
+    <div class="g-hold" id="gHold"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" class="g-tr"/><circle cx="60" cy="60" r="54" class="g-pr" id="gPr"/></svg><span class="g-hi" id="gHi">✋</span></div>
+    <div class="g-hl" id="gHl">Halten zum Öffnen</div>
+    <button class="g-no" onclick="gateNo()">${g.t==='eve'?'Stimmt, Feierabend 🛋️':`Stimmt, App zu ${g.t==='krank'?'🛌':'🏖️'}`}</button>
+    <div class="g-st">Diesen Monat: <b>${st.monthVisits}</b> ${st.monthVisits===1?'Besuch':'Besuche'} in der Freizeit · <b>${st.clean}</b> ${st.clean===1?'freier Tag':'freie Tage'} ganz ohne App${st.skips?` · <b>${st.skips}×</b> standhaft`:''}</div>
+  </div>`;
+  lockScroll();gateBind()}
+function gateBind(){const h=document.getElementById('gHold');if(!h)return;const pr=document.getElementById('gPr');const C=2*Math.PI*54;pr.style.strokeDasharray=C;pr.style.strokeDashoffset=C;
+  let t0=0,raf=0,done=false;const DUR=3000;
+  const step=ts=>{const p=Math.min(1,(ts-t0)/DUR);pr.style.strokeDashoffset=C*(1-p);h.style.setProperty('--p',p);if(p>=1){done=true;gateOpen();return}raf=requestAnimationFrame(step)};
+  const down=ev=>{if(done)return;ev.preventDefault();h.classList.add('on');document.getElementById('gHl').textContent='Weiter halten …';t0=performance.now();raf=requestAnimationFrame(step);try{fxTone(440,0,.08,.05,'sine')}catch(e){}};
+  const up=()=>{if(done||!h.classList.contains('on'))return;cancelAnimationFrame(raf);h.classList.remove('on');h.classList.add('nope');setTimeout(()=>h.classList.remove('nope'),450);pr.style.transition='stroke-dashoffset .4s ease';pr.style.strokeDashoffset=C;setTimeout(()=>pr.style.transition='',420);document.getElementById('gHl').textContent='Ganz halten 😉, 3 Sekunden'};
+  h.addEventListener('pointerdown',down);['pointerup','pointerleave','pointercancel'].forEach(e=>h.addEventListener(e,up));h.addEventListener('contextmenu',e=>e.preventDefault())}
+function gateOpen(){const el=document.getElementById('gate');if(!GATE_PREV){const g=gateState();const k=g&&g.key||todayK();S.gateLog=S.gateLog||{};S.gateLog[k]=(S.gateLog[k]||0)+1;save();try{localStorage.setItem('gate_'+k,'1')}catch(e){}}
+  try{const F=fxStage();for(let i=0;i<26;i++)fxAdd({ch:pick(['🔓','✨','💼','📈']),sz:28,x:F.W/2,y:F.H*.62,vx:(Math.random()-.5)*900,vy:-(300+Math.random()*600),g:900,drag:.97,tv:400,flut:40,delay:Math.random()*.1,ttl:3});fxTone(660,0,.12,.08,'triangle');fxTone(990,.1,.2,.08,'triangle')}catch(e){}
+  el.classList.add('out');setTimeout(()=>{el.className='gate';el.innerHTML='';unlockScroll();const cb=GATE_CB;GATE_CB=null;cb&&cb();if(!GATE_PREV)toast('Okay, aber nicht zu lange 😉')},520)}
+function gateNo(){const el=document.getElementById('gate');if(!GATE_PREV){const g=gateState();const k=g&&g.key||todayK();S.gateSkip=S.gateSkip||{};S.gateSkip[k]=(S.gateSkip[k]||0)+1;save()}
+  const g=el.querySelector('.g-in');g.innerHTML=`<div class="g-bye"><div class="g-emo">✌️</div><h2 class="g-h">Gute Entscheidung.</h2><p class="g-p">Genieß den Tag. Du kannst die App jetzt einfach schließen.</p><div class="g-zz">z<span>z</span><span>z</span></div><button class="g-link" onclick="gateBack()">doch kurz rein</button></div>`;
+  try{const F=fxStage();for(let i=0;i<20;i++)fxAdd({ch:pick(['🌴','☀️','🍹','🏖️','😎']),sz:30,x:Math.random()*F.W,y:-40,vy:60,g:180,tv:170,flut:110,delay:Math.random()*1.2,ttl:6})}catch(e){}}
+function gateBack(){showGate(GATE_CB,GATE_PT)}
+function dailyFlow(){if(LOCKED)return;if(document.getElementById('gate').classList.contains('on'))return;if(gateNeeded()){showGate(dailyFlow2);return}dailyFlow2()}
+function dailyFlow2(){const pm=addM(ymOf(new Date()),-1);
   if(pm>=S.settings.startMonth&&S.settings.lastWrap!==pm&&S.targets[pm]){S.settings.lastWrap=pm;save();
     const after=()=>{if(pm.endsWith('-12')&&S.settings.lastYearWrap!==pm.slice(0,4)){S.settings.lastYearWrap=pm.slice(0,4);save();showWrap('y',pm.slice(0,4),()=>maybeKickoff())}else maybeKickoff()};
     showWrap('m',pm,after);return}
