@@ -1009,6 +1009,7 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.tr-l .tr-r.pend{background:var(--paper);opacity:.92;border:1px dashed var(--line);box-shadow:none}.tr-r.pend .tr-a{font-size:16px}.tr-r.pend .tr-now{color:var(--ink2)}
 .tr-l{display:flex;flex-direction:column;gap:8px}
 .tr-l .tr-r{border-top:0;border-radius:18px;padding:13px 14px;background:var(--paper);box-shadow:var(--shadow);border:1px solid transparent}
 .tr-l .tr-r.g{background:linear-gradient(120deg,rgba(31,175,107,.13),rgba(31,175,107,.03) 70%),var(--paper);border-color:rgba(31,175,107,.22)}
@@ -1540,7 +1541,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='102';const APP_SEMVER='3.8.3';const APP_DATE='2026-11-12';
+const APP_VERSION='103';const APP_SEMVER='3.8.4';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -3320,9 +3321,10 @@ const TR_DEF=[
  {id:'free',n:'App-Besuche in der Freizeit / Woche',e:'🏝️',g:-1,f:v=>fmtN(v,1),since:()=>firstKey(S.gateLog),c:(K,W)=>Object.entries(S.gateLog||{}).filter(([k])=>k.slice(0,10)>=K[0]&&k.slice(0,10)<=K[K.length-1]).reduce((a,[,v])=>a+v,0)/W.weeks}];
 function trWin(from,to){const K=rangeKs(from,to);const wd=K.filter(k=>actWorkday(k));const tr=wd.filter(k=>{const e=S.days[k];return e&&!isFree(e.type)&&worked(e)!=null});return{K,W:{wd,tr,weeks:K.length/7}}}
 function trCalc(){const y=ymd(new Date(Date.now()-864e5));const rS=ymd(new Date(pD(y)-27*864e5));const bE=ymd(new Date(pD(rS)-864e5));const bS0=ymd(new Date(pD(bE)-83*864e5));
-  const R=trWin(rS,y);const out=[];
-  TR_DEF.forEach(m=>{const sd=m.since?m.since():null;if(m.since&&!sd)return;let bS=bS0;if(sd&&sd>bS)bS=sd;if(bS>bE||rangeKs(bS,bE).length<14)return;
-    const B=trWin(bS,bE);if(B.W.wd.length<5||R.W.wd.length<5)return;const cur=m.c(R.K,R.W),base=m.c(B.K,B.W);if(cur==null||base==null)return;
+  const R=trWin(rS,y);const out=[];out.pending=[];
+  TR_DEF.forEach(m=>{const sd=m.since?m.since():null;const pend=()=>{let cur=null;try{const s0=sd&&sd>rS?sd:rS;if(!m.since||sd){const X=trWin(s0,y);cur=X.W.wd.length?m.c(X.K,X.W):null}}catch(e){}const eta=sd?ymd(new Date(pD(sd)-0+42*864e5)):null;out.pending.push({...m,cur,eta,sd})};
+    if(m.since&&!sd){pend();return}let bS=bS0;if(sd&&sd>bS)bS=sd;if(bS>bE||rangeKs(bS,bE).length<14){pend();return}
+    const B=trWin(bS,bE);if(B.W.wd.length<5||R.W.wd.length<5){pend();return}const cur=m.c(R.K,R.W),base=m.c(B.K,B.W);if(cur==null||base==null){pend();return}
     const diff=m.abs?cur-base:m.pt?cur-base:(base?(cur-base)/Math.abs(base)*100:(cur>0?100:0));const thr=m.thr!=null?m.thr:m.abs?({start:10,end:10,pause:5,ot:.75,office:.5}[m.id]??10):m.pt?8:10;const dir=Math.abs(diff)<thr?0:diff>0?1:-1;
     const good=m.g===0?0:dir*m.g;
     const spark=[7,6,5,4,3,2,1,0].map(w=>{const e=ymd(new Date(pD(y)-w*7*864e5)),s=ymd(new Date(pD(e)-6*864e5));const X=trWin(s,e);return X.W.wd.length?m.c(X.K,X.W):null});
@@ -3341,7 +3343,8 @@ function trTip(t){const wk=insWeekday();const cs=closedStats();const cm=ymOf(new
    mis:'Die Tagesmissionen sind kleine Extra-Hebel. Schau morgens kurz rein und such dir eine aus, die zum Tag passt.',
    free:'Du schaust in der Freizeit öfter in die App als sonst. Die Zahlen laufen nicht weg, Abschalten macht dich am Montag schneller.'}[t.id]}
 function trSpark(t){const v=t.spark.map(x=>x==null?0:x);const mx=Math.max(...v.map(Math.abs),1e-9);return `<div class="tr-sp">${v.map((x,i)=>`<i style="height:${Math.max(3,Math.abs(x)/mx*26)}px" class="${i===v.length-1?'l':''}"></i>`).join('')}</div>`}
-function trendsPanel(){const T=trCalc();if(!T.length)return `<div class="empty-s">Trends brauchen etwas Vorlauf: Die App vergleicht deine letzten 4 Wochen mit den 12 Wochen davor. Nach gut zwei Wochen mit Einträgen erscheinen die ersten Pfeile.</div>`;
+function trPending(P){if(!P.length)return '';return `<div class="tr-grp">🔒 Sammelt noch Daten</div><div class="tr-l">${P.map(t=>`<div class="tr-r pend"><span class="tr-a">⏳</span><div class="tr-n"><b>${t.e} ${t.n}</b><small><span class="tr-now">${t.cur!=null?t.f(t.cur):'–'}</span><span class="tr-c">${t.cur!=null?'bisher':'noch keine Daten'}</span></small><em>${t.eta?(t.eta<=todayK()?'Trend kommt, sobald genug Arbeitstage da sind':`Trend ab ca. ${dLabel(t.eta)}`):t.since?'Startet mit dem ersten Eintrag':'Braucht noch ein paar Einträge in den letzten 4 Wochen'}${t.g<0?' · weniger ist besser':t.g===0?' · nur Richtung, keine Wertung':''}</em></div></div>`).join('')}</div>`}
+function trendsPanel(){const T=trCalc();if(!T.length)return `<p class="hint" style="margin:0 4px 12px">Die App vergleicht deine letzten 4 Wochen mit den Wochen davor. Sobald genug Daten da sind, bekommt jede Kennzahl einen Pfeil. Bis dahin siehst du hier schon, worauf es ankommt.</p>${trPending(T.pending)}`;
   const up=T.filter(t=>t.good>0),dn=T.filter(t=>t.good<0);const tips=dn.sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff)).slice(0,3);
   const chg=t=>t.abs?(t.dir?`${t.dir>0?'+':'−'}${t.id==='start'||t.id==='end'?Math.round(Math.abs(t.cur-t.base))+' min':t.f(Math.abs(t.cur-t.base)).replace(/^[+−-]/,'')}`:'±0'):t.pt?`${t.diff>=0?'+':'−'}${fmtN(Math.abs(t.diff),0)} Pkt.`:`${t.diff>=0?'+':'−'}${fmtN(Math.abs(t.diff),0)} %`;
   const say=t=>{const more={start:['später','früher'],end:['später','früher']}[t.id]||['mehr','weniger'];return t.dir===0?'praktisch unverändert':`${chg(t)} ${t.dir>0?more[0]:more[1]} als vorher`};
@@ -3360,7 +3363,8 @@ function trendsPanel(){const T=trCalc();if(!T.length)return `<div class="empty-s
   ${up.length?`<div class="tr-wins"><div class="tw-h">🌿 Das läuft gerade richtig gut</div>${srt([...up]).slice(0,3).map(t=>`<div class="tw-c"><span>${t.e}</span><div><b>${t.n}</b><small>${t.f(t.cur)} statt ${t.f(t.base)}</small></div><em>${t.pt?'+'+fmtN(Math.abs(t.diff),0)+' Pkt.':(t.g<0?'−':'+')+fmtN(Math.abs(t.diff),0)+' %'}</em></div>`).join('')}</div>`:''}
   ${up.length?`<div class="tr-grp">↑ Läuft besser</div><div class="tr-l">${srt(up).map(row).join('')}</div>`:''}
   ${dn.length?`<div class="tr-grp">↓ Läuft schwächer</div><div class="tr-l">${srt(dn).map(row).join('')}</div>`:''}
-  ${T.filter(t=>!t.good).length?`<div class="tr-grp">Stabil &amp; neutral</div><div class="tr-l">${T.filter(t=>!t.good).map(row).join('')}</div>`:''}`}
+  ${T.filter(t=>!t.good).length?`<div class="tr-grp">Stabil &amp; neutral</div><div class="tr-l">${T.filter(t=>!t.good).map(row).join('')}</div>`:''}
+  ${trPending(T.pending)}`}
 function vVerlauf(){
   const VT=subCur('verlauf',['trend','ins','hist']);
   const cy=new Date().getFullYear(); const years=[];for(let y=2020;y<=cy+1;y++)years.push(y);
