@@ -1009,6 +1009,15 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.vf-svg{position:absolute;inset:0;overflow:visible}
+.vf-trail{fill:none;stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:vftr 2.6s cubic-bezier(.45,.05,.4,1) .5s forwards,vffade .8s ease 3s forwards}
+@keyframes vftr{to{stroke-dashoffset:0}}@keyframes vffade{to{opacity:0}}
+.vf-pl{position:absolute;left:0;top:0;offset-rotate:auto;offset-distance:0%;animation:vfgo 2.6s cubic-bezier(.45,.05,.4,1) .5s both;z-index:2}
+.vf-pl b{display:block;font-size:30px;line-height:1;transform:rotate(45deg);filter:drop-shadow(0 6px 10px rgba(0,60,140,.35))}
+@keyframes vfgo{0%{offset-distance:0%;opacity:0}6%{opacity:1}100%{offset-distance:100%;opacity:1}}
+.vf-puff{position:absolute;left:0;top:0;width:14px;height:14px;margin:-7px;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(47,140,240,.15);opacity:0;animation:vfpuff 1.4s ease-out both}
+@keyframes vfpuff{0%{opacity:0;transform:scale(.2)}20%{opacity:.9}100%{opacity:0;transform:scale(2.2)}}
+
 .oh-figs div{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 6px}.oh-figs small{white-space:nowrap}.oh-figs b{font-size:18px;margin-top:3px}
 .oh-add,.oh-add span{color:#111318!important}
 .lane{margin:16px 0;border-radius:24px;background:color-mix(in srgb,var(--sc) 9%,var(--canvas));border:1.5px solid color-mix(in srgb,var(--sc) 30%,transparent);overflow:hidden}
@@ -1184,6 +1193,7 @@ html[data-theme=light] .eod-t,html[data-theme=light] .eod-ops span small{color:r
 .dt-c .dq{margin-top:10px;font-size:14.5px}
 .dstart{margin-top:12px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;height:46px;border:0;border-radius:16px;background:#111318;color:#F9DC4A;font:inherit;font-size:15px;font-weight:650;cursor:pointer}.dstart svg{width:18px;height:18px}.dstart b{font-variant-numeric:tabular-nums;color:#fff}
 .dstart:active{transform:scale(.98)}
+.daytile.dt-c::before{display:none}
 .more-tg{width:100%;margin:14px 0 0;display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:18px;border:1px dashed var(--line);background:transparent;color:var(--ink);font:inherit;cursor:pointer;text-align:left}
 .more-tg span:first-child{font-weight:650;font-size:15px;white-space:nowrap}.more-tg small{flex:1;min-width:0;color:var(--ink2);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mt-ch{font-size:22px;line-height:1;color:var(--ink2);transform:rotate(90deg);transition:transform .2s}.more-tg.on .mt-ch{transform:rotate(-90deg)}
@@ -1455,7 +1465,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='86';const APP_SEMVER='3.5.2';const APP_DATE='2026-11-11';
+const APP_VERSION='87';const APP_SEMVER='3.5.3';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2074,7 +2084,8 @@ let VAC_OPEN=false,VAC_FLOWN=false,_vacT=null;
 function vacFlyMaybe(){_vacT=null;if(VAC_FLOWN)return;const el=document.querySelector('.vac');if(!el||VIEW!=='home')return;
   const r=el.getBoundingClientRect();if(festBusy()||document.hidden||r.bottom<60||r.top>innerHeight-40){_vacT=setTimeout(vacFlyMaybe,1200);return}
   VAC_FLOWN=true;const o=document.createElement('div');o.className='vac-flyov';o.style.cssText=`left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;border-radius:22px`;
-  o.innerHTML='<span class="vac-fly"><i></i>✈️</span>';o.style.setProperty('--w',r.width+'px');document.body.appendChild(o);el.classList.add('flying');
+  const W=r.width,H=r.height;const d=`M -50 ${H*.85} C ${W*.22} ${H*1.02}, ${W*.34} ${H*.18}, ${W*.5} ${H*.32} S ${W*.62} ${H*.92}, ${W*.74} ${H*.55} S ${W*.9} ${H*.05}, ${W+60} ${-10}`;
+  o.innerHTML=`<svg class="vf-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs><linearGradient id="vfg" x1="0" x2="1"><stop offset="0" stop-color="#2F8CF0" stop-opacity="0"/><stop offset=".6" stop-color="#2F8CF0" stop-opacity=".55"/><stop offset="1" stop-color="#7CC8F2" stop-opacity=".9"/></linearGradient></defs><path d="${d}" pathLength="1" class="vf-trail" stroke="url(#vfg)"/></svg><span class="vf-pl" style="offset-path:path('${d}')"><b>✈️</b></span>${[0,1,2,3,4].map(i=>`<i class="vf-puff" style="offset-path:path('${d}');offset-distance:${18+i*16}%;animation-delay:${.5+i*.38}s"></i>`).join('')}`;document.body.appendChild(o);el.classList.add('flying');
   const sc=()=>{o.remove();el.classList.remove('flying');removeEventListener('scroll',sc)};addEventListener('scroll',sc,{passive:true});setTimeout(sc,3600)}
 function vacCard(){if(S.settings.vacWarn===false)return '';const v=vacAhead();if(!v)return '';const c=(S.vacPrep||{})[v.start]||{};const last=v.wd===1;const done=VAC_TASKS.filter(([id])=>c[id]).length;const all=last&&done===VAC_TASKS.length;
   const range=v.start===v.end?`${WDL[pD(v.start).getDay()]}, ${dmy(v.start)}`:`${dmy(v.start)}–${dmy(v.end)}`;
@@ -3392,7 +3403,7 @@ async function enableFace(){try{if(!window.PublicKeyCredential||!(await PublicKe
 /* ---------- Tagesstart-Motivation ---------- */
 const MISSIONS=[
 '📞 Power-Hour: 60 Minuten nur Calls, Handy weg, Mails zu',
-'⚡ Speed-to-Lead: Jeden neuen Inbound-Lead heute in unter 5 Minuten anrufen',
+'♻️ Drei alte Leads aus dem Bestand mit einem aktuellen Anlass neu anrufen',
 '📞 Fünf Leads anrufen, die du noch nie erreicht hast',
 '🧊 Drei kalte Leads mit einem neuen Aufhänger reaktivieren',
 '🎯 Einen Wunsch-Lead mit einer persönlichen Video-Nachricht ansprechen',
