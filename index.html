@@ -1009,6 +1009,16 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.src-seg button{flex:1}
+.oc-src{display:inline-block;margin:0 0 5px 5px;font-size:10.5px;font-weight:700;padding:3px 7px;border-radius:7px;background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink2)}
+.focus{grid-column:1/-1;border-radius:24px;padding:16px;background:radial-gradient(120% 90% at 100% 0%,rgba(249,220,74,.2),transparent 60%),linear-gradient(160deg,#1A1D26,#0E1015);color:#fff;box-shadow:var(--shadow)}
+.fo-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}.fo-h span{font-size:20px}.fo-h b{font-size:17px;font-weight:800}.fo-h em{margin-left:auto;font-style:normal;font-size:13px;font-weight:800;padding:3px 10px;border-radius:99px;background:rgba(249,220,74,.18);color:#F9DC4A}
+.fo-i{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px solid rgba(255,255,255,.08)}.fo-i:first-of-type{border-top:0}
+.fo-n{flex:none;width:26px;height:26px;border-radius:50%;background:#F9DC4A;color:#111318;font-weight:800;font-size:13px;display:grid;place-items:center;margin-top:1px}
+.fo-t{flex:1;min-width:0;cursor:pointer}.fo-t b{display:block;font-size:15px;font-weight:750}.fo-t small{display:block;margin-top:3px;font-size:13px;line-height:1.4;color:rgba(255,255,255,.7)}
+.fo-c{flex:none;width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.25);background:none;color:transparent;display:grid;place-items:center;cursor:pointer}.fo-c svg{width:18px;height:18px}
+.fo-i.done .fo-c{background:#1FAF6B;border-color:#1FAF6B;color:#fff}.fo-i.done .fo-t{opacity:.5}.fo-i.done .fo-t b{text-decoration:line-through}.fo-i.done .fo-n{background:#1FAF6B;color:#fff}
+
 .tr-l .tr-r.pend{background:var(--paper);opacity:.92;border:1px dashed var(--line);box-shadow:none}.tr-r.pend .tr-a{font-size:16px}.tr-r.pend .tr-now{color:var(--ink2)}
 .tr-l{display:flex;flex-direction:column;gap:8px}
 .tr-l .tr-r{border-top:0;border-radius:18px;padding:13px 14px;background:var(--paper);box-shadow:var(--shadow);border:1px solid transparent}
@@ -1541,7 +1551,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='103';const APP_SEMVER='3.8.4';const APP_DATE='2026-11-12';
+const APP_VERSION='104';const APP_SEMVER='3.9.0';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1949,14 +1959,14 @@ const QUOTES_WORK=['Jeder Call bringt dich näher an die 70 %.','Ein Nein ist nu
 function lastWorkday(m){const n=dim(m);for(let i=n;i>=1;i--){const x=dayInfo(`${m}-${pad(i)}`);if(!x.weekend&&!x.hol&&!x.sp)return x.k}return null}
 function workdaysLeft(m,from){let n=0;monthDays(m).forEach(x=>{if(x.k<from||x.weekend||x.hol||x.sp)return;if(x.e&&isFree(x.e.type))return;n+=(x.e&&x.e.type==='halb')?.5:1});return n}
 /* ---------- Startseite: Layout ---------- */
-const HB_DEF=[['entry','Heute eintragen','main'],['umsatz','Umsatz','main'],['ziel','Tagesziel','main'],['mis','Missionen','main'],['qa','Schnellzugriff','main'],['fri','Wochenrückblick (Fr–So)','main'],['tempo','Tempo & Pace-Kurve','more'],['deals','Letzte Verträge','more'],['tiles','Kennzahlen','more'],['week','Letzte 5 Arbeitstage','more'],['strip','Zielerreichung Jahr','more']];
+const HB_DEF=[['focus','Dein Fokus heute','main'],['entry','Heute eintragen','main'],['umsatz','Umsatz','main'],['ziel','Tagesziel','main'],['mis','Missionen','main'],['qa','Schnellzugriff','main'],['fri','Wochenrückblick (Fr–So)','main'],['tempo','Tempo & Pace-Kurve','more'],['deals','Letzte Verträge','more'],['tiles','Kennzahlen','more'],['week','Letzte 5 Arbeitstage','more'],['strip','Zielerreichung Jahr','more']];
 const HB_NAME=Object.fromEntries(HB_DEF.map(([id,l])=>[id,l]));
 function homeLay(){const L=S.settings.homeLay||{};const place={};HB_DEF.forEach(([id,,p])=>place[id]=(L.place||{})[id]||p);return{custom:!!L.custom,order:(L.order&&L.order.length?[...L.order,...HB_DEF.map(x=>x[0]).filter(id=>!L.order.includes(id))]:HB_DEF.map(x=>x[0])),place}}
 function homeAutoOrder(){const tk=todayK();const di=dayInfo(tk);const e=di.e||{};const wd=!di.weekend&&!di.hol&&!di.sp&&!(e.type&&isFree(e.type));const h=new Date().getHours();
-  if(restState())return['umsatz','fri','ziel','mis','qa','entry'];
-  if(wd&&!e.start)return['entry','ziel','mis','umsatz','qa','fri'];
-  if(h<12)return['ziel','mis','umsatz','qa','entry','fri'];
-  return['umsatz','ziel','mis','qa','entry','fri']}
+  if(restState())return['umsatz','fri','ziel','mis','qa','entry','focus'];
+  if(wd&&!e.start)return['entry','focus','ziel','mis','umsatz','qa','fri'];
+  if(h<12)return['focus','ziel','mis','umsatz','qa','entry','fri'];
+  return['focus','umsatz','ziel','mis','qa','entry','fri']}
 function homeSplit(){const L=homeLay();let main=[],more=[];
   const order=L.custom?L.order:[...homeAutoOrder(),...L.order.filter(id=>!homeAutoOrder().includes(id))];
   order.forEach(id=>{const p=L.place[id];if(p==='main')main.push(id);else if(p==='more')more.push(id)});return{main,more}}
@@ -2214,17 +2224,47 @@ function actCard(){const k=todayK();const wd=actWorkday(k);const a=actOf(k),g=ac
 const WD2=['So','Mo','Di','Mi','Do','Fr','Sa'];
 let OPK=null,OPID=null;
 let OPST='offer';
-function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.find(x=>x.id===id):null;OPST=o?((o.stage==='won'||o.stage==='lost')?'__keep':(o.stage||'')):'offer';const cmN=ymOf(new Date());OPFM=o?(o.fm||OPK.slice(0,7)):(OPK.slice(0,7)<cmN?cmN:OPK.slice(0,7));
+function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.find(x=>x.id===id):null;OPSRC=o&&o.src||null;OPST=o?((o.stage==='won'||o.stage==='lost')?'__keep':(o.stage||'')):'offer';const cmN=ymOf(new Date());OPFM=o?(o.fm||OPK.slice(0,7)):(OPK.slice(0,7)<cmN?cmN:OPK.slice(0,7));
   const fmOpts=[cmN,addM(cmN,1),addM(cmN,2)];if(!fmOpts.includes(OPFM))fmOpts.unshift(OPFM);
   openSheet(`${sheetHead(id?'Opportunity bearbeiten':'Opportunity geschrieben')}
    <div class="field"><label for="opa">Wert der Opportunity in ${o&&o.cur==='CHF'?'CHF':'€'}</label><input class="inp" id="opa" inputmode="decimal" placeholder="z. B. 2.400" value="${o&&o.amount?(o.cur==='CHF'?+o.orig:+o.amount).toLocaleString('de-DE',{maximumFractionDigits:2}):''}" style="font-size:24px;height:58px;font-weight:600" oninput="opHint();curHint('opa')" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('opn').focus()}">${curField('opa',o&&o.cur,o&&o.orig)}</div>
    <div class="grid2" style="margin-top:14px"><div class="field"><label>Kunde</label><input class="inp" id="opn" placeholder="Name des Kunden" value="${o?esc(o.name||''):''}" onkeydown="if(event.key==='Enter'){event.preventDefault();saveOp()}"></div><div class="field"><label>Datum</label><input class="inp" type="date" id="opd" value="${OPK}"></div></div>
    <div class="field" style="margin-top:14px"><label>Stage im Forecast</label><div class="seg op-stage">${[['offer','Offer created'],['proposal','Proposal sent'],['expected','Expected'],['signed','Signed'],['','Nicht im Forecast']].map(([k2,l2])=>`<button class="${(o?(o.stage||''):'offer')===k2?'on':''}" onclick="OPST='${k2}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on');opHint()">${l2}</button>`).join('')}</div><div class="hint" id="ophint" style="margin-top:6px"></div></div>
+   ${srcField(OPSRC,'OPSRC')}
    <div class="field" id="opfmw" style="margin-top:14px;${o&&!OPEN_ST.includes(o.stage)?'display:none':''}"><label>Forecast für</label><div class="seg op-fm">${fmOpts.map(m2=>`<button class="${OPFM===m2?'on':''}" onclick="OPFM='${m2}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on');opHint()">${m2===cmN?'Diesen Monat':MON[pD(m2).getMonth()]}</button>`).join('')}</div></div>
 
    ${id&&o&&OPEN_ST.includes(o.stage)?`<div class="op-acts"><button class="ok" onclick="oppAction('won')">${ic('check')}Gewonnen</button>${(o.fm||OPK.slice(0,7))>ymOf(new Date())?`<button class="mv" onclick="oppAction('pull')">${ic('left')}In den ${MONS[pD(ymOf(new Date())).getMonth()]}</button>`:''}<button class="mv" onclick="oppAction('push')">${ic('right')}Nach ${MONS[pD(addM(o.fm||OPK.slice(0,7),1)).getMonth()]}</button><button class="no" onclick="oppAction('lost')">${ic('x')}Lost</button></div>`:''}${id&&o&&(o.stage==='won'||o.stage==='lost')?`<p class="hint" style="margin-top:12px">Status: <b>${o.stage==='won'?'✓ Gewonnen':'✗ Closed Lost'}</b>. Wählst du oben eine Stage, ist sie wieder offen.</p>`:''}
    <div class="row" style="margin-top:18px;gap:8px">${id?`<button class="btn danger" onclick="closeSheet();actOpDel('${OPK}','${id}')" aria-label="Löschen">${ic('trash')}</button>`:''}<button class="btn pri block" onclick="saveOp()">${id?'Speichern':'+1 Opp eintragen'}</button></div>`);
   opHint();if(!id)setTimeout(()=>{const i=document.getElementById('opa');i&&i.focus()},350)}
+/* ---------- Lead-Herkunft ---------- */
+const SRC_L={new:'🆕 Neuer Lead',old:'📂 Bestand'};
+function srcField(cur,fn){return `<div class="field" style="margin-top:14px"><label>Lead-Herkunft <span style="font-weight:500;color:var(--ink2)">(optional)</span></label><div class="seg src-seg">${['new','old'].map(v=>`<button type="button" class="${cur===v?'on':''}" onclick="${fn}=${fn}==='${v}'?null:'${v}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===${fn}))" data-v="${v}">${SRC_L[v]}</button>`).join('')}</div><div class="hint" style="margin-top:4px">Neu = erst vor Tagen oder wenigen Wochen bekommen · Bestand = schon länger in deiner Pipeline</div></div>`}
+let OPSRC=null,ISRC=null;
+function srcStats(){const r={new:{won:0,lost:0,v:[],cyc:[]},old:{won:0,lost:0,v:[],cyc:[]}};const cr={};Object.entries(S.act||{}).forEach(([k,a])=>(a.ops||[]).forEach(o=>cr[o.id]=k));
+  (S.closed||[]).forEach(e=>{const sr=(e.item&&e.item.src)||e.src;if(!r[sr])return;if(e.res==='won'){r[sr].won++;r[sr].v.push(+e.v||0);if(e.opp&&cr[e.opp])r[sr].cyc.push(dDiff(cr[e.opp],e.date))}else r[sr].lost++});
+  Object.values(r).forEach(x=>{x.n=x.won+x.lost;x.rate=x.n?x.won/x.n*100:null;x.avg=x.v.length?x.v.reduce((a,b)=>a+b,0)/x.v.length:null;x.cy=median(x.cyc)});return r}
+/* ---------- Dein Fokus heute ---------- */
+function focusActions(){const k=todayK(),cm=ymOf(new Date()),nm=addM(cm,1);const h=new Date().getHours();const A=[];
+  if(!actWorkday(k))return A;
+  const left=workdaysLeft(cm,k);const tot=monthDays(cm).filter(x=>actWorkday(x.k)).length||20;const phase=1-left/tot;
+  const now=openItems(cm);const stale=now.filter(x=>x.st!=='signed'&&x.age!=null&&x.age>=staleLimit(x.st)).sort((a,b)=>(+b.v||0)-(+a.v||0));
+  const hot=now.filter(x=>x.st==='expected'||x.st==='signed').sort((a,b)=>(+b.v||0)-(+a.v||0));
+  const bc=insBackcalc();const ss=srcStats();const best=ss.new.n>=3&&ss.old.n>=3?(ss.new.rate>=ss.old.rate?'new':'old'):null;
+  const nxt=openItems(nm).reduce((a,x)=>a+(+x.v||0)*stRate(x.st)/100,0);
+  let T=[];try{T=trCalc().filter(t=>t.good<0)}catch(e){}
+  const names=L=>L.slice(0,3).map(x=>esc(x.n||'Opp')).join(', ')+(L.length>3?` +${L.length-3}`:'');
+  if(hot.length&&left<=6&&!(bc&&bc.done))A.push({id:'close',e:'🏁',t:`${hot.length} ${hot.length===1?'Abschluss':'Abschlüsse'} holen`,d:`Noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'} im ${MON[pD(cm).getMonth()]}: ${names(hot)}. Heute nach dem nächsten Schritt fragen.`,go:"location.hash='#opps'",p:100});
+  if(stale.length)A.push({id:'follow',e:'📞',t:`${stale.length} ${stale.length===1?'Opp':'Opps'} nachfassen`,d:`Liegen länger als bei dir üblich: ${names(stale)}.`,go:"location.hash='#opps'",p:70+Math.min(20,stale.length*4)+(h>=12?15:0)});
+  const cover=bc&&!bc.done?bc.cover:null;const thin=cover!=null&&cover<1;const tpipe=T.find(t=>t.id==='pipe'||t.id==='ops');
+  if(thin||tpipe||phase<.3){const n=thin&&cover<.6?3:2;const srcTip=best?` Am besten aus ${best==='old'?'deinem Bestand':'neuen Leads'}: Da gewinnst du ${fmtN(ss[best].rate,0)} % statt ${fmtN(ss[best==='new'?'old':'new'].rate,0)} %.`:'';
+    A.push({id:'build',e:'🌱',t:`Heute ${n} neue Opps schreiben`,d:(thin?`Deine gewichtete Pipeline deckt nur ${fmtN(cover*100,0)} % der Lücke bis 100 %.`:tpipe?`Neue Pipeline ist gerade schwächer als sonst.`:`Monatsanfang: Jetzt Pipeline aufbauen, die am Monatsende abschließt.`)+srcTip,go:"opSheet()",p:(thin?85:60)+(h<12?15:0)})}
+  if(phase>=.6&&nxt<(rev(nm).target||0)*.3)A.push({id:'next',e:'📅',t:`Pipeline für ${MON[pD(nm).getMonth()]} vorbereiten`,d:`Für ${MON[pD(nm).getMonth()]} liegen erst ${fmtE(nxt)} gewichtet bereit. Opps, die erst später kommen, direkt in den ${MON[pD(nm).getMonth()]} legen.`,go:"opSheet()",p:50});
+  T.filter(t=>!['pipe','ops'].includes(t.id)).slice(0,1).forEach(t=>A.push({id:'tr_'+t.id,e:t.e,t:`${t.n}: wieder hoch`,d:trTip(t),go:"localStorage.setItem('sub_verlauf','trend');location.hash='#verlauf'",p:45}));
+  if(!A.length)A.push({id:'goal',e:'🎯',t:'Alles im Plan',d:'Keine offenen Baustellen. Tagesziel angehen und eine neue Opp schreiben.',go:'',p:10});
+  return A.sort((a,b)=>b.p-a.p).slice(0,3)}
+function focusDone(id){const k=todayK();S.focusDone=S.focusDone||{};const L=S.focusDone[k]=S.focusDone[k]||[];const i=L.indexOf(id);if(i<0){L.push(id);toast('Erledigt 💪','ok')}else L.splice(i,1);save();render()}
+function focusCard(){const A=focusActions();if(!A.length)return '';const D=(S.focusDone||{})[todayK()]||[];const done=A.filter(a=>D.includes(a.id)).length;
+  return `<div class="focus"><div class="fo-h"><span>🧭</span><b>Dein Fokus heute</b><em>${done}/${A.length}</em></div>${A.map((a,i)=>`<div class="fo-i ${D.includes(a.id)?'done':''}"><span class="fo-n">${i+1}</span><div class="fo-t" ${a.go?`onclick="${a.go}"`:''}><b>${a.e} ${a.t}</b><small>${a.d}</small></div><button class="fo-c" onclick="focusDone('${a.id}')" aria-label="Erledigt">${ic('check')}</button></div>`).join('')}</div>`}
 let OPFM=null;
 /* ---------- Währung: CHF-Eingabe ---------- */
 const chfRate=()=>{const r=+S.settings.chfRate;return r>0?r:1.07};
@@ -2292,10 +2332,11 @@ function laterPanel(m){if(m!==ymOf(new Date()))return '';const rows=[];[1,2,3].f
   <p class="hint" style="margin-top:8px">Zählen im Forecast ihres Monats, nicht im ${MON[pD(m).getMonth()]}. ← holt eine Opp in den ${MON[pD(m).getMonth()]} zurück, wenn der Kunde doch früher will.</p>`}
 let IE=null;
 let IST=null,IMO=null;
-function itemSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];if(!x)return;IE={m,st,i};IST=st;IMO=m;const cm=ymOf(new Date());const ms=[0,1,2,3,4,5].map(d=>addM(cm,d));if(!ms.includes(m))ms.unshift(m);
+function itemSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];if(!x)return;IE={m,st,i};IST=st;IMO=m;ISRC=x.src||(x.opp&&oppFind(x.opp)?oppFind(x.opp).o.src:null)||null;const cm=ymOf(new Date());const ms=[0,1,2,3,4,5].map(d=>addM(cm,d));if(!ms.includes(m))ms.unshift(m);
   const pick=(grp,val,fn)=>`onclick="${fn}='${val}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on')"`;
   openSheet(`${sheetHead('Opp bearbeiten')}<div class="field"><label for="iev">Vertragswert in ${x.cur==='CHF'?'CHF':'€'}</label><input class="inp" id="iev" inputmode="decimal" value="${(x.cur==='CHF'?+x.orig:+x.v).toLocaleString('de-DE',{maximumFractionDigits:2})}" style="font-size:24px;height:58px;font-weight:600" oninput="curHint('iev')" onkeydown="if(event.key==='Enter'){event.preventDefault();itemSave()}">${curField('iev',x.cur,x.orig)}</div>
    <div class="field" style="margin-top:14px"><label>Kunde</label><input class="inp" id="ien" value="${esc(x.n||'')}"></div>
+   ${srcField(ISRC,'ISRC')}
    <div class="field" style="margin-top:16px"><label>Stage</label><div class="is-st">${ST_ORDER.map(k=>`<button type="button" class="${k===st?'on':''}" style="--c:${ST_COL[k]}" ${pick('st',k,'IST')}><i></i>${ST_SHORT[k]}<small>${stRate(k)} %</small></button>`).join('')}</div></div>
    <div class="field" style="margin-top:14px"><label>Forecast-Monat</label><div class="is-mo">${ms.map(mm=>`<button type="button" class="${mm===m?'on':''}" ${pick('mo',mm,'IMO')}>${mm===cm?'Diesen Monat':MONS[pD(mm).getMonth()]+(pD(mm).getFullYear()!==pD(cm).getFullYear()?' '+String(pD(mm).getFullYear()).slice(2):'')}</button>`).join('')}</div></div>
    ${x.vh&&x.vh.length?`<p class="hint" style="margin-top:10px">Wertverlauf: ${[...x.vh.map(h=>fmtE(h.v)+' ('+dLabel(h.d)+')'),fmtE(x.v)+' (jetzt)'].join(' → ')}</p>`:''}
@@ -2305,7 +2346,7 @@ function itemSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];if(!
 function itemDel(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);if(x&&x.opp){const f=oppFind(x.opp);if(f){delete f.o.stage}}save();closeSheet();render();toast(`${x&&x.n||'Eintrag'} gelöscht`,'ok')}
 function itemSave(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st][i];const cm=curMeta('iev');let nv=Math.abs(toEUR('iev')||0);if(cm&&x.cur==='CHF'&&Math.abs(x.orig-cm.orig)<.01)nv=+x.v;curApply(x,cm);const nn=document.getElementById('ien').value.trim();
   if(nv&&Math.abs(nv-x.v)>=.01){x.vh=x.vh||[];x.vh.push({d:todayK(),v:+x.v});const dl=nv-x.v;x.v=nv;toast(`Wert ${dl>0?'erhöht':'gesenkt'}: ${sgnE(dl)}`,'ok')}if(nn)x.n=nn;
-  const f=x.opp?oppFind(x.opp):null;if(f){f.o.amount=x.v;if(nn)f.o.name=nn;curApply(f.o,x.cur?{cur:x.cur,orig:x.orig,fx:x.fx}:null)}
+  if(ISRC)x.src=ISRC;else delete x.src;const f=x.opp?oppFind(x.opp):null;if(f){f.o.amount=x.v;if(nn)f.o.name=nn;if(ISRC)f.o.src=ISRC;else delete f.o.src;curApply(f.o,x.cur?{cur:x.cur,orig:x.orig,fx:x.fx}:null)}
   let tst=IST||st,tm=IMO||m;if(tst!==st||tm!==m){F.items[st].splice(i,1);fcRecalc(F,st);if(tst!==st){const _ds=x.since;x.since=todayK();x.sh=[...new Set([...(x.sh||[st]),tst])];trLog(st,tst,_ds)}S.forecast[tm]=S.forecast[tm]||{};const N=S.forecast[tm];N.items=N.items||{};let it=N.items[tst];if(!it||!it.length){it=[];if(+N[tst])it.push({v:+N[tst],n:'Bisheriger Wert'})}it.push(x);N.items[tst]=it;fcRecalc(N,tst);if(f){f.o.stage=tst;f.o.fm=tm;if(tst!==st)f.o.stageSince=todayK()}
     toast(`${x.n||'Opp'} → ${FCN[tst]}${tm!==m?' · '+MON[pD(tm).getMonth()]:''}`,'ok')}else fcRecalc(F,st);save();closeSheet();render()}
 function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);const _ds=x.since;x.since=todayK();x.sh=[...new Set([...(x.sh||[st]),ns])];trLog(st,ns,_ds);
@@ -2391,14 +2432,14 @@ function funnelPanel(m){const cur=ymOf(new Date());if(m!==cur)return '';const r=
 
 /* Opp ↔ Forecast-Einzelwerte verknüpfen */
 function fcOppUnlink(id,only){Object.keys(S.forecast||{}).forEach(m=>{if(only&&m!==only)return;const F=S.forecast[m];if(!F||!F.items)return;Object.keys(F.items).forEach(st=>{const before=F.items[st].length;F.items[st]=F.items[st].filter(x=>x.opp!==id);if(F.items[st].length!==before){F[st]=F.items[st].reduce((a,x)=>a+(+x.v||0),0);if(!F.items[st].length)delete F.items[st]}})})}
-function fcOppLink(o,date){if(!OPEN_ST.includes(o.stage)||!(+o.amount))return;const m=date.slice(0,7);S.forecast[m]=S.forecast[m]||{};const F=S.forecast[m];F.items=F.items||{};let it=F.items[o.stage];if(!it||!it.length){it=[];if(+F[o.stage])it.push({v:+F[o.stage],n:'Bisheriger Wert'})}it.push({v:+o.amount,n:o.name||'Opp',opp:o.id,since:o.stageSince||date,...(o.vh?{vh:o.vh}:{}),...(o.cur?{cur:o.cur,orig:o.orig,fx:o.fx}:{})});F.items[o.stage]=it;F[o.stage]=it.reduce((a,x)=>a+(+x.v||0),0)}
+function fcOppLink(o,date){if(!OPEN_ST.includes(o.stage)||!(+o.amount))return;const m=date.slice(0,7);S.forecast[m]=S.forecast[m]||{};const F=S.forecast[m];F.items=F.items||{};let it=F.items[o.stage];if(!it||!it.length){it=[];if(+F[o.stage])it.push({v:+F[o.stage],n:'Bisheriger Wert'})}it.push({v:+o.amount,n:o.name||'Opp',opp:o.id,since:o.stageSince||date,...(o.src?{src:o.src}:{}),...(o.vh?{vh:o.vh}:{}),...(o.cur?{cur:o.cur,orig:o.orig,fx:o.fx}:{})});F.items[o.stage]=it;F[o.stage]=it.reduce((a,x)=>a+(+x.v||0),0)}
 function saveOp(){const amt=Math.abs(toEUR('opa')||0);const cm=curMeta('opa');const k=document.getElementById('opd').value||OPK;const name=document.getElementById('opn').value.trim();
   if(OPST==='__keep'){const f=oppFind(OPID);OPST=f?f.o.stage:'';}
   {const pv=OPID&&oppFind(OPID);if(pv&&pv.o.stage&&OPST&&pv.o.stage!==OPST)trLog(pv.o.stage,OPST,pv.o.stageSince)}
   if(OPEN_ST.includes(OPST)&&!amt){toast('Für den Forecast bitte einen Wert eintragen');document.getElementById('opa').focus();return}
   if(OPID&&k!==OPK)actSet(OPK,a=>{a.ops=a.ops.filter(o=>o.id!==OPID)});
   const prev=OPID?(oppFind(OPID)||{}).o:null;
-  const o={id:OPID||uid(),amount:amt||0,name};if(OPST)o.stage=OPST;curApply(o,cm);if(prev&&cm&&prev.cur==='CHF'&&Math.abs(prev.orig-cm.orig)<.01){o.amount=+prev.amount;o.fx=prev.fx}
+  const o={id:OPID||uid(),amount:amt||0,name};if(OPSRC)o.src=OPSRC;if(OPST)o.stage=OPST;curApply(o,cm);if(prev&&cm&&prev.cur==='CHF'&&Math.abs(prev.orig-cm.orig)<.01){o.amount=+prev.amount;o.fx=prev.fx}
   o.stageSince=!prev?k:(prev.stage===OPST?(prev.stageSince||OPK):todayK());
   const pfm=prev?(prev.fm||OPK.slice(0,7)):null;o.fm=OPEN_ST.includes(OPST)&&OPFM?OPFM:(pfm||k.slice(0,7));if(pfm&&pfm!==o.fm)fcOppUnlink(o.id,pfm);
   if(prev&&Math.abs((+prev.amount||0)-o.amount)>=.01){o.vh=[...(prev.vh||[]),{d:todayK(),v:+prev.amount||0}]}else if(prev&&prev.vh)o.vh=prev.vh;
@@ -2457,7 +2498,7 @@ function vHome(){
   const dw=d0.getDay();const showFri=(dw===5&&d0.getHours()>=12)||dw===6||dw===0;const fri=showFri?(()=>{const mon=new Date(d0);mon.setDate(d0.getDate()-((dw+6)%7));const ks=[...Array(5)].map((_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return ymd(d)});const ds=S.deals.filter(x=>!x.retro&&ks.includes(x.date));return {n:ds.filter(x=>+x.amount>0).length,sum:ds.reduce((a,x)=>a+ +x.amount,0),h:ks.reduce((a,k)=>a+(worked(S.days[k]||{})||0),0),mis:ks.reduce((a,k)=>a+missionState(k).filter(Boolean).length,0)}})():null;
 
   const prevW=(()=>{const d=new Date(d0);for(let i=0;i<14;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start&&x.end)return dayInfo(ymd(d))}return null})();
-  const B={entry:`    <div class="panel today">
+  const B={focus:restState()?'':focusCard(),entry:`    <div class="panel today">
       <div class="row"><div><div class="ptl">${ic(locked?'lock':'edit','class="pi"')}${locked?'Heute':'Heute eintragen'}</div><div class="lbl">${locked?'Heute ist frei':'Soll '+fmtN(soll)+' Stunden'}</div></div><span class="sp"></span>${locked?'':`<button class="chip" onclick="editDay('${tk}')">Details</button>`}</div>
       ${locked?`<div class="freebox lockbox">${ic(di.hol?'flag':'sun')}<div><b>${di.hol||'Wochenende'}</b><div class="lbl">Heute wird nicht gearbeitet. Die Erfassung ist gesperrt.</div></div></div>`:`
       <div class="seg tseg" style="margin-top:14px">${['arbeit','koeln','halb','urlaub','krank'].map(t=>`<button class="${(S.days[tk]?type:'')===t?'on':''}" onclick="todaySet('type','${t}')">${ic(TYPES[t].i)}${TYPES[t].l}</button>`).join('')}</div>
@@ -2523,7 +2564,7 @@ function vHome(){
     ${hpCard()}
     ${HS.main.map(id=>B[id]).join('')}
   </div>
-  ${HS.more.length?`<button class="more-tg ${moreOpen?'on':''}" onclick="homeMoreToggle()"><span>${moreOpen?'Weniger anzeigen':'Mehr anzeigen'}</span><small>${HS.more.map(id=>({tempo:'Tempo',deals:'Verträge',tiles:'Kennzahlen',week:'5 Tage',strip:'Jahr',entry:'Zeit',umsatz:'Umsatz',ziel:'Tagesziel',mis:'Missionen',qa:'Schnellzugriff',fri:'Woche'})[id]).join(' · ')}</small><span class="mt-ch">›</span></button>
+  ${HS.more.length?`<button class="more-tg ${moreOpen?'on':''}" onclick="homeMoreToggle()"><span>${moreOpen?'Weniger anzeigen':'Mehr anzeigen'}</span><small>${HS.more.map(id=>({focus:'Fokus',tempo:'Tempo',deals:'Verträge',tiles:'Kennzahlen',week:'5 Tage',strip:'Jahr',entry:'Zeit',umsatz:'Umsatz',ziel:'Tagesziel',mis:'Missionen',qa:'Schnellzugriff',fri:'Woche'})[id]).join(' · ')}</small><span class="mt-ch">›</span></button>
   ${moreOpen?`<div class="bento more-b">${HS.more.map(id=>B[id]).join('')}</div>`:''}`:''}`;
 }
 const dealName=d=>d.name||(d.retro?(d.channel==='in'?'Inbound gesamt':'Outbound gesamt'):(d.channel==='in'?'Inbound-Vertrag':'Outbound-Vertrag'));
@@ -2989,7 +3030,7 @@ function oppMonthSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];
   <div class="om-grid">${ms.map(mm=>`<button class="${mm===m?'on':''}" onclick="fcItemMoveTo('${m}','${st}',${i},'${mm}')"><b>${MON[pD(mm).getMonth()]}</b><small>${mm===cm?'dieser Monat':pD(mm).getFullYear()}</small></button>`).join('')}</div>`)}
 function oppCard(m,x){const cm=ymOf(new Date());const open=`itemSheet('${m}','${x.st}',${x.i})`;const si=ST_ORDER.indexOf(x.st);
   return `<div class="oc" style="--sc:${ST_COL[x.st]}">
-    <div class="oc-top" onclick="${open}"><div class="oc-n"><span class="oc-badge">${ST_SHORT[x.st]}</span><b>${esc(x.n||'Opp')}${chfTag(x)}</b><small>${x.age!=null?ageChip(x.age):''}${m!==cm?`<span class="oc-m">📅 ${MON[pD(m).getMonth()]}</span>`:''}</small></div><div class="oc-v"><b>${fmtE(x.v)}</b><small>gewichtet ${fmtE((+x.v||0)*stRate(x.st)/100)}</small></div></div>
+    <div class="oc-top" onclick="${open}"><div class="oc-n"><span class="oc-badge">${ST_SHORT[x.st]}</span>${x.src?`<span class="oc-src">${x.src==='new'?'🆕 Neu':'📂 Bestand'}</span>`:''}<b>${esc(x.n||'Opp')}${chfTag(x)}</b><small>${x.age!=null?ageChip(x.age):''}${m!==cm?`<span class="oc-m">📅 ${MON[pD(m).getMonth()]}</span>`:''}</small></div><div class="oc-v"><b>${fmtE(x.v)}</b><small>gewichtet ${fmtE((+x.v||0)*stRate(x.st)/100)}</small></div></div>
     <div class="oc-steps" onclick="${open}">${ST_ORDER.map((s,j)=>`<div class="st ${j<si?'past':j===si?'on':''}" style="--c:${ST_COL[s]}"><i></i><span>${ST_SHORT[s]}</span></div>`).join('')}</div>
     <div class="oc-acts"><button class="oc-won" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')"><span>🤝</span>Gewonnen</button><button class="oc-mo" onclick="oppMonthSheet('${m}','${x.st}',${x.i})">Verschieben${ic('arrowr')}</button><button class="oc-lost" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')" aria-label="Verloren" title="Verloren"><span>💔</span></button></div>
   </div>`}
@@ -3284,6 +3325,7 @@ function insCards(){const C=[];const b=insBase();const fmtH=h=>h>=10?fmtN(h,0)+'
   const fa=insFcAcc();if(fa)C.push({e:'🔭',tone:'#2F8CF0',t:'Forecast-Treffsicherheit',v:(fa.avg>0?'+':'')+fmtN(fa.avg,0)+' %',p:`Deine erste Abgabe im Monat lag im Schnitt ${Math.abs(fa.avg)<8?'<b>sehr nah</b> am Ergebnis':fa.avg>0?'<b>zu hoch</b>, du bist eher optimistisch':'<b>zu niedrig</b>, du bist eher vorsichtig'} (${fa.rows.length} ${fa.rows.length===1?'Monat':'Monate'}).`,cls:Math.abs(fa.avg)>=15?'iw':''});
   const cy=insCycle();if(cy)C.push({e:'⏳',t:'Vom Opp zum Abschluss',v:`Ø ${fmtN(cy.med,0)} Tage`,tone:'#F28C28',p:`So lange dauert es bei dir typischerweise vom Anlegen bis zum Gewinn (${cy.n} Deals, ${cy.min}–${cy.max} Tage). Opps von heute landen also eher im ${MON[pD(ymd(new Date(Date.now()+cy.med*864e5))).getMonth()]}.`});
   const me=insMonthEnd();if(me)C.push({e:'🏁',t:'Endspurt',v:fmtN(me.share,0)+' %',tone:'#E5484D',p:`So viel deines Umsatzes kommt in der letzten Monatswoche rein (${me.n} Monate).${me.share>=45?' Früher im Monat abschließen nimmt Druck raus.':''}`});
+  {const ss=srcStats();if(ss.new.n+ss.old.n>=2)C.push({e:'🆕',tone:'#2F8CF0',t:'Neue Leads vs. Bestand',v:`${ss.new.rate!=null?fmtN(ss.new.rate,0)+' %':'–'} vs. ${ss.old.rate!=null?fmtN(ss.old.rate,0)+' %':'–'}`,p:`Gewinnquote neu vs. Bestand (${ss.new.n} / ${ss.old.n} abgeschlossen).${ss.new.avg&&ss.old.avg?` Ø Deal: ${fmtE(ss.new.avg)} vs. ${fmtE(ss.old.avg)}.`:''}${ss.new.cy!=null&&ss.old.cy!=null?` Dauer: ${fmtN(ss.new.cy,0)} vs. ${fmtN(ss.old.cy,0)} Tage.`:''}`})}
   const tm=insTimes();if(tm)C.push({e:'🕗',tone:'#8B7CF6',t:'Dein Arbeitstag',v:`${tm.start!=null?hhmm(tm.start):'–'}–${tm.end!=null?hhmm(tm.end):'–'}`,p:`Ø ${hm(tm.avg)} gearbeitet an den letzten ${tm.n} Tagen.`});
   const cs=closedStats();if(cs.reasons&&cs.reasons[0]&&cs.lost>=3)C.push({e:'💔',tone:'#E5484D',t:'Häufigster Verlustgrund',v:cs.reasons[0][0],p:`${cs.reasons[0][1]} von ${cs.lost} verlorenen Opps. Lohnt sich, im Gespräch früher anzusprechen.`});
   return C}
@@ -3826,6 +3868,7 @@ function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worke
       <div><small>Demos</small><b>${a.demo}<em>/${g.demo}</em></b></div>
       <div><small>Opps</small><b>${ops.length}<em>/${g.op}</em></b></div>
       <div><small>Missionen</small><b>${mDone}<em>/${Math.min(3,mst.length||3)}</em></b></div></div>
+      ${(()=>{const D=(S.focusDone||{})[k]||[];return D.length?`<div class="eod-t">🧭 ${D.length} ${D.length===1?'Fokus-Aufgabe':'Fokus-Aufgaben'} erledigt</div>`:''})()}
       ${hpOn()?`<div class="eod-t">${hpDone(k)?`⚡ High-Prios erledigt um ${S.hiprio[k]} Uhr`:'⚡ High-Prios heute nicht abgehakt'}</div>`:''}
       ${ops.length?`<div class="eod-ops">${ops.map(o=>`<div><span>🎯 ${esc(o.name||'Opp')}${OPEN_ST.includes(o.stage)?`<small>${FCN[o.stage]}${o.fm&&o.fm!==m?' · '+MON[pD(o.fm).getMonth()]:''}</small>`:''}</span><b>${+o.amount?fmtE(+o.amount):'–'}</b></div>`).join('')}
         ${opSum?`<div class="eod-sum"><span>Neue Pipeline</span><b>${fmtE(opSum)}<small>gewichtet ${fmtE(opW)}</small></b></div>`:''}</div>`:''}</div>
