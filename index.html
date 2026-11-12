@@ -1182,7 +1182,7 @@ html[data-theme=light] .eod-t,html[data-theme=light] .eod-ops span small{color:r
 
 /* Kompakte Startseite */
 .rs-date{position:relative;display:flex;justify-content:space-between;gap:10px;margin:-4px 0 12px;font-size:12.5px;font-weight:650;color:rgba(255,255,255,.72)}
-.daytile.dt-c{padding:16px 18px 16px}
+.daytile.dt-c{padding:16px 18px 16px;margin-bottom:14px}
 .dt-c .dmain{margin-top:6px;align-items:center}
 .dt-c .dw{font-size:clamp(28px,8.5vw,36px);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .dt-c .dw .dd{font-size:16px;font-weight:600;margin:0;letter-spacing:0}
@@ -1465,7 +1465,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='87';const APP_SEMVER='3.5.3';const APP_DATE='2026-11-12';
+const APP_VERSION='88';const APP_SEMVER='3.5.4';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
