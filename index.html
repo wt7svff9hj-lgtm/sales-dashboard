@@ -1492,7 +1492,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='97';const APP_SEMVER='3.7.2';const APP_DATE='2026-11-12';
+const APP_VERSION='98';const APP_SEMVER='3.7.3';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1986,9 +1986,10 @@ function weekRecap(k){const d=pD(k);const mon=new Date(d);mon.setDate(d.getDate(
 function restDur(min){min=Math.max(0,Math.round(min));const d=Math.floor(min/1440),h=Math.floor(min%1440/60),m=min%60;return d?`${d} ${d===1?'Tag':'Tage'} ${h}h`:h?`${h}h ${pad(m)}m`:`${m} min`}
 function restNextStart(nx){if(!nx)return null;const st=S.settings.startTime||'08:00';const t=pD(nx.k);const [h,m]=st.split(':');t.setHours(+h,+m,0,0);return{t,st}}
 /* ---------- Arbeitstag läuft ---------- */
+function pauseAvg(){const a=[];const d=new Date();for(let i=0;i<60&&a.length<20;i++){d.setDate(d.getDate()-1);const e=S.days[ymd(d)];if(e&&(e.type==='arbeit'||e.type==='koeln')&&e.end&&+e.pause>0)a.push(+e.pause)}if(a.length<3)return{m:60,learned:false,n:a.length};return{m:Math.round(median(a)/5)*5,learned:true,n:a.length}}
 function workState(now){now=now||new Date();const tk=ymd(now);const di=dayInfo(tk);const e=di.e;if(!e||isFree(e.type)||!e.start||e.end)return null;const nm=now.getHours()*60+now.getMinutes();const st=toMin(e.start);if(nm<st)return null;
-  const soll=di.soll||(+S.settings.sollTag||8);let p=+e.pause||0;const pAss=!p&&soll>6;if(pAss)p=30;const el=nm-st;const w=Math.max(0,(el-((+e.pause||0)||(pAss&&el>360?30:0)))/60);const endMin=st+soll*60+p;
-  return{tk,di,e,w,soll,endMin,pAss,pct:Math.min(1,w/soll),left:endMin-nm}}
+  const soll=di.soll||(+S.settings.sollTag||8);let p=+e.pause||0;const pAss=!p&&soll>6;const PA=pauseAvg();if(pAss)p=PA.m;const el=nm-st;const w=Math.max(0,(el-((+e.pause||0)||(pAss&&el>360?Math.min(PA.m,el-360):0)))/60);const endMin=st+soll*60+p;
+  return{tk,di,e,w,soll,endMin,pAss,PA,pct:Math.min(1,w/soll),left:endMin-nm}}
 function hhmm(m){m=((Math.round(m)%1440)+1440)%1440;return pad(Math.floor(m/60))+':'+pad(m%60)}
 function workCard(){const s=workState();if(!s)return '';const a=actOf(s.tk),g=actGoal(s.tk);const hpD=hpDone(s.tk);const fig=(l,v)=>`<div><small>${l}</small><b>${v}</b></div>`;
   const done=s.left<=0;const hr=new Date().getHours();const kick=hr<11?'Guten Morgen':hr<14?'Arbeitstag läuft':'Endspurt';
@@ -1997,7 +1998,7 @@ function workCard(){const s=workState();if(!s)return '';const a=actOf(s.tk),g=ac
     <div class="wk-bar"><i id="workBar" style="width:${Math.round(s.pct*100)}%"></i></div>
     <div class="wk-row"><span>${done?'Soll erreicht ✓':`Soll ${fmtN(s.soll)} h`}</span><span id="workEnd">${done?`seit ${hhmm(s.endMin)} Uhr`:`Feierabend ca. <b>${hhmm(s.endMin)} Uhr</b>`}</span></div>
     <div class="rs-figs">${fig('Demos',`${a.demo}<em>/${g.demo}</em>`)}${fig('Opps',`${a.ops.length}<em>/${g.op}</em>`)}${fig('High-Prios',hpD?'✓':'offen')}</div>
-    ${s.pAss?`<div class="rs-note">Inkl. 30 min Pause. Trag deine Pausen ein, dann wird’s genauer.</div>`:''}</div>`}
+    ${s.pAss?`<div class="rs-note">Inkl. ${s.PA.m} min Pause${s.PA.learned?` (dein Schnitt der letzten ${s.PA.n} Tage)`:''}. Trag deine Pausen ein, dann wird’s genauer.</div>`:''}</div>`}
 setInterval(()=>{const el=document.getElementById('workClock');if(!el||document.hidden)return;const s=workState();if(!s){render();return}el.textContent=hm(s.w);const b=document.getElementById('workBar');if(b)b.style.width=Math.round(s.pct*100)+'%'},30000);
 function restCard(){const r=restState();if(!r)return '';const now=new Date();const tk=todayK();const nm=S.settings.name?', '+esc(S.settings.name):'';
   let cls=r.t,emo,kick,head,sub='',body='',foot='';
