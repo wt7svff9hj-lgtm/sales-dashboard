@@ -507,6 +507,10 @@ textarea.inp{height:auto;padding:12px 14px}
 .seg.pill button{height:34px;background:none;border-radius:10px}
 .seg.pill button.on{background:var(--paper);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
+.wi-g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:end}.wi-c{min-width:0;display:block}.wi-c.r{text-align:right}.wi-c .mid{font-size:clamp(22px,7vw,30px)}.wi-c .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wi-in{display:inline-flex;align-items:baseline;gap:4px;border-bottom:2px dashed var(--line,rgba(127,127,127,.35));padding-bottom:1px;margin-bottom:2px;max-width:100%;line-height:1.05}.wi-in:focus-within{border-bottom-color:var(--acc,#F5C400);border-bottom-style:solid}
+.wi-sz{display:inline-grid;min-width:0;max-width:100%;font-family:'SD Display','SD Text',sans-serif;font-size:clamp(22px,7vw,30px);font-weight:650;font-stretch:var(--cond);font-variant-numeric:tabular-nums;line-height:1.05}.wi-sz::after{content:attr(data-v);grid-area:1/1;visibility:hidden;white-space:pre;padding-right:2px}.wi-in input{grid-area:1/1;width:100%;min-width:1ch;border:0;background:none;padding:0;margin:0;color:var(--ink);font:inherit;outline:none}.wi-in>span:last-child{font-family:'SD Display','SD Text',sans-serif;font-size:clamp(22px,7vw,30px);font-weight:650;color:var(--ink)}
+.wi-q{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:4px}.wi-q button{padding:0;font-size:13px;white-space:nowrap}
 .quick button{height:34px;padding:0 12px;border-radius:10px;background:var(--raise);font-size:13.5px;font-weight:600;color:var(--ink2)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
@@ -1556,7 +1560,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='116';const APP_SEMVER='3.10.9';const APP_DATE='2026-11-12';
+const APP_VERSION='122';const APP_SEMVER='3.10.15';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -3262,21 +3266,24 @@ function vGehalt(){
   </div>`:''}
   ${GT==='wi'?`<div class="sh" style="margin-top:6px"><h2>${ic('zap','class="pi"')}Was wäre wenn?</h2><span class="sp"></span><span class="meta">Umsatz verschieben</span></div>
   <div class="panel whatif">
-    <div class="row" style="align-items:flex-end;flex-wrap:wrap;gap:12px">
-      <div><div class="lbl">Umsatz im ${MON[pD(CUR).getMonth()]}</div><div class="mid" id="wiA">${fmtE(s.neu)}</div><div class="lbl" id="wiP">${fmtP(s.att,1)} vom Ziel</div></div>
-      <span class="sp"></span>
-      <div style="text-align:right"><div class="lbl">Auszahlung</div><div class="mid" id="wiT">${fmtE(s.total)}</div><div class="lbl" id="wiD">so wie jetzt</div></div>
+    <div class="wi-g">
+      <label class="wi-c"><div class="lbl">Umsatz im ${MON[pD(CUR).getMonth()]}</div><div class="wi-in"><span class="wi-sz" data-v="${fmtN(Math.round(s.neu))}"><input id="wiA" size="1" type="text" inputmode="decimal" enterkeyhint="done" value="${fmtN(Math.round(s.neu))}" oninput="whatIfIn(this.value)" onfocus="this.select()" onblur="whatIfIn(this.value);this.value=fmtN(Math.round(WI_V));wiW()" onkeydown="if(event.key==='Enter')this.blur()"></span><span>€</span></div><div class="lbl" id="wiP">${fmtP(s.att,1)} vom Ziel</div></label>
+      <div class="wi-c r"><div class="lbl">Auszahlung</div><div class="mid" id="wiT">${fmtE(s.total)}</div><div class="lbl" id="wiD">so wie jetzt</div></div>
     </div>
     <input type="range" class="range" min="0" max="${Math.round(sliderMax)}" step="50" value="${Math.round(s.neu)}" oninput="whatIf(this.value)">
-    <div class="quick">${[70,100,130,150].map(p=>`<button onclick="const r=document.querySelector('.range');r.value=${Math.round(s.target*p/100)};whatIf(r.value)">${p} %</button>`).join('')}<button onclick="const r=document.querySelector('.range');r.value=${Math.round(s.neu)};whatIf(r.value)">Ist</button></div>
+    <div class="quick wi-q">${[70,100,130,150].map(p=>`<button onclick="whatIf(${Math.round(s.target*p/100)})">${p} %</button>`).join('')}<button onclick="whatIf(${Math.round(s.neu)})">Ist</button></div>
+    <div class="hint" style="margin-top:10px">Tipp: Auf den Umsatz tippen und einen eigenen Betrag eingeben.</div>
   </div>
 
 `:''}`;
 }
-function whatIf(v){v=+v;const s0=salary(CUR);const s=salaryWith(CUR,v);const t=s.target||1;
-  document.getElementById('wiA').textContent=fmtE(v);document.getElementById('wiP').textContent=fmtP(v/t*100,1)+' vom Ziel';
+let WI_V=0;
+function wiW(){const i=document.getElementById('wiA');if(i)i.parentNode.dataset.v=i.value||' '}
+function whatIfIn(raw){const n=parseFloat(String(raw).replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.'));whatIf(isFinite(n)&&n>=0?n:0,1);wiW()}
+function whatIf(v,fromInput){v=Math.max(0,+v||0);WI_V=v;const r=document.querySelector('.whatif .range');if(r)r.value=Math.min(v,+r.max);const inp=document.getElementById('wiA');if(inp&&!fromInput){inp.value=fmtN(Math.round(v));wiW()}const s0=salary(CUR);const s=salaryWith(CUR,v);const t=s.target||1;
+  document.getElementById('wiP').textContent=fmtP(v/t*100,1)+' vom Ziel';
   document.getElementById('wiT').textContent=fmtE(s.total);const d=s.total-s0.total;const el=document.getElementById('wiD');
-  el.textContent=Math.abs(d)<1?'so wie jetzt':(d>0?'+':'−')+fmtE(Math.abs(d))+' gegenüber jetzt';el.className='lbl '+(d>1?'pos':d<-1?'neg':'');}
+  el.textContent=Math.abs(d)<1?'so wie jetzt':(d>0?'+':'−')+fmtE(Math.abs(d))+' ggü. jetzt';el.className='lbl '+(d>1?'pos':d<-1?'neg':'');}
 function compSheet(){
   const a=compDaysAuto(CUR); const cur=S.salary.compDays[CUR];
   openSheet(`${sheetHead('Kompensationstage')}
