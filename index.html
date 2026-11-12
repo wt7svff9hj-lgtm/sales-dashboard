@@ -1064,7 +1064,7 @@ html[data-theme=dark] .cf-yes{background:#F9DC4A;color:#111318}
 .oc-m{font-size:12px;font-weight:650;padding:2px 8px;border-radius:99px;background:rgba(90,169,240,.14);color:#2E7CC4}
 .oc-v{text-align:right;flex:none}.oc-v b{display:block;font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}.oc-v small{font-size:11.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
 .oc-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:12px}
-.oc-steps button{border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:stretch;gap:5px;font:inherit}
+.oc-steps{cursor:pointer}.oc-steps .st{display:flex;flex-direction:column;align-items:stretch;gap:5px;font:inherit}
 .oc-steps i{display:block;height:6px;border-radius:99px;background:var(--line);transition:background .25s}
 .oc-steps span{font-size:11px;font-weight:650;color:var(--ink2);text-align:center}
 .oc-steps .past i{background:color-mix(in srgb,var(--c) 45%,transparent)}.oc-steps .on i{background:var(--c);box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 30%,transparent)}.oc-steps .on span{color:var(--ink);font-weight:800}
@@ -1465,7 +1465,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='89';const APP_SEMVER='3.5.5';const APP_DATE='2026-11-12';
+const APP_VERSION='90';const APP_SEMVER='3.5.6';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2912,7 +2912,7 @@ function oppMonthSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];
 function oppCard(m,x){const cm=ymOf(new Date());const open=`itemSheet('${m}','${x.st}',${x.i})`;const si=ST_ORDER.indexOf(x.st);
   return `<div class="oc" style="--sc:${ST_COL[x.st]}">
     <div class="oc-top" onclick="${open}"><div class="oc-n"><span class="oc-badge">${ST_SHORT[x.st]}</span><b>${esc(x.n||'Opp')}${chfTag(x)}</b><small>${x.age!=null?ageChip(x.age):''}${m!==cm?`<span class="oc-m">📅 ${MON[pD(m).getMonth()]}</span>`:''}</small></div><div class="oc-v"><b>${fmtE(x.v)}</b><small>gewichtet ${fmtE((+x.v||0)*stRate(x.st)/100)}</small></div></div>
-    <div class="oc-steps">${ST_ORDER.map((s,j)=>`<button class="${j<si?'past':j===si?'on':''}" style="--c:${ST_COL[s]}" onclick="fcItemStage('${m}','${x.st}',${x.i},'${s}')" aria-label="${FCN[s]}"><i></i><span>${ST_SHORT[s]}</span></button>`).join('')}</div>
+    <div class="oc-steps" onclick="${open}">${ST_ORDER.map((s,j)=>`<div class="st ${j<si?'past':j===si?'on':''}" style="--c:${ST_COL[s]}"><i></i><span>${ST_SHORT[s]}</span></div>`).join('')}</div>
     <div class="oc-acts"><button class="oc-won" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')"><span>🤝</span>Gewonnen</button><button class="oc-mo" onclick="oppMonthSheet('${m}','${x.st}',${x.i})">Verschieben${ic('arrowr')}</button><button class="oc-lost" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')" aria-label="Verloren" title="Verloren"><span>💔</span></button></div>
   </div>`}
 function oppGroups(m,items){return [...ST_ORDER].reverse().map(st=>{const it=items.filter(x=>x.st===st);if(!it.length)return '';const sum=it.reduce((a,x)=>a+(+x.v||0),0);
