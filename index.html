@@ -1009,6 +1009,11 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.tr-l{display:flex;flex-direction:column;gap:8px}
+.tr-l .tr-r{border-top:0;border-radius:18px;padding:13px 14px;background:var(--paper);box-shadow:var(--shadow);border:1px solid transparent}
+.tr-l .tr-r.g{background:linear-gradient(120deg,rgba(31,175,107,.13),rgba(31,175,107,.03) 70%),var(--paper);border-color:rgba(31,175,107,.22)}
+.tr-l .tr-r.b{background:linear-gradient(120deg,rgba(242,140,40,.16),rgba(242,140,40,.04) 70%),var(--paper);border-color:rgba(242,140,40,.3)}
+
 .tr-alarm{border-radius:24px;padding:14px;margin-bottom:14px;background:linear-gradient(160deg,rgba(229,72,77,.16),rgba(229,72,77,.04)),var(--paper);border:1.5px solid rgba(229,72,77,.4)}
 .ta-h{display:flex;align-items:center;gap:8px;font-weight:800;font-size:17px;margin:2px 4px 10px}.ta-h em{font-style:normal;margin-left:auto;min-width:24px;height:24px;border-radius:12px;background:#E5484D;color:#fff;font-size:13px;display:grid;place-items:center}
 .ta-dot{width:10px;height:10px;border-radius:50%;background:#E5484D;box-shadow:0 0 0 0 rgba(229,72,77,.6);animation:tapulse 1.6s infinite}
@@ -1535,7 +1540,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='101';const APP_SEMVER='3.8.2';const APP_DATE='2026-11-12';
+const APP_VERSION='102';const APP_SEMVER='3.8.3';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -3289,28 +3294,28 @@ function insightsPanel(){const C=insCards();
 function rangeKs(from,to){const out=[];const d=pD(from);while(ymd(d)<=to){out.push(ymd(d));d.setDate(d.getDate()+1)}return out}
 function firstKey(o){const k=Object.keys(o||{}).filter(x=>/^\d{4}-\d\d-\d\d/.test(x)).sort()[0];return k?k.slice(0,10):null}
 const TR_DEF=[
- {id:'demo',n:'Demos pro Arbeitstag',e:'🎬',g:1,f:v=>fmtN(v,1),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).demo,0)/W.wd.length:null},
- {id:'ops',n:'Neue Opps pro Arbeitstag',e:'🎯',g:1,f:v=>fmtN(v,1),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).ops.length,0)/W.wd.length:null},
- {id:'pipe',n:'Neue Pipeline pro Woche',e:'🌱',g:1,f:v=>fmtE(v),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).ops.reduce((s,o)=>s+(+o.amount||0),0),0)/W.weeks:null},
+ {id:'demo',since:()=>firstKey(Object.fromEntries(Object.entries(S.act||{}).filter(([,a])=>a&&(a.demo||(a.ops||[]).length)))),n:'Demos pro Arbeitstag',e:'🎬',g:1,f:v=>fmtN(v,1),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).demo,0)/W.wd.length:null},
+ {id:'ops',since:()=>firstKey(Object.fromEntries(Object.entries(S.act||{}).filter(([,a])=>a&&(a.demo||(a.ops||[]).length)))),n:'Neue Opps pro Arbeitstag',e:'🎯',g:1,f:v=>fmtN(v,1),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).ops.length,0)/W.wd.length:null},
+ {id:'pipe',since:()=>firstKey(Object.fromEntries(Object.entries(S.act||{}).filter(([,a])=>a&&(a.demo||(a.ops||[]).length)))),n:'Neue Pipeline pro Woche',e:'🌱',g:1,f:v=>fmtE(v),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).ops.reduce((s,o)=>s+(+o.amount||0),0),0)/W.weeks:null},
  {id:'rev',n:'Umsatz pro Woche',e:'💶',g:1,f:v=>fmtE(v),c:(K,W)=>realDeals().filter(d=>d.date>=K[0]&&d.date<=K[K.length-1]).reduce((a,d)=>a+ +d.amount,0)/W.weeks},
  {id:'size',n:'Ø Deal-Größe',e:'📦',g:1,f:v=>fmtE(v),c:(K)=>{const L=realDeals().filter(d=>d.date>=K[0]&&d.date<=K[K.length-1]);return L.length>=2?L.reduce((a,d)=>a+ +d.amount,0)/L.length:null}},
  {id:'win',n:'Gewinnquote',e:'🤝',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K)=>{const L=(S.closed||[]).filter(e=>e.date>=K[0]&&e.date<=K[K.length-1]);return L.length>=3?L.filter(e=>e.res==='won').length/L.length*100:null}},
- {id:'goal',n:'Tagesziel geschafft',e:'✅',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K,W)=>W.wd.length?W.wd.filter(actHit).length/W.wd.length*100:null},
+ {id:'goal',since:()=>firstKey(Object.fromEntries(Object.entries(S.act||{}).filter(([,a])=>a&&(a.demo||(a.ops||[]).length)))),n:'Tagesziel geschafft',e:'✅',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K,W)=>W.wd.length?W.wd.filter(actHit).length/W.wd.length*100:null},
  {id:'move',n:'Opps nach vorn bewegt / Woche',e:'⏩',g:1,f:v=>fmtN(v,1),since:()=>(S.trans||[])[0]&&S.trans[0].d,c:(K,W)=>(S.trans||[]).filter(e=>e.d>=K[0]&&e.d<=K[K.length-1]&&ST_ORDER.indexOf(e.t)>ST_ORDER.indexOf(e.f)).length/W.weeks},
  {id:'hp',n:'High-Prios zuerst erledigt',e:'⚡',g:1,f:v=>fmtN(v,0)+' %',pt:1,since:()=>firstKey(S.hiprio),c:(K,W)=>W.wd.length?W.wd.filter(k=>hpDone(k)).length/W.wd.length*100:null},
  {id:'mis',n:'Missionen pro Arbeitstag',e:'🏅',g:1,f:v=>fmtN(v,1),since:()=>firstKey(S.missions),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+missionState(k).filter(Boolean).length,0)/W.wd.length:null},
- {id:'oppv',n:'Ø Wert neuer Opps',e:'💎',g:1,f:v=>fmtE(v),c:(K,W)=>{const L=W.wd.flatMap(k=>actOf(k).ops).filter(o=>+o.amount>0);return L.length>=3?L.reduce((a,o)=>a+ +o.amount,0)/L.length:null}},
+ {id:'oppv',since:()=>firstKey(Object.fromEntries(Object.entries(S.act||{}).filter(([,a])=>a&&(a.demo||(a.ops||[]).length)))),n:'Ø Wert neuer Opps',e:'💎',g:1,f:v=>fmtE(v),c:(K,W)=>{const L=W.wd.flatMap(k=>actOf(k).ops).filter(o=>+o.amount>0);return L.length>=3?L.reduce((a,o)=>a+ +o.amount,0)/L.length:null}},
  {id:'lost',n:'Verlorene Opps pro Woche',e:'💔',g:-1,f:v=>fmtN(v,1),since:()=>(S.closed||[]).map(e=>e.date).sort()[0],c:(K,W)=>(S.closed||[]).filter(e=>e.res==='lost'&&e.date>=K[0]&&e.date<=K[K.length-1]).length/W.weeks},
- {id:'hpo',n:'Arbeitsstunden pro neuer Opp',e:'⏳',g:-1,f:v=>fmtN(v,1)+' h',c:(K,W)=>{const o=W.tr.reduce((a,k)=>a+actOf(k).ops.length,0);return W.tr.length>=5&&o>=2?W.tr.reduce((a,k)=>a+worked(S.days[k]),0)/o:null}},
- {id:'rph',n:'Umsatz pro Arbeitsstunde',e:'⚙️',g:1,f:v=>fmtE(v),c:(K,W)=>{if(W.tr.length<5)return null;const h=W.tr.reduce((a,k)=>a+worked(S.days[k]),0);const r=realDeals().filter(d=>d.date>=W.tr[0]&&d.date<=K[K.length-1]).reduce((a,d)=>a+ +d.amount,0);return h?r/h:null}},
+ {id:'hpo',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Arbeitsstunden pro neuer Opp',e:'⏳',g:-1,f:v=>fmtN(v,1)+' h',c:(K,W)=>{const o=W.tr.reduce((a,k)=>a+actOf(k).ops.length,0);return W.tr.length>=5&&o>=2?W.tr.reduce((a,k)=>a+worked(S.days[k]),0)/o:null}},
+ {id:'rph',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Umsatz pro Arbeitsstunde',e:'⚙️',g:1,f:v=>fmtE(v),c:(K,W)=>{if(W.tr.length<5)return null;const h=W.tr.reduce((a,k)=>a+worked(S.days[k]),0);const r=realDeals().filter(d=>d.date>=W.tr[0]&&d.date<=K[K.length-1]).reduce((a,d)=>a+ +d.amount,0);return h?r/h:null}},
  {id:'dwell',n:'Ø Tage pro Stage',e:'🐢',g:-1,f:v=>fmtN(v,0)+' Tage',since:()=>{const t=(S.trans||[]).find(e=>e.dw!=null);return t&&t.d},c:(K)=>{const a=(S.trans||[]).filter(e=>e.dw!=null&&e.d>=K[0]&&e.d<=K[K.length-1]).map(e=>e.dw);return a.length>=3?median(a):null}},
  {id:'fcsub',n:'Forecast pünktlich abgegeben',e:'📋',g:1,f:v=>fmtN(v,0)+' %',pt:1,since:()=>(S.fcSubs||[]).map(x=>x.date).sort()[0],c:(K)=>{const mons=K.filter(k=>pD(k).getDay()===1&&actWorkday(k));if(mons.length<2)return null;return mons.filter(k=>(S.fcSubs||[]).some(x=>x.date>=k&&x.date<=k)).length/mons.length*100}},
- {id:'cover',n:'Tage mit Zeiterfassung',e:'🗂️',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K,W)=>W.wd.length?W.tr.length/W.wd.length*100:null},
- {id:'hours',n:'Ø Arbeitszeit',e:'⏱️',g:0,f:v=>hm(v),c:(K,W)=>W.tr.length?W.tr.reduce((a,k)=>a+worked(S.days[k]),0)/W.tr.length:null},
- {id:'start',n:'Ø Arbeitsbeginn',e:'🌅',g:0,f:v=>hhmm(v),abs:1,c:(K,W)=>{const a=W.tr.map(k=>S.days[k].start).filter(Boolean);return a.length?a.reduce((x,y)=>x+toMin(y),0)/a.length:null}},
- {id:'end',n:'Ø Feierabend',e:'🌙',g:0,f:v=>hhmm(v),abs:1,c:(K,W)=>{const a=W.tr.map(k=>S.days[k].end).filter(Boolean);return a.length?a.reduce((x,y)=>x+toMin(y),0)/a.length:null}},
- {id:'pause',n:'Ø Pause',e:'☕',g:0,f:v=>fmtN(v,0)+' min',abs:1,c:(K,W)=>{const a=W.tr.map(k=>+S.days[k].pause||0).filter(x=>x>0);return a.length>=3?a.reduce((x,y)=>x+y,0)/a.length:null}},
- {id:'ot',n:'Überstunden pro Woche',e:'⚖️',g:0,f:v=>hmS(v),abs:1,c:(K,W)=>W.tr.length?W.tr.reduce((a,k)=>a+worked(S.days[k])-(dayInfo(k).soll||8),0)/W.weeks:null},
+ {id:'cover',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Tage mit Zeiterfassung',e:'🗂️',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K,W)=>W.wd.length?W.tr.length/W.wd.length*100:null},
+ {id:'hours',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Ø Arbeitszeit',e:'⏱️',g:0,f:v=>hm(v),c:(K,W)=>W.tr.length?W.tr.reduce((a,k)=>a+worked(S.days[k]),0)/W.tr.length:null},
+ {id:'start',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Ø Arbeitsbeginn',e:'🌅',g:0,f:v=>hhmm(v),abs:1,c:(K,W)=>{const a=W.tr.map(k=>S.days[k].start).filter(Boolean);return a.length?a.reduce((x,y)=>x+toMin(y),0)/a.length:null}},
+ {id:'end',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Ø Feierabend',e:'🌙',g:0,f:v=>hhmm(v),abs:1,c:(K,W)=>{const a=W.tr.map(k=>S.days[k].end).filter(Boolean);return a.length?a.reduce((x,y)=>x+toMin(y),0)/a.length:null}},
+ {id:'pause',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Ø Pause',e:'☕',g:0,f:v=>fmtN(v,0)+' min',abs:1,c:(K,W)=>{const a=W.tr.map(k=>+S.days[k].pause||0).filter(x=>x>0);return a.length>=3?a.reduce((x,y)=>x+y,0)/a.length:null}},
+ {id:'ot',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Überstunden pro Woche',e:'⚖️',g:0,f:v=>hmS(v),abs:1,c:(K,W)=>W.tr.length?W.tr.reduce((a,k)=>a+worked(S.days[k])-(dayInfo(k).soll||8),0)/W.weeks:null},
  {id:'office',n:'Office-Tage pro Woche',e:'🏢',g:0,f:v=>fmtN(v,1),abs:1,c:(K,W)=>W.wd.filter(k=>(S.days[k]||{}).type==='koeln').length/W.weeks},
  {id:'free',n:'App-Besuche in der Freizeit / Woche',e:'🏝️',g:-1,f:v=>fmtN(v,1),since:()=>firstKey(S.gateLog),c:(K,W)=>Object.entries(S.gateLog||{}).filter(([k])=>k.slice(0,10)>=K[0]&&k.slice(0,10)<=K[K.length-1]).reduce((a,[,v])=>a+v,0)/W.weeks}];
 function trWin(from,to){const K=rangeKs(from,to);const wd=K.filter(k=>actWorkday(k));const tr=wd.filter(k=>{const e=S.days[k];return e&&!isFree(e.type)&&worked(e)!=null});return{K,W:{wd,tr,weeks:K.length/7}}}
@@ -3353,9 +3358,9 @@ function trendsPanel(){const T=trCalc();if(!T.length)return `<div class="empty-s
       <div class="ta-goal">🎯 Ziel: zurück auf <b>${t.f(t.base)}</b>${!t.pt&&!t.abs&&t.f(Math.abs(gapv)).length<12?` (${t.g<0?'−':'+'}${t.f(Math.abs(gapv))})`:''}</div>
       <p class="ta-tip"><b>So geht's:</b> ${trTip(t)}</p></div>`}).join('')}</div>`:`<div class="tr-plan ok"><div class="tr-ph">🚀 Alles im grünen Bereich</div><p style="margin:0;font-size:14px">Keine Kennzahl hat sich verschlechtert. Weiter so!</p></div>`}
   ${up.length?`<div class="tr-wins"><div class="tw-h">🌿 Das läuft gerade richtig gut</div>${srt([...up]).slice(0,3).map(t=>`<div class="tw-c"><span>${t.e}</span><div><b>${t.n}</b><small>${t.f(t.cur)} statt ${t.f(t.base)}</small></div><em>${t.pt?'+'+fmtN(Math.abs(t.diff),0)+' Pkt.':(t.g<0?'−':'+')+fmtN(Math.abs(t.diff),0)+' %'}</em></div>`).join('')}</div>`:''}
-  ${up.length?`<div class="tr-grp">↑ Läuft besser</div><div class="panel flush tr-l">${srt(up).map(row).join('')}</div>`:''}
-  ${dn.length?`<div class="tr-grp">↓ Läuft schwächer</div><div class="panel flush tr-l">${srt(dn).map(row).join('')}</div>`:''}
-  ${T.filter(t=>!t.good).length?`<div class="tr-grp">Stabil &amp; neutral</div><div class="panel flush tr-l">${T.filter(t=>!t.good).map(row).join('')}</div>`:''}`}
+  ${up.length?`<div class="tr-grp">↑ Läuft besser</div><div class="tr-l">${srt(up).map(row).join('')}</div>`:''}
+  ${dn.length?`<div class="tr-grp">↓ Läuft schwächer</div><div class="tr-l">${srt(dn).map(row).join('')}</div>`:''}
+  ${T.filter(t=>!t.good).length?`<div class="tr-grp">Stabil &amp; neutral</div><div class="tr-l">${T.filter(t=>!t.good).map(row).join('')}</div>`:''}`}
 function vVerlauf(){
   const VT=subCur('verlauf',['trend','ins','hist']);
   const cy=new Date().getFullYear(); const years=[];for(let y=2020;y<=cy+1;y++)years.push(y);
