@@ -1009,7 +1009,7 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
-html.priv .pn{filter:blur(6px);user-select:none;-webkit-user-select:none}
+html.priv .pn{display:none}
 html.priv #opn,html.priv #ien,html.priv #dln{color:transparent;text-shadow:0 0 9px var(--ink)}
 .src-seg{display:grid;grid-template-columns:repeat(3,1fr)}.src-seg button{white-space:normal;line-height:1.15;padding:6px 4px;min-height:42px;hyphens:manual}
 @media (max-width:420px){.bar .syncbar>span:last-child{display:none}.bar .syncbar{padding:0 7px;gap:0}}
@@ -1035,7 +1035,7 @@ html.priv #opn,html.priv #ien,html.priv #dln{color:transparent;text-shadow:0 0 9
 .ta-dot{width:10px;height:10px;border-radius:50%;background:#E5484D;box-shadow:0 0 0 0 rgba(229,72,77,.6);animation:tapulse 1.6s infinite}
 @keyframes tapulse{70%{box-shadow:0 0 0 10px rgba(229,72,77,0)}100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}}
 .ta-c{--ac:#E5484D;background:var(--paper);border-radius:18px;padding:14px;margin-top:10px;border-left:5px solid var(--ac);box-shadow:var(--shadow)}.ta-c:first-of-type{margin-top:0}
-.ta-c.warn{--ac:#F28C28}.ta-c.watch{--ac:#E8B400}
+.ta-c.wrn{--ac:#F28C28}.ta-c.watch{--ac:#E8B400}
 .ta-top{display:flex;align-items:center;gap:8px}.ta-badge{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:7px;background:var(--ac);color:#fff}
 .ta-pct{margin-left:auto;font-size:15px;font-weight:800;color:var(--ac);font-variant-numeric:tabular-nums}
 .ta-t{display:block;margin-top:8px;font-size:16.5px;font-weight:750}
@@ -1556,7 +1556,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='108';const APP_SEMVER='3.10.1';const APP_DATE='2026-11-12';
+const APP_VERSION='111';const APP_SEMVER='3.10.4';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1812,7 +1812,11 @@ function salary(m,noComp){
   const base=+P.base, variable=+P.variable, ote=base+variable;
   const otePct=target?variable/target*100:0;
   const neu=r.tot;
-  const big=r.ds.filter(d=>!d.retro&&!d.storno&&+d.amount>+P.bigThreshold).reduce((s,d)=>s+ +d.amount,0);
+  /* Big Deal: Storno im selben Monat = wie gelöscht; Storno in späterem Monat kürzt den Bonus nicht */
+  const stM=r.ds.filter(d=>d.storno).map(d=>({...d,left:Math.abs(+d.amount)}));
+  const big=r.ds.filter(d=>!d.retro&&!d.storno&&+d.amount>0).map(d=>{let v=+d.amount;
+    stM.filter(x=>x.left>0&&(x.ref?x.ref===d.id:((x.name||'')&&(x.name||'').trim().toLowerCase()===(d.name||'').trim().toLowerCase())||(!x.name&&Math.abs(x.left-v)<.01))).forEach(x=>{const c=Math.min(v,x.left);v-=c;x.left-=c});
+    return v}).filter(v=>v>+P.bigThreshold).reduce((s,v)=>s+v,0);
   const att=target?neu/target*100:0;
   let over=0; const tiers=[...P.tiers].sort((a,b)=>a.from-b.from); tiers.forEach(t=>{if(att>=t.from)over=+t.rate});
   const rate=att>=tiers[0].from?otePct+over:0;
@@ -2247,7 +2251,8 @@ function opSheet(k,id){OPK=k||todayK();OPID=id||null;const o=id?actOf(OPK).ops.f
 function privOn(){try{return localStorage.getItem('priv')==='1'}catch(e){return false}}
 function privSync(){const on=privOn();document.documentElement.classList.toggle('priv',on);const b=document.getElementById('cbpriv');if(b)b.innerHTML=ic(on?'eyeoff':'eye')}
 function privToggle(){const on=!privOn();try{localStorage.setItem('priv',on?'1':'0')}catch(e){}privSync();render();toast(on?'🙈 Namen ausgeblendet':'👀 Namen wieder sichtbar','ok')}
-const pn=v=>`<span class="pn">${esc(v)}</span>`;
+const pn=v=>privOn()?'':`<span class="pn">${esc(v)}</span>`;
+const oppN=n=>`${n} ${n===1?'Opp':'Opps'}`;
 const SRC_L={new:'🆕 Neuer Lead',old:'📂 Bestand',own:'🔎 Eigenrecherche'};
 function srcField(cur,fn){return `<div class="field" style="margin-top:14px"><label>Lead-Herkunft <span style="font-weight:500;color:var(--ink2)">(optional)</span></label><div class="seg src-seg">${['new','old','own'].map(v=>`<button type="button" class="${cur===v?'on':''}" onclick="${fn}=${fn}==='${v}'?null:'${v}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===${fn}))" data-v="${v}">${({new:'🆕 Neu',old:'📂 Bestand',own:'🔎 Eigen&shy;recherche'})[v]}</button>`).join('')}</div><div class="hint" style="margin-top:4px">Neu = vor Kurzem vom Lead Management · Bestand = schon länger in deiner Pipeline · Eigenrecherche = selbst gefunden (Instagram, KI, unterwegs …)</div></div>`}
 let OPSRC=null,ISRC=null;
@@ -2263,7 +2268,7 @@ function focusActions(){const k=todayK(),cm=ymOf(new Date()),nm=addM(cm,1);const
   const bc=insBackcalc();const ss=srcStats();const okS=['new','old','own'].filter(k=>ss[k].n>=3);const best=okS.length>=2?okS.reduce((a,b)=>ss[b].rate>ss[a].rate?b:a):null;const SRC_W={new:'neuen Leads',old:'deinem Bestand',own:'Eigenrecherche'};
   const nxt=openItems(nm).reduce((a,x)=>a+(+x.v||0)*stRate(x.st)/100,0);
   let T=[];try{T=trCalc().filter(t=>t.good<0)}catch(e){}
-  const names=L=>L.slice(0,3).map(x=>pn(x.n||'Opp')).join(', ')+(L.length>3?` +${L.length-3}`:'');
+  const names=L=>privOn()?oppN(L.length):L.slice(0,3).map(x=>pn(x.n||'Opp')).join(', ')+(L.length>3?` +${L.length-3}`:'');
   if(hot.length&&left<=6&&!(bc&&bc.done))A.push({id:'close',e:'🏁',t:`${hot.length} ${hot.length===1?'Abschluss':'Abschlüsse'} holen`,d:`Ziel: noch im ${MON[pD(cm).getMonth()]} einbuchen, ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'} bleiben. ${names(hot)}: heute nach Unterschrift bzw. Unterlagen fragen.`,go:"location.hash='#opps'",p:100});
   if(stale.length)A.push({id:'follow',e:'📞',t:`${names(stale.slice(0,2))} nachfassen`,d:`Ziel: nächsten Schritt festmachen, bevor die Opp kalt wird. ${stale.length>2?`Insgesamt ${stale.length} Opps liegen`:stale.length===2?'Beide liegen':'Sie liegt'} länger als bei dir üblich in ihrer Stage.`,go:"location.hash='#opps'",p:70+Math.min(20,stale.length*4)+(h>=12?15:0)});
   const cover=bc&&!bc.done?bc.cover:null;const thin=cover!=null&&cover<1;const tpipe=T.find(t=>t.id==='pipe'||t.id==='ops');
@@ -2404,7 +2409,7 @@ function oppReopenSheet(id){const e=(S.closed||[]).find(x=>x.id===id);if(!e)retu
   openSheet(`<div class="cf-wrap"><div class="cf-emo">↩️</div><h2>Zurück in die Pipeline?</h2>
     <div class="cf-card"><b>${pn(e.n)}${chfTag(e.item||e)}</b><span>${fmtE(e.v)} · war ${e.res==='won'?'gewonnen':'verloren'} am ${dLabel(e.date)}</span></div>
     <p>Die Opp kommt zurück nach <b>${FCN[st]}</b> im ${MON[pD(tm).getMonth()]}.</p>
-    ${d?`<label class="cf-chk"><input type="checkbox" id="cfDel" checked><span>Umsatz-Eintrag „${pn(dealName(d))}“ über ${fmtE(d.amount)} vom ${dLabel(d.date)} ebenfalls löschen</span></label>`:''}
+    ${d?`<label class="cf-chk"><input type="checkbox" id="cfDel" checked><span>Umsatz-Eintrag ${privOn()?'':'„'+pn(dealName(d))+'“ '}über ${fmtE(d.amount)} vom ${dLabel(d.date)} ebenfalls löschen</span></label>`:''}
     <button class="cf-yes" onclick="oppReopen('${id}')">Zurückholen</button><button class="cf-no" onclick="closeSheet()">Abbrechen</button></div>`)}
 function oppReopen(id){const ix=(S.closed||[]).findIndex(x=>x.id===id);if(ix<0)return;const e=S.closed[ix];const st=e.st&&ST_ORDER.includes(e.st)?e.st:'expected';const cm=ymOf(new Date());const tm=(e.m||cm)<cm?cm:(e.m||cm);
   const del=document.getElementById('cfDel');if(del&&del.checked){const d=closedDeal(e);if(d)S.deals=S.deals.filter(z=>z.id!==d.id)}
@@ -2874,8 +2879,8 @@ function dealSheet(id,storno,pre){
   openSheet(`${sheetHead(id?(st?'Storno bearbeiten':'Umsatz bearbeiten'):(st?'Storno eintragen':'Neuer Umsatz'))}
    ${d.closedId&&!id?`<button class="undo-l" onclick="closeSheet();setTimeout(()=>oppReopenSheet('${d.closedId}'),250)">↩️ Doch nicht gewonnen? Zurück in die Pipeline</button>`:''}
    ${id?'':`<div class="seg" style="margin-bottom:12px"><button class="${st?'':'on'}" onclick="dealSheet(null,false)">${ic('plus')}Umsatz</button><button class="${st?'on':''}" onclick="dealSheet(null,true)">${ic('storno')}Storno</button></div>`}
-   ${st?`<p class="hint" style="margin:0 0 12px">Der Betrag wird im gewählten Monat vom Umsatz abgezogen. Der ursprüngliche Vertrag bleibt in seinem Monat stehen.</p>
-   <div class="field" style="margin-bottom:14px"><label>Ursprünglicher Vertrag (optional, übernimmt Betrag)</label><select class="inp" id="dlr" onchange="pickRef(this.value)"><option value="">Nicht ausgewählt</option>${refD?`<option value="${refD.id}" selected>${esc(dealName(refD))}, ${dLabel(refD.date)}, ${fmtE(refD.amount,2)}</option>`:''}${orig.map(x=>`<option value="${x.id}">${pn(dealName(x))}, ${dLabel(x.date)}, ${fmtE(x.amount,2)}</option>`).join('')}</select></div>`:''}
+   ${st?`<p class="hint" style="margin:0 0 12px">Der Betrag wird im gewählten Monat vom Umsatz abgezogen. Der ursprüngliche Vertrag bleibt in seinem Monat stehen. Big-Deal-Bonus: Storno im selben Monat streicht ihn, Storno in einem späteren Monat nicht.</p>
+   <div class="field" style="margin-bottom:14px"><label>Ursprünglicher Vertrag (optional, übernimmt Betrag)</label><select class="inp" id="dlr" onchange="pickRef(this.value)"><option value="">Nicht ausgewählt</option>${refD?`<option value="${refD.id}" selected>${privOn()?'':esc(dealName(refD))+', '}${dLabel(refD.date)}, ${fmtE(refD.amount,2)}</option>`:''}${orig.map(x=>`<option value="${x.id}">${privOn()?'':esc(dealName(x))+', '}${dLabel(x.date)}, ${fmtE(x.amount,2)}</option>`).join('')}</select></div>`:''}
    <div class="seg"><button class="${d.channel==='in'?'on':''}" id="dlci" onclick="DL.channel='in';this.classList.add('on');this.nextElementSibling.classList.remove('on')">${ic('inb')}Inbound</button><button class="${d.channel==='out'?'on':''}" id="dlco" onclick="DL.channel='out';this.classList.add('on');this.previousElementSibling.classList.remove('on')">${ic('outb')}Outbound</button></div>
    <div class="field" style="margin-top:16px"><label for="dla">${st?'Storno-Betrag in '+(d.cur==='CHF'?'CHF':'€')+' (wird abgezogen)':'Betrag (ARR) in '+(d.cur==='CHF'?'CHF':'€')}</label><div style="position:relative">${st?'<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:24px;font-weight:700;color:var(--red)">−</span>':''}<input class="inp" id="dla" inputmode="decimal" value="${amt}" placeholder="1.611,00" oninput="updDealVal();curHint('dla')" style="font-size:24px;height:58px;font-weight:600;${st?'padding-left:36px;color:var(--red)':''}"></div>${curField('dla',d.cur,d.orig)}</div>
    <div class="grid2" style="margin-top:14px">
@@ -2988,12 +2993,12 @@ function fcDiff(m,base){const now=fcSnapshot(m);const R=fcRates(forecast(m));con
       const nextHas=(()=>{const F2=S.forecast[addM(m,1)];return F2&&F2.items&&Object.values(F2.items).some(a=>a.some(x=>itemKey(x)===k))})();
       if(c&&c.res==='lost')add('✕',`Closed Lost: ${pn(b.n)} (${fmtE(b.v)}${c.reason?', '+c.reason:''})`,-wb,'neg');
       else if(c&&c.res==='won')add('✓',`Gewonnen: ${pn(b.n)}, zählt jetzt als Closed Won`,-wb,'info2');
-      else if(nextHas)add('→',`Verschoben in den ${MON[pD(addM(m,1)).getMonth()]}: ${pn(b.n)} (${fmtE(b.v)}, ${FCN[b.st]})`,-wb,'neg');
+      else if(nextHas)add('→',`Verschoben in den ${MON[pD(addM(m,1)).getMonth()]}: ${privOn()?'':pn(b.n)+' '}(${fmtE(b.v)}, ${FCN[b.st]})`,-wb,'neg');
       else add('−',`Entfernt: ${pn(b.n)} (${FCN[b.st]})`,-wb,'neg');return}
     if(n.st!==b.st)add(R[n.st]>R[b.st]?'↗':'↘',`${pn(n.n)}: ${FCN[b.st]} → ${FCN[n.st]}`,n.v*R[n.st]-wb,R[n.st]>R[b.st]?'pos':'neg');
     else if(Math.abs(n.v-b.v)>=.5)add('±',`${pn(n.n)}: Wert ${fmtE(b.v)} → ${fmtE(n.v)}`,(n.v-b.v)*R[n.st],n.v>b.v?'pos':'neg')});
   const fresh=[...nm.values()].filter(n=>!bm.has(n.k)&&!(n.n==='Bisheriger Wert'));
-  if(fresh.length){const tot=fresh.reduce((a,n)=>a+n.v*R[n.st],0);add('＋',`Neu: ${fresh.length} ${fresh.length===1?'Opp':'Opps'} (${fresh.map(n=>pn(n.n)+' '+fmtE(n.v)).join(', ')})`,tot,'pos')}
+  if(fresh.length){const tot=fresh.reduce((a,n)=>a+n.v*R[n.st],0);add('＋',`Neu: ${fresh.length} ${fresh.length===1?'Opp':'Opps'} (${fresh.map(n=>(privOn()?'':pn(n.n)+' ')+fmtE(n.v)).join(', ')})`,tot,'pos')}
   // bare stage values
   ['signed','offer','proposal','expected'].forEach(st=>{if(base.bare[st]!=null&&now.bare[st]!=null&&Math.abs(now.bare[st]-base.bare[st])>=.5)add('±',`${FCN[st]} manuell geändert`,(now.bare[st]-base.bare[st])*R[st],now.bare[st]>base.bare[st]?'pos':'neg')});
   if(Math.abs(now.wN-base.wN)>=.5)add('⏱',`Pauschale neue Opps: ${fmtN(base.weeks,1)} → ${fmtN(now.weeks,1)} Restwochen`,now.wN-base.wN,now.wN>base.wN?'pos':'neg');
@@ -3386,9 +3391,9 @@ function trCalc(){const y=ymd(new Date(Date.now()-864e5));const rS=ymd(new Date(
     const good=m.g===0?0:dir*m.g;
     const spark=[7,6,5,4,3,2,1,0].map(w=>{const e=ymd(new Date(pD(y)-w*7*864e5)),s=ymd(new Date(pD(e)-6*864e5));const X=trWin(s,e);return X.W.wd.length?m.c(X.K,X.W):null});
     out.push({...m,cur,base,diff,dir,good,spark,bS,bE})});out.rS=rS;out.rE=y;return out}
-function trSev(t){const d=Math.abs(t.diff);const crit=t.pt?d>=20:d>=40,warn=t.pt?d>=10:d>=20;return crit?{c:'crit',l:'Kritisch'}:warn?{c:'warn',l:'Achtung'}:{c:'watch',l:'Beobachten'}}
+function trSev(t){const d=Math.abs(t.diff);const crit=t.pt?d>=20:d>=40,warn=t.pt?d>=10:d>=20;return crit?{c:'crit',l:'Kritisch'}:warn?{c:'wrn',l:'Achtung'}:{c:'watch',l:'Beobachten'}}
 function trAction(t){const cm=ymOf(new Date());const now=openItems(cm);const hot=now.filter(x=>x.st==='expected'||x.st==='signed').sort((a,b)=>(+b.v||0)-(+a.v||0));const prop=now.filter(x=>x.st==='proposal').sort((a,b)=>(+b.v||0)-(+a.v||0));
-  const nm=L=>L.slice(0,2).map(x=>pn(x.n||'Opp')).join(' und ');const why=`Aktuell ${t.f(t.cur)} statt ${t.f(t.base)}.`;const wk=insWeekday();
+  const nm=L=>privOn()?oppN(L.slice(0,2).length):L.slice(0,2).map(x=>pn(x.n||'Opp')).join(' und ');const why=`Aktuell ${t.f(t.cur)} statt ${t.f(t.base)}.`;const wk=insWeekday();
   return {
    rev:hot.length?{t:`${nm(hot)} heute anrufen`,d:`Ziel: Unterschrift bzw. Starttermin festmachen. ${hot.length>1?'Die beiden':'Die Opp'} ${hot.length>1?'sind':'ist'} am nächsten am Umsatz. Dein Umsatz pro Woche: ${why}`}:prop.length?{t:`${nm(prop)} nach einem Entscheidungstermin fragen`,d:`Ziel: Proposals in Richtung Abschluss schieben. Dein Umsatz pro Woche: ${why}`}:{t:'Heute 2 neue Angebote rausschicken',d:`Ziel: Ohne Opps in der Pipeline kommt kein Umsatz nach. Dein Umsatz pro Woche: ${why}`},
    demo:{t:'Heute 2 Demo-Termine vereinbaren',d:`Ziel: zurück auf ${t.f(t.base)} Demos pro Tag. ${why}${wk?` Leg sie am besten auf einen ${WDL[wk.best.d]}, da läuft es bei dir am besten.`:''}`},
@@ -3887,7 +3892,7 @@ function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worke
   if(vacB&&vacB.wd===1){const ok=!vacMissing(vacB).length;emo='🏖️';head='Schönen Urlaub!';msg=ok?`Alles erledigt und übergeben. Bis ${WDL[pD(vacB.back).getDay()]}, ${dmy(vacB.back)} Jetzt wird abgeschaltet.`:`${vacMissing(vacB).length} Punkte auf der Urlaubs-Checkliste sind noch offen. Zurück am ${WDL[pD(vacB.back).getDay()]}, ${dmy(vacB.back)}`}
   const tips=[];if(vacB&&vacB.wd===1)nx=null;
   if(nx&&nx.wd===1&&fcDue())tips.push(`📋 Montag bis 12 Uhr: Forecast KW ${kwOf(nx.k)} abgeben`);
-  if(stale.length)tips.push(`⏳ ${stale.length} ${stale.length===1?'Opp wartet':'Opps warten'} seit 14+ Tagen, ${stale.length===1?'nachfassen':'nachfassen'}: ${stale.slice(0,2).map(x=>pn(x.n||'Opp')).join(', ')}${stale.length>2?' …':''}`);
+  if(stale.length)tips.push(`⏳ ${stale.length} ${stale.length===1?'Opp wartet':'Opps warten'} seit 14+ Tagen, ${stale.length===1?'nachfassen':'nachfassen'}: ${privOn()?oppN(stale.length):stale.slice(0,2).map(x=>pn(x.n||'Opp')).join(', ')+(stale.length>2?' …':'')}`);
   if(r.target&&r.pct<70&&nx){const left=workdaysLeft(m,nx.k);if(left)tips.push(`🎯 Bis 70 % fehlen ${fmtE(r.target*.7-r.tot)}, noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'}`)}
   const el=document.getElementById('eod');
   el.innerHTML=`<div class="kk-in">
@@ -4012,7 +4017,7 @@ function fxVault(){return fxLayer('fx-vault',`<div class="vlt"><div class="vlt-d
 /* Stufen */
 function fxSmall(a){fxRain(16,{dur:.8});fxCoins(3);return 900}
 function fxMid(a){if(Math.random()<.5){fxRain(70,{dur:1.3});fxCoins(6)}else{fxWhoosh();fxCannon(34,{});fxCoins(6,.2)}return 1300}
-function fxStorm(a){fxRain(90,{dur:1.6,gold:.08});const d=fxLayer('fx-cnt',`<b class="num">+0 €</b><small>${a.name?pn(a.name):'Deal'}</small>`,2100);fxCount(d.querySelector('b'),a.amount,1600);fxCoins(14,0,.11);return 1900}
+function fxStorm(a){fxRain(90,{dur:1.6,gold:.08});const d=fxLayer('fx-cnt',`<b class="num">+0 €</b><small>${a.name&&!privOn()?pn(a.name):'Deal'}</small>`,2100);fxCount(d.querySelector('b'),a.amount,1600);fxCoins(14,0,.11);return 1900}
 function fxBig(a){fxDim(2600);fxVault();fxTone(180,0,.12,.25,'square');fxTone(140,.25,.12,.25,'square');setTimeout(()=>{fxBoom();fxShake();fxBurst(110,{gold:.3});fxRain(60,{dur:1.6,gold:.2,big:true});fxLayer('fx-gold',`<span class="k">BIG DEAL</span><b class="num">+${fmtE(a.amount)}</b>`,2000);fxCoins(10,.2,.08)},700);return 2500}
 function fxMega(a){fxDim(3300,'deep');fxAdd({ch:'💵',sz:64,x:innerWidth/2,y:-60,vy:60,g:0,tv:120,drag:1,flut:40,vr:.8,ttl:1.6});fxWhoosh(.2);
   setTimeout(()=>{fxBoom();fxBell(2);fxShake(2);fxCannon(50,{gold:.25});fxBurst(140,{gold:.35,speed:1.2});fxRain(90,{dur:2,gold:.25,big:true});fxLayer('fx-gold mega',`<span class="k">MEGA DEAL</span><b class="num">+${fmtE(a.amount)}</b>`,2400);fxCoins(16,.2,.07)},1300);return 3400}
@@ -4189,7 +4194,7 @@ function closeWrap(){const el=document.getElementById('wrap');el.classList.add('
 function monthSlides(m){const r=rev(m);const pm=addM(m,-1);const rp=rev(pm);const st=monthStats(m);const real=r.ds.filter(d=>!d.retro);const big=real.reduce((b,d)=>!b||+d.amount>+b.amount?d:b,null);const sal=m>=S.settings.startMonth&&S.targets[m]?salary(m):null;const mn=MON[pD(m).getMonth()];const diff=r.pct-rp.pct;
   const sl=[{cls:'y',html:`<div class="wr-emo">🎬</div><div class="wr-k">Dein Rückblick</div><h2 class="wr-h">${mn}<br>${m.slice(0,4)}</h2><p class="wr-p">Tippe rechts für weiter.</p>`},
    {html:`<div class="wr-k">Umsatz</div><div class="wr-big">${fmtE(r.tot)}</div><p class="wr-p">${r.target?`Das sind <b>${fmtN(r.pct,1)} %</b> von deinem Ziel (${fmtE(r.target)}).`:''}</p>${rp.target?`<div class="wr-chip ${diff>=0?'up':'down'}">${diff>=0?'▲':'▼'} ${fmtN(Math.abs(diff),1)} Punkte zum ${MON[pD(pm).getMonth()]}</div>`:''}`,conf:r.pct>=70},
-   {html:`<div class="wr-k">Abschlüsse</div><div class="wr-big">${real.length||r.ds.length}</div><p class="wr-p">${big?`Dein größter Deal: <b>${fmtE(big.amount)}</b>${big.name?' ('+pn(big.name)+')':''}.`:'Noch keine einzelnen Verträge.'}</p><div class="wr-split"><span>Inbound <b>${fmtE(r.inb)}</b></span><span>Outbound <b>${fmtE(r.out)}</b></span></div>`},
+   {html:`<div class="wr-k">Abschlüsse</div><div class="wr-big">${real.length||r.ds.length}</div><p class="wr-p">${big?`Dein größter Deal: <b>${fmtE(big.amount)}</b>${big.name&&!privOn()?' ('+pn(big.name)+')':''}.`:'Noch keine einzelnen Verträge.'}</p><div class="wr-split"><span>Inbound <b>${fmtE(r.inb)}</b></span><span>Outbound <b>${fmtE(r.out)}</b></span></div>`},
    {html:`<div class="wr-k">Arbeitszeit</div><div class="wr-big">${hm(st.ist)}</div><p class="wr-p">an ${st.days.filter(x=>x.w>0).length} Arbeitstagen, Saldo <b>${sgn(st.saldo)} h</b>, Urlaub ${one(st.urlaub)} Tage.</p>`},
    {cls:'y',html:`<div class="wr-emo">${r.pct>=100?'🏆':r.pct>=70?'💸':'💪'}</div><div class="wr-k">${sal?'Auszahlung '+MON[pD(addM(m,1)).getMonth()]:'Fazit'}</div>${sal?`<div class="wr-big">${fmtE(sal.total)}</div><p class="wr-p">davon variabel ${fmtE(sal.total-sal.base)}.</p>`:''}<p class="wr-p">${r.pct>=100?'Ziel erreicht. Genau so weiter!':r.pct>=70?'Provision gesichert. Nächster Monat: noch eine Stufe höher.':'Neuer Monat, neue Chance. Du holst dir das zurück.'}</p><button class="kk-go" style="background:rgba(17,19,24,.1);color:#111318;margin-top:18px" onclick="event.stopPropagation();const mm='${m}';closeWrap();setTimeout(()=>monthCard(mm),400)">📸 Als Bild teilen</button><button class="kk-go" style="background:#111318;color:#F9DC4A;margin-top:10px" onclick="event.stopPropagation();closeWrap()">Auf in den ${MON[pD(addM(m,1)).getMonth()]} 🚀</button>`,conf:r.pct>=100}];
   return sl}
