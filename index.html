@@ -1011,7 +1011,7 @@ html.prelock .lock{display:block}
 .kk-go:active{transform:scale(.98)}
 html.priv .pn{display:none}
 html.priv #opn,html.priv #ien,html.priv #dln{color:transparent;text-shadow:0 0 9px var(--ink)}
-.src-seg{display:grid;grid-template-columns:repeat(3,1fr)}.src-seg button{white-space:normal;line-height:1.15;padding:6px 4px;min-height:42px;hyphens:manual}
+.src-seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.src-seg button{height:46px;padding:0 10px;justify-content:center;white-space:nowrap;font-size:15px}
 @media (max-width:420px){.bar .syncbar>span:last-child{display:none}.bar .syncbar{padding:0 7px;gap:0}}
 
 .src-seg button{flex:1}
@@ -1556,7 +1556,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='111';const APP_SEMVER='3.10.4';const APP_DATE='2026-11-12';
+const APP_VERSION='112';const APP_SEMVER='3.10.5';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2253,10 +2253,10 @@ function privSync(){const on=privOn();document.documentElement.classList.toggle(
 function privToggle(){const on=!privOn();try{localStorage.setItem('priv',on?'1':'0')}catch(e){}privSync();render();toast(on?'🙈 Namen ausgeblendet':'👀 Namen wieder sichtbar','ok')}
 const pn=v=>privOn()?'':`<span class="pn">${esc(v)}</span>`;
 const oppN=n=>`${n} ${n===1?'Opp':'Opps'}`;
-const SRC_L={new:'🆕 Neuer Lead',old:'📂 Bestand',own:'🔎 Eigenrecherche'};
-function srcField(cur,fn){return `<div class="field" style="margin-top:14px"><label>Lead-Herkunft <span style="font-weight:500;color:var(--ink2)">(optional)</span></label><div class="seg src-seg">${['new','old','own'].map(v=>`<button type="button" class="${cur===v?'on':''}" onclick="${fn}=${fn}==='${v}'?null:'${v}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===${fn}))" data-v="${v}">${({new:'🆕 Neu',old:'📂 Bestand',own:'🔎 Eigen&shy;recherche'})[v]}</button>`).join('')}</div><div class="hint" style="margin-top:4px">Neu = vor Kurzem vom Lead Management · Bestand = schon länger in deiner Pipeline · Eigenrecherche = selbst gefunden (Instagram, KI, unterwegs …)</div></div>`}
+const SRC_L={new:'🆕 Neuer Lead',old:'📂 Bestand',own:'🔎 Eigenrecherche',ag:'🏢 Agentur'};const SRC_K=['new','old','own','ag'];
+function srcField(cur,fn){return `<div class="field" style="margin-top:14px"><label>Lead-Herkunft <span style="font-weight:500;color:var(--ink2)">(optional)</span></label><div class="seg src-seg">${SRC_K.map(v=>`<button type="button" class="${cur===v?'on':''}" onclick="${fn}=${fn}==='${v}'?null:'${v}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===${fn}))" data-v="${v}">${({new:'🆕 Neu',old:'📂 Bestand',own:'🔎 Eigenrecherche',ag:'🏢 Agentur'})[v]}</button>`).join('')}</div><div class="hint" style="margin-top:4px">Neu = vor Kurzem vom Lead Management · Bestand = schon länger in deiner Pipeline · Eigenrecherche = selbst gefunden (Instagram, KI, unterwegs …) · Agentur = Agenturgeschäft</div></div>`}
 let OPSRC=null,ISRC=null;
-function srcStats(){const r={new:{won:0,lost:0,v:[],cyc:[]},old:{won:0,lost:0,v:[],cyc:[]},own:{won:0,lost:0,v:[],cyc:[]}};const cr={};Object.entries(S.act||{}).forEach(([k,a])=>(a.ops||[]).forEach(o=>cr[o.id]=k));
+function srcStats(){const r={new:{won:0,lost:0,v:[],cyc:[]},old:{won:0,lost:0,v:[],cyc:[]},own:{won:0,lost:0,v:[],cyc:[]},ag:{won:0,lost:0,v:[],cyc:[]}};const cr={};Object.entries(S.act||{}).forEach(([k,a])=>(a.ops||[]).forEach(o=>cr[o.id]=k));
   (S.closed||[]).forEach(e=>{const sr=(e.item&&e.item.src)||e.src;if(!r[sr])return;if(e.res==='won'){r[sr].won++;r[sr].v.push(+e.v||0);if(e.opp&&cr[e.opp])r[sr].cyc.push(dDiff(cr[e.opp],e.date))}else r[sr].lost++});
   Object.values(r).forEach(x=>{x.n=x.won+x.lost;x.rate=x.n?x.won/x.n*100:null;x.avg=x.v.length?x.v.reduce((a,b)=>a+b,0)/x.v.length:null;x.cy=median(x.cyc)});return r}
 /* ---------- Dein Fokus heute ---------- */
@@ -2265,7 +2265,7 @@ function focusActions(){const k=todayK(),cm=ymOf(new Date()),nm=addM(cm,1);const
   const left=workdaysLeft(cm,k);const tot=monthDays(cm).filter(x=>actWorkday(x.k)).length||20;const phase=1-left/tot;
   const now=openItems(cm);const stale=now.filter(x=>x.st!=='signed'&&x.age!=null&&x.age>=staleLimit(x.st)).sort((a,b)=>(+b.v||0)-(+a.v||0));
   const hot=now.filter(x=>x.st==='expected'||x.st==='signed').sort((a,b)=>(+b.v||0)-(+a.v||0));
-  const bc=insBackcalc();const ss=srcStats();const okS=['new','old','own'].filter(k=>ss[k].n>=3);const best=okS.length>=2?okS.reduce((a,b)=>ss[b].rate>ss[a].rate?b:a):null;const SRC_W={new:'neuen Leads',old:'deinem Bestand',own:'Eigenrecherche'};
+  const bc=insBackcalc();const ss=srcStats();const okS=SRC_K.filter(k=>ss[k].n>=3);const best=okS.length>=2?okS.reduce((a,b)=>ss[b].rate>ss[a].rate?b:a):null;const SRC_W={new:'neuen Leads',old:'deinem Bestand',own:'Eigenrecherche',ag:'Agenturgeschäft'};
   const nxt=openItems(nm).reduce((a,x)=>a+(+x.v||0)*stRate(x.st)/100,0);
   let T=[];try{T=trCalc().filter(t=>t.good<0)}catch(e){}
   const names=L=>privOn()?oppN(L.length):L.slice(0,3).map(x=>pn(x.n||'Opp')).join(', ')+(L.length>3?` +${L.length-3}`:'');
@@ -3048,7 +3048,7 @@ function oppMonthSheet(m,st,i){const x=((S.forecast[m]||{}).items||{})[st]?.[i];
   <div class="om-grid">${ms.map(mm=>`<button class="${mm===m?'on':''}" onclick="fcItemMoveTo('${m}','${st}',${i},'${mm}')"><b>${MON[pD(mm).getMonth()]}</b><small>${mm===cm?'dieser Monat':pD(mm).getFullYear()}</small></button>`).join('')}</div>`)}
 function oppCard(m,x){const cm=ymOf(new Date());const open=`itemSheet('${m}','${x.st}',${x.i})`;const si=ST_ORDER.indexOf(x.st);
   return `<div class="oc" style="--sc:${ST_COL[x.st]}">
-    <div class="oc-top" onclick="${open}"><div class="oc-n"><span class="oc-badge">${ST_SHORT[x.st]}</span>${x.src?`<span class="oc-src">${({new:'🆕 Neu',old:'📂 Bestand',own:'🔎 Eigenrecherche'})[x.src]}</span>`:''}<b>${pn(x.n||'Opp')}${chfTag(x)}</b><small>${x.age!=null?ageChip(x.age):''}${m!==cm?`<span class="oc-m">📅 ${MON[pD(m).getMonth()]}</span>`:''}</small></div><div class="oc-v"><b>${fmtE(x.v)}</b><small>gewichtet ${fmtE((+x.v||0)*stRate(x.st)/100)}</small></div></div>
+    <div class="oc-top" onclick="${open}"><div class="oc-n"><span class="oc-badge">${ST_SHORT[x.st]}</span>${x.src?`<span class="oc-src">${({new:'🆕 Neu',old:'📂 Bestand',own:'🔎 Eigenrecherche',ag:'🏢 Agentur'})[x.src]}</span>`:''}<b>${pn(x.n||'Opp')}${chfTag(x)}</b><small>${x.age!=null?ageChip(x.age):''}${m!==cm?`<span class="oc-m">📅 ${MON[pD(m).getMonth()]}</span>`:''}</small></div><div class="oc-v"><b>${fmtE(x.v)}</b><small>gewichtet ${fmtE((+x.v||0)*stRate(x.st)/100)}</small></div></div>
     <div class="oc-steps" onclick="${open}">${ST_ORDER.map((s,j)=>`<div class="st ${j<si?'past':j===si?'on':''}" style="--c:${ST_COL[s]}"><i></i><span>${ST_SHORT[s]}</span></div>`).join('')}</div>
     <div class="oc-acts"><button class="oc-won" onclick="fcItemAct('${m}','${x.st}',${x.i},'won')"><span>🤝</span>Gewonnen</button><button class="oc-mo" onclick="oppMonthSheet('${m}','${x.st}',${x.i})">Verschieben${ic('arrowr')}</button><button class="oc-lost" onclick="fcItemAct('${m}','${x.st}',${x.i},'lost')" aria-label="Verloren" title="Verloren"><span>💔</span></button></div>
   </div>`}
@@ -3343,8 +3343,8 @@ function insCards(){const C=[];const b=insBase();const fmtH=h=>h>=10?fmtN(h,0)+'
   const fa=insFcAcc();if(fa)C.push({e:'🔭',tone:'#2F8CF0',t:'Forecast-Treffsicherheit',v:(fa.avg>0?'+':'')+fmtN(fa.avg,0)+' %',p:`Deine erste Abgabe im Monat lag im Schnitt ${Math.abs(fa.avg)<8?'<b>sehr nah</b> am Ergebnis':fa.avg>0?'<b>zu hoch</b>, du bist eher optimistisch':'<b>zu niedrig</b>, du bist eher vorsichtig'} (${fa.rows.length} ${fa.rows.length===1?'Monat':'Monate'}).`,cls:Math.abs(fa.avg)>=15?'iw':''});
   const cy=insCycle();if(cy)C.push({e:'⏳',t:'Vom Opp zum Abschluss',v:`Ø ${fmtN(cy.med,0)} Tage`,tone:'#F28C28',p:`So lange dauert es bei dir typischerweise vom Anlegen bis zum Gewinn (${cy.n} Deals, ${cy.min}–${cy.max} Tage). Opps von heute landen also eher im ${MON[pD(ymd(new Date(Date.now()+cy.med*864e5))).getMonth()]}.`});
   const me=insMonthEnd();if(me)C.push({e:'🏁',t:'Endspurt',v:fmtN(me.share,0)+' %',tone:'#E5484D',p:`So viel deines Umsatzes kommt in der letzten Monatswoche rein (${me.n} Monate).${me.share>=45?' Früher im Monat abschließen nimmt Druck raus.':''}`});
-  {const ss=srcStats();const K=['new','old','own'].filter(k=>ss[k].n);if(K.length&&K.reduce((a,k)=>a+ss[k].n,0)>=2){const best=K.reduce((a,b)=>ss[b].rate>ss[a].rate?b:a);C.push({e:'🧭',tone:'#2F8CF0',t:'Woher deine Deals kommen',v:`${SRC_L[best]} gewinnt`,p:K.map(k=>`<b>${SRC_L[k]}</b>: ${fmtN(ss[k].rate,0)} % (${ss[k].won} von ${ss[k].n})${ss[k].avg?`, Ø ${fmtE(ss[k].avg)}`:''}${ss[k].cy!=null?`, ${fmtN(ss[k].cy,0)} Tage`:''}`).join('<br>'),w:0})}}
-  {const L=Object.values(S.act||{}).flatMap(a=>a.ops||[]).filter(o=>o.src);if(L.length>=3){const c={new:0,old:0,own:0};L.forEach(o=>c[o.src]=(c[o.src]||0)+1);C.push({e:'📊',tone:'#8B7CF6',t:'Mix deiner neuen Opps',v:`${fmtN(c.own/L.length*100,0)} % Eigenrecherche`,p:`Von ${L.length} Opps mit Herkunft: ${c.new} neue Leads, ${c.old} Bestand, ${c.own} Eigenrecherche.`,bars:[['Neu',c.new],['Bestand',c.old],['Eigen',c.own]].map(([l,v])=>({l,v}))})}}
+  {const ss=srcStats();const K=SRC_K.filter(k=>ss[k].n);if(K.length&&K.reduce((a,k)=>a+ss[k].n,0)>=2){const best=K.reduce((a,b)=>ss[b].rate>ss[a].rate?b:a);C.push({e:'🧭',tone:'#2F8CF0',t:'Woher deine Deals kommen',v:`${SRC_L[best]} gewinnt`,p:K.map(k=>`<b>${SRC_L[k]}</b>: ${fmtN(ss[k].rate,0)} % (${ss[k].won} von ${ss[k].n})${ss[k].avg?`, Ø ${fmtE(ss[k].avg)}`:''}${ss[k].cy!=null?`, ${fmtN(ss[k].cy,0)} Tage`:''}`).join('<br>'),w:0})}}
+  {const L=Object.values(S.act||{}).flatMap(a=>a.ops||[]).filter(o=>o.src);if(L.length>=3){const c={new:0,old:0,own:0,ag:0};L.forEach(o=>c[o.src]=(c[o.src]||0)+1);C.push({e:'📊',tone:'#8B7CF6',t:'Mix deiner neuen Opps',v:`${fmtN(c.own/L.length*100,0)} % Eigenrecherche`,p:`Von ${L.length} Opps mit Herkunft: ${c.new} neue Leads, ${c.old} Bestand, ${c.own} Eigenrecherche${c.ag?`, ${c.ag} Agentur`:''}.`,bars:[['Neu',c.new],['Bestand',c.old],['Eigen',c.own],['Agentur',c.ag]].map(([l,v])=>({l,v}))})}}
   const tm=insTimes();if(tm)C.push({e:'🕗',tone:'#8B7CF6',t:'Dein Arbeitstag',v:`${tm.start!=null?hhmm(tm.start):'–'}–${tm.end!=null?hhmm(tm.end):'–'}`,p:`Ø ${hm(tm.avg)} gearbeitet an den letzten ${tm.n} Tagen.`});
   const cs=closedStats();if(cs.reasons&&cs.reasons[0]&&cs.lost>=3)C.push({e:'💔',tone:'#E5484D',t:'Häufigster Verlustgrund',v:cs.reasons[0][0],p:`${cs.reasons[0][1]} von ${cs.lost} verlorenen Opps. Lohnt sich, im Gespräch früher anzusprechen.`});
   return C}
