@@ -1465,7 +1465,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='88';const APP_SEMVER='3.5.4';const APP_DATE='2026-11-12';
+const APP_VERSION='89';const APP_SEMVER='3.5.5';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1628,7 +1628,7 @@ function defaultState(){
     forecast:{},
     heat,
     salary:{base:3600,variable:1400,tiers:[{from:70,rate:0},{from:100,rate:5},{from:130,rate:10}],bigThreshold:2500,bigRate:3,planRate:1,workDaysBase:22,compDays:{},provHist:{'2026-09':1761.49,'2026-10':0}},
-    fcParams:{weekValue:1875,weekRate:20,offerRate:5,proposalRate:20,expectedRate:60}
+    fcParams:{weekValue:1875,weekRate:20,offerRate:5,proposalRate:20,expectedRate:60,signedRate:90}
   };
 }
 let S;
@@ -1746,11 +1746,12 @@ function forecast(m){
   const f=S.forecast[m]||{}; const P=S.fcParams; const r=rev(m);
   const weeks=f.weeks!=null&&f.weeks!==''?+f.weeks:remainingWeeks(m);
   const signed=+f.signed||0, offer=+f.offer||0, proposal=+f.proposal||0, expected=+f.expected||0;
+  const sR=P.signedRate!=null?+P.signedRate:90, wS=signed*sR/100;
   const oR=P.offerRate!=null?+P.offerRate:5, wO=offer*oR/100;
   const wP=proposal*P.proposalRate/100, wE=expected*P.expectedRate/100, wN=weeks*P.weekValue*P.weekRate/100;
   const closedAuto=r.tot, closed=closedAuto;
-  const exp=closed+signed+wO+wP+wE+wN;
-  return {f,r,closed,closedAuto,closedManual:false,weeks,autoWeeks:f.weeks==null||f.weeks==='',signed,offer,oR,wO,proposal,expected,wP,wE,wN,exp,target:r.target,pct:r.target?exp/r.target*100:0};
+  const exp=closed+wS+wO+wP+wE+wN;
+  return {f,r,closed,closedAuto,closedManual:false,weeks,autoWeeks:f.weeks==null||f.weeks==='',signed,sR,wS,offer,oR,wO,proposal,expected,wP,wE,wN,exp,target:r.target,pct:r.target?exp/r.target*100:0};
 }
 
 /* ---------- Heatmap-Logik ---------- */
@@ -2169,7 +2170,7 @@ function fxSheet(){openSheet(`${sheetHead('Wechselkurs CHF')}<p class="hint" sty
   <div class="row" style="gap:10px;margin-top:14px"><button class="btn" style="flex:1" onclick="fxLive()">Aktuellen Kurs laden</button><button class="btn pri" style="flex:1" onclick="fxSave()">Speichern</button></div>`)}
 async function fxLive(){const st=document.getElementById('fxst');st.textContent='Lade Kurs …';try{const r=await fetch('https://api.frankfurter.app/latest?from=CHF&to=EUR');const j=await r.json();const v=j.rates&&j.rates.EUR;if(!v)throw 0;document.getElementById('fxr').value=fmtN(v,4);st.textContent=`EZB-Referenzkurs vom ${new Date(j.date).toLocaleDateString('de-DE')}`}catch(e){st.textContent='Kurs konnte nicht geladen werden. Bitte von Hand eintragen.'}}
 function fxSave(){const v=numIn(document.getElementById('fxr').value);if(!(v>0)){toast('Bitte einen gültigen Kurs eintragen');return}S.settings.chfRate=v;S.settings.chfAt=todayK();save();closeSheet();render();toast(`Kurs gespeichert: 1 CHF = ${fmtN(v,4)} €`,'ok')}
-function opHint(){const h=document.getElementById('ophint');if(!h)return;if(OPST==='__keep'){h.innerHTML='';return}const a=Math.abs(toEUR('opa')||0);const P=S.fcParams;const rate={offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:100}[OPST];
+function opHint(){const h=document.getElementById('ophint');if(!h)return;if(OPST==='__keep'){h.innerHTML='';return}const a=Math.abs(toEUR('opa')||0);const P=S.fcParams;const rate={offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:P.signedRate!=null?+P.signedRate:90}[OPST];
   if(OPST==='won'){h.innerHTML='Wird aus dem Forecast genommen. Danach öffnet sich direkt „Umsatz eintragen“ mit Betrag und Kunde.';return}
   if(OPST==='lost'){h.innerHTML='Wird aus dem Forecast genommen und zählt nicht mehr zur Pipeline.';return}
   const fw=document.getElementById('opfmw');if(fw)fw.style.display=OPEN_ST.includes(OPST)?'':'none';
@@ -2829,7 +2830,7 @@ function fcField(f,val){const F=S.forecast[CUR]||{};const it=(F.items||{})[f];co
 /* ============================================================
    Forecast abgeben (Montag) + Veränderung seit Abgabe
    ============================================================ */
-function fcRates(F){const P=S.fcParams;return {signed:1,offer:(F?F.oR:(P.offerRate!=null?+P.offerRate:5))/100,proposal:+P.proposalRate/100,expected:+P.expectedRate/100}}
+function fcRates(F){const P=S.fcParams;return {signed:(P.signedRate!=null?+P.signedRate:90)/100,offer:(F?F.oR:(P.offerRate!=null?+P.offerRate:5))/100,proposal:+P.proposalRate/100,expected:+P.expectedRate/100}}
 function itemKey(x,st){return x.opp?'o:'+x.opp:(x.iid?'i:'+x.iid:null)}
 function ensureIids(m){const F=S.forecast[m];let ch=false;if(F&&F.items)Object.keys(F.items).forEach(st=>F.items[st].forEach(x=>{if(!x.opp&&!x.iid){x.iid=uid();ch=true}}));return ch}
 function fcSnapshot(m){ensureIids(m);const F=forecast(m);const f=S.forecast[m]||{};const items=[];['signed','offer','proposal','expected'].forEach(st=>((f.items||{})[st]||[]).forEach(x=>items.push({k:itemKey(x,st),n:x.n||'Opp',st,v:+x.v||0})));
@@ -2900,7 +2901,7 @@ function subBar(v,items,cur){return `<div class="subtabs">${items.map(([id,l,n])
 const ST_ORDER=['offer','proposal','expected','signed'];
 const ST_COL={offer:'#8B7CF6',proposal:'#2F8CF0',expected:'#F28C28',signed:'#1FAF6B'};
 const ST_SHORT={offer:'Offer',proposal:'Proposal',expected:'Expected',signed:'Signed'};
-function stRate(st){const P=S.fcParams;return {offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:100}[st]||0}
+function stRate(st){const P=S.fcParams;return {offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:P.signedRate!=null?+P.signedRate:90}[st]||0}
 function fcItemMoveTo(m,st,i,nm){if(nm===m)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);
   S.forecast[nm]=S.forecast[nm]||{};const N=S.forecast[nm];N.items=N.items||{};let it=N.items[st];if(!it||!it.length){it=[];if(+N[st])it.push({v:+N[st],n:'Bisheriger Wert'})}it.push(x);N.items[st]=it;fcRecalc(N,st);
   const f=x.opp?oppFind(x.opp):null;if(f)f.o.fm=nm;save();closeSheet();render();
@@ -2959,7 +2960,7 @@ function vForecast(){
     <div class="panel">
       <div class="grp">Bereits gesichert</div>
       <div class="fr"><div><b>Closed Won</b><small>automatisch aus deinen Verträgen</small></div><div class="fixed">${ic('lock','style="width:14px;height:14px;vertical-align:-1px;color:var(--muted);margin-right:6px"')}${fmtE(F.closed,2)}</div></div>
-      <div class="fr"><div><b>Signed</b><small>kommt sicher diesen Monat</small></div>${fcField('signed',F.signed)}</div>
+      <div class="fr"><div><b>Signed</b><small>Unterschrieben, zählt ${F.sR} %</small></div>${fcField('signed',F.signed)}<div class="w">ergibt ${fmtE(F.wS,2)}</div></div>
       <div class="grp">Offene und neue Opportunities</div>
       <div class="fr"><div><b>Offer created</b><small>Pipeline-Wert, zählt ${F.oR} %</small></div>${fcField('offer',F.offer)}<div class="w">ergibt ${fmtE(F.wO,2)}</div></div>
       <div class="fr"><div><b>Proposal sent</b><small>Pipeline-Wert, zählt ${P.proposalRate} %</small></div>${fcField('proposal',F.proposal)}<div class="w">ergibt ${fmtE(F.wP,2)}</div></div>
@@ -2972,6 +2973,7 @@ function vForecast(){
   ${ST==='gew'?`
   <div class="panel">
     <div class="grid3 r">
+      <div class="field"><label>Signed in %</label><input class="inp" type="number" value="${F.sR}" onchange="S.fcParams.signedRate=+this.value;save();render()"></div>
       <div class="field"><label>Offer created in %</label><input class="inp" type="number" value="${F.oR}" onchange="S.fcParams.offerRate=+this.value;save();render()"></div>
       <div class="field"><label>Proposal sent in %</label><input class="inp" type="number" value="${P.proposalRate}" onchange="S.fcParams.proposalRate=+this.value;save();render()"></div>
       <div class="field"><label>Expected sign up in %</label><input class="inp" type="number" value="${P.expectedRate}" onchange="S.fcParams.expectedRate=+this.value;save();render()"></div>
@@ -3551,7 +3553,7 @@ function eodNextWork(k){const d=pD(k);for(let i=0;i<14;i++){d.setDate(d.getDate(
 function signedOn(k){const cm=k.slice(0,7);const out=[];[0,1,2,3,4,5].forEach(d=>{const m=addM(cm,d);fcNormalize(m);const it=((S.forecast[m]||{}).items||{}).signed||[];it.forEach(x=>{if(x.since===k)out.push({...x,m})})});return out}
 function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worked(e);if(w==null){toast('Für heute fehlt noch Beginn oder Ende');return}
   const d0=pD(k),m=k.slice(0,7);const a=actOf(k),g=actGoal(k);const hit=actHit(k);
-  const P=S.fcParams;const rate=st=>({offer:P.offerRate!=null?+P.offerRate:5,proposal:+P.proposalRate,expected:+P.expectedRate,signed:100}[st]||0);
+  const P=S.fcParams;const rate=stRate;
   const ops=a.ops;const opSum=ops.reduce((s,o)=>s+(+o.amount||0),0);const opW=ops.reduce((s,o)=>s+(OPEN_ST.includes(o.stage)?(+o.amount||0)*rate(o.stage)/100:0),0);
   const deals=S.deals.filter(x=>x.date===k&&!x.retro&&!x.storno);const dSum=deals.reduce((s,x)=>s+ +x.amount,0);
   const r=rev(m);const fc=forecast(m);const saldo=w-di.soll;const bal=balanceNow();
