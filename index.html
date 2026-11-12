@@ -1472,7 +1472,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='93';const APP_SEMVER='3.6.2';const APP_DATE='2026-11-12';
+const APP_VERSION='94';const APP_SEMVER='3.6.3';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1927,7 +1927,7 @@ function dayTile(){
   return `<div class="daytile dt-c ${isFinal?'final':''}">${seasonFx(se)}
     <div class="dtop"><span>KW ${isoWeek(d0)}</span><span class="sp"></span><span>${MON[d0.getMonth()]} ${d0.getFullYear()}</span></div>
     <div class="dmain"><div><div class="dw">${WDL[d0.getDay()]}<span class="dd">${d0.getDate()}. ${MON[d0.getMonth()]}</span></div></div><div class="dico">${ic(icon)}</div></div>
-    <div class="dchips"><span class="dchip">${free?ic('check'):ic('clock')}${free?'Heute ist frei':status}</span><span class="dch2" title="Urlaub und Feiertage sind schon abgezogen">${ic('brief')}<b>${left?one(left):'0'}</b> ${left===1?'Arbeitstag':'Arbeitstage'} übrig</span>${vacM?`<span class="dch2">${ic('plane')}<b>${one(vacM)}</b> ${vacM===1?'Urlaubstag':'Urlaubstage'} im ${MON[d0.getMonth()]}</span>`:''}</div>
+    <div class="dchips"><span class="dchip">${free?ic('check'):ic('clock')}${free?'Heute ist frei':status}</span><span class="dch2" title="Urlaub und Feiertage sind schon abgezogen">${ic('brief')}<b>${left?one(left):'0'}</b> ${left===1?'Arbeitstag':'Arbeitstage'} übrig</span>${vacM?`<span class="dch2">${ic('plane')}<b>${one(vacM)}</b> ${vacM===1?'Urlaubstag':'Urlaubstage'}</span>`:''}</div>
     ${free?`<div class="dsub2">${status}</div>`:''}
     ${isFinal?`<div class="finalbar">${ic('flag')}<div><b>Finaltag</b><span>Alles, was heute unterschrieben wird, zählt noch im ${MON[d0.getMonth()]}.</span></div></div>`:!free&&left>0&&left<=5?`<div class="endspurt">⏳ Endspurt: noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'}</div>`:''}
     ${canStart?`<button class="dstart" onclick="startNow()">${ic('clock')} Arbeitsbeginn jetzt eintragen <b>${pad(d0.getHours())}:${pad(d0.getMinutes())}</b></button>`:`<div class="dq">„${quote}“</div>`}
