@@ -1009,6 +1009,13 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.ins{position:relative;overflow:hidden;border-radius:22px;padding:16px;background:linear-gradient(160deg,color-mix(in srgb,var(--t) 10%,var(--paper)) 0%,var(--paper) 55%);border:1px solid color-mix(in srgb,var(--t) 18%,transparent)}
+.ins::after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--t) 22%,transparent),transparent 70%);pointer-events:none}
+.ins-h{gap:9px;font-size:12.5px;color:var(--ink2)}.ins-h .ins-i{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:color-mix(in srgb,var(--t) 18%,transparent)}
+.ins-v{margin-top:12px;font-size:22px;letter-spacing:-.01em;color:color-mix(in srgb,var(--t) 35%,var(--ink))}
+.ins.wide{background:linear-gradient(135deg,color-mix(in srgb,var(--t) 26%,var(--paper)),var(--paper) 70%)}.ins.wide .ins-v{font-size:32px}
+.ins-b i{background:color-mix(in srgb,var(--t) 30%,transparent)}.ins-b i.hi{background:var(--t)}
+
 .ins-g{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:22px}
 @media (min-width:760px){.ins-g{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .ins{background:var(--paper);border-radius:20px;padding:14px;box-shadow:var(--shadow);min-width:0;display:flex;flex-direction:column}
@@ -1485,7 +1492,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='95';const APP_SEMVER='3.7.0';const APP_DATE='2026-11-12';
+const APP_VERSION='96';const APP_SEMVER='3.7.1';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -3185,12 +3192,12 @@ const dDiff=(a,b)=>Math.round((pD(b)-pD(a))/864e5);
 const median=a=>{if(!a.length)return null;const s=[...a].sort((x,y)=>x-y);const h=s.length>>1;return s.length%2?s[h]:(s[h-1]+s[h])/2};
 function insWin(days){const out=[];const d=new Date();for(let i=0;i<days;i++){out.push(ymd(d));d.setDate(d.getDate()-1)}return out}
 function realDeals(){return S.deals.filter(d=>!d.retro&&!d.storno&&+d.amount>0)}
-function insBase(){const ks=insWin(90).filter(k=>k<=todayK());let h=0,wd=0,demo=0,ops=0,opVal=0;
+function insBase(){let ks=insWin(90).filter(k=>k<=todayK());const tr=ks.filter(k=>{const e=S.days[k];return e&&!isFree(e.type)&&worked(e)!=null});const from=tr.length?tr[tr.length-1]:ks[ks.length-1];ks=ks.filter(k=>k>=from);let h=0,wd=0,demo=0,ops=0,opVal=0;
   ks.forEach(k=>{const e=S.days[k];const w=e&&!isFree(e.type)?worked(e):null;if(w!=null){h+=w;wd++}const a=actOf(k);demo+=a.demo;ops+=a.ops.length;opVal+=a.ops.reduce((s,o)=>s+(+o.amount||0),0)});
-  const from=ks[ks.length-1];const dl=realDeals().filter(d=>d.date>=from);const rv=dl.reduce((s,d)=>s+ +d.amount,0);
+  const weeks=Math.max(1,dDiff(from,todayK())/7);const dl=realDeals().filter(d=>d.date>=from);const rv=dl.reduce((s,d)=>s+ +d.amount,0);
   const cl=(S.closed||[]).filter(e=>e.date>=from);const won=cl.filter(e=>e.res==='won').length,lost=cl.length-won;
   const allCl=S.closed||[];const wonA=allCl.filter(e=>e.res==='won').length;
-  return{h,wd,demo,ops,opVal,deals:dl.length,rv,won,lost,winRate:allCl.length>=5?wonA/allCl.length:null,from}}
+  return{h,wd,demo,ops,opVal,deals:dl.length,rv,won,lost,winRate:allCl.length>=5?wonA/allCl.length:null,from,weeks}}
 function insDealSize(){const L=realDeals();if(!L.length)return null;const cm=ymOf(new Date());const ms=[5,4,3,2,1,0].map(d=>addM(cm,-d));
   const by=ms.map(m=>{const x=L.filter(d=>d.date.slice(0,7)===m);return{m,n:x.length,avg:x.length?x.reduce((s,d)=>s+ +d.amount,0)/x.length:null}});
   const recent=L.filter(d=>d.date>=addM(cm,-5)+'-01');const avg=(recent.length?recent:L).reduce((s,d)=>s+ +d.amount,0)/(recent.length||L.length);
@@ -3208,26 +3215,31 @@ function insBackcalc(){const cm=ymOf(new Date());const r=rev(cm);if(!r.target)re
   const avg=ds&&ds.avg||null;if(!avg)return null;const deals=Math.ceil(gap/avg);
   const opsPerDeal=b.winRate?1/b.winRate:(b.deals?b.ops/b.deals:null);const demosPerOpp=b.ops?b.demo/b.ops:null;
   const fc=forecast(cm);const pipe=fc.wS+fc.wO+fc.wP+fc.wE;const left=workdaysLeft(cm,todayK());
-  return{gap,avg,deals,opps:opsPerDeal?Math.ceil(deals*opsPerDeal):null,demos:opsPerDeal&&demosPerOpp?Math.ceil(deals*opsPerDeal*demosPerOpp):null,pipe,cover:gap>0?pipe/gap:null,left,opsPerDeal,demosPerOpp,winRate:b.winRate}}
+  return{gap,avg,deals,opps:opsPerDeal?Math.ceil(deals*opsPerDeal):null,demos:null,pipe,cover:gap>0?pipe/gap:null,left,opsPerDeal,demosPerOpp,winRate:b.winRate}}
+function insCycle(){const cr={};Object.entries(S.act||{}).forEach(([k,a])=>(a.ops||[]).forEach(o=>cr[o.id]=k));const d=(S.closed||[]).filter(e=>e.res==='won'&&e.opp&&cr[e.opp]).map(e=>dDiff(cr[e.opp],e.date));return d.length>=3?{med:median(d),n:d.length,min:Math.min(...d),max:Math.max(...d)}:null}
+function insMonthEnd(){const L=realDeals();const ms=[...new Set(L.map(d=>d.date.slice(0,7)))].filter(m=>m<ymOf(new Date()));if(ms.length<2)return null;let tot=0,end=0;L.forEach(d=>{const m=d.date.slice(0,7);if(!ms.includes(m))return;tot+=+d.amount;const last=new Date(+m.slice(0,4),+m.slice(5,7),0).getDate();if(+d.date.slice(8)>last-7)end+=+d.amount});return tot?{share:end/tot*100,n:ms.length}:null}
 function insCards(){const C=[];const b=insBase();const fmtH=h=>h>=10?fmtN(h,0)+' h':fmtN(h,1)+' h';
   const bc=insBackcalc();
   if(bc&&bc.done)C.push({e:'🏆',t:'Ziel 100 %',v:'erreicht',p:'Alles ab jetzt ist Bonus.'});
-  else if(bc)C.push({e:'🎯',t:'Bis 100 % fehlen',v:fmtE(bc.gap),p:`Bei Ø ${fmtE(bc.avg)} pro Deal sind das <b>${bc.deals} ${bc.deals===1?'Abschluss':'Abschlüsse'}</b>${bc.opps?`, also ca. <b>${bc.opps} Opps</b>`:''}${bc.demos?` bzw. <b>${bc.demos} Demos</b>`:''}. Noch ${one(bc.left)} Arbeitstage.`,w:1});
+  else if(bc)C.push({e:'🎯',tone:'#F2B33D',t:'Bis 100 % fehlen',v:fmtE(bc.gap),p:`Bei Ø ${fmtE(bc.avg)} pro Deal sind das <b>${bc.deals} ${bc.deals===1?'Abschluss':'Abschlüsse'}</b>${bc.opps?`, also ca. <b>${bc.opps} Opps</b>`:''}${bc.demos?` bzw. <b>${bc.demos} Demos</b>`:''}. Noch ${one(bc.left)} Arbeitstage.`,w:1});
   if(bc&&!bc.done&&bc.cover!=null)C.push({e:bc.cover>=1?'🛡️':'⚠️',t:'Pipeline-Deckung',v:fmtN(bc.cover,1)+'×',p:bc.cover>=1.2?'Deine gewichtete Pipeline deckt die Lücke bis 100 % gut ab.':bc.cover>=1?'Knapp: Die Pipeline reicht gerade so. Jeder Ausfall tut weh.':`Die gewichtete Pipeline (${fmtE(bc.pipe)}) reicht nicht. Neue Opps haben Vorrang.`,cls:bc.cover>=1?'':'iw'});
-  if(b.wd>=5&&(b.ops||b.demo)){C.push({e:'⏱️',t:'Arbeitszeit pro Ergebnis',v:b.ops?fmtH(b.h/b.ops)+' / Opp':fmtH(b.h/b.demo)+' / Demo',p:`Letzte 90 Tage: ${fmtN(b.h,0)} h, ${b.demo} Demos, ${b.ops} Opps${b.deals?`, ${b.deals} Abschlüsse. Das sind <b>${fmtH(b.h/b.deals)} pro Abschluss</b>`:''}.`});
-    if(b.rv>0)C.push({e:'💶',t:'Umsatz pro Stunde',v:fmtE(b.rv/b.h),p:`${fmtE(b.rv)} Umsatz in ${fmtN(b.h,0)} Arbeitsstunden (90 Tage).`})}
-  if(b.ops>=3&&b.demo)C.push({e:'🔁',t:'Demos pro Opp',v:fmtN(b.demo/b.ops,1),p:`Aus ${b.demo} Demos wurden ${b.ops} Opps.${b.winRate!=null?` Deine Gewinnquote: <b>${fmtN(b.winRate*100,0)} %</b>.`:''}${(()=>{const g=S.settings.actGoal||{demo:2,op:1};const r=b.demo/b.ops;return Math.abs(r-g.demo/g.op)>=1?` Dein Tagesziel geht von ${fmtN(g.demo/g.op,1)} aus.`:''})()}`});
-  const ds=insDealSize();if(ds&&ds.n>=3){const pts=ds.by.filter(x=>x.avg);const tr=pts.length>=2?(pts[pts.length-1].avg-pts[0].avg)/pts[0].avg*100:null;C.push({e:'📦',t:'Ø Deal-Größe',v:fmtE(ds.avg),p:`${ds.n} Abschlüsse, größter ${fmtE(ds.max)}, ${fmtN(ds.bigShare*100,0)} % Big Deals.${tr!=null&&Math.abs(tr)>=10?` Trend: <b>${tr>0?'+':''}${fmtN(tr,0)} %</b> seit ${MONS[pD(pts[0].m).getMonth()]}.`:''}`,bars:ds.by.map(x=>({l:MONS[pD(x.m).getMonth()],v:x.avg||0}))})}
-  const dw=insDwell();const dws=ST_ORDER.filter(st=>dw[st].n>=3);if(dws.length)C.push({e:'📅',t:'Typische Verweildauer',v:dws.map(st=>`${ST_SHORT[st]} ${fmtN(dw[st].med,0)} T`).join(' · '),p:'So lange liegt eine Opp bei dir normalerweise in der Stage. Danach gilt sie als „wartet zu lange“.'});
-  const wk=insWeekday();if(wk)C.push({e:'📈',t:'Dein stärkster Tag',v:WDL[wk.best.d],p:`An ${WDL[wk.best.d]}en schaffst du die meisten Demos und Opps, an ${WDL[wk.worst.d]}en die wenigsten.`,bars:wk.avg.map(x=>({l:WDL[x.d].slice(0,2),v:x.v,hi:x.d===wk.best.d}))});
+  const since=`seit ${dLabel(b.from)} (${b.wd} ${b.wd===1?'Arbeitstag':'Arbeitstage'} mit Zeiterfassung)`;
+  if(b.wd>=5&&b.ops){C.push({e:'⏱️',t:'Arbeitszeit pro Opp',v:fmtH(b.h/b.ops),tone:'#2F8CF0',p:`${fmtN(b.h,0)} h und ${b.ops} neue Opps ${since}${b.deals?`. Pro Abschluss: <b>${fmtH(b.h/b.deals)}</b>`:''}.`})}
+  if(b.wd>=5&&b.rv>0)C.push({e:'💶',t:'Umsatz pro Stunde',v:fmtE(b.rv/b.h),tone:'#1FAF6B',p:`${fmtE(b.rv)} Umsatz in ${fmtN(b.h,0)} Arbeitsstunden, gleicher Zeitraum wie die Zeiterfassung (seit ${dLabel(b.from)}).`});
+  if(b.wd>=5&&(b.ops||b.demo))C.push({e:'🚀',t:'Aktivität pro Woche',v:`${fmtN(b.demo/b.weeks,1)} Demos · ${fmtN(b.ops/b.weeks,1)} Opps`,tone:'#8B7CF6',p:`Dazu ${fmtE(b.opVal/b.weeks)} neue Pipeline pro Woche${b.winRate!=null?`. Deine Gewinnquote: <b>${fmtN(b.winRate*100,0)} %</b>`:''}.`});
+  const ds=insDealSize();if(ds&&ds.n>=3){const pts=ds.by.filter(x=>x.avg);const tr=pts.length>=2?(pts[pts.length-1].avg-pts[0].avg)/pts[0].avg*100:null;C.push({e:'📦',tone:'#1FAF6B',t:'Ø Deal-Größe',v:fmtE(ds.avg),p:`Aus deinen eingetragenen Abschlüssen der letzten 6 Monate (insgesamt ${ds.n}), größter ${fmtE(ds.max)}, ${fmtN(ds.bigShare*100,0)} % Big Deals.${tr!=null&&Math.abs(tr)>=10?` Trend: <b>${tr>0?'+':''}${fmtN(tr,0)} %</b> seit ${MONS[pD(pts[0].m).getMonth()]}.`:''}`,bars:ds.by.map(x=>({l:MONS[pD(x.m).getMonth()],v:x.avg||0}))})}
+  const dw=insDwell();const dws=ST_ORDER.filter(st=>dw[st].n>=3);if(dws.length)C.push({e:'📅',tone:'#2F8CF0',t:'Typische Verweildauer',v:dws.map(st=>`${ST_SHORT[st]} ${fmtN(dw[st].med,0)} T`).join(' · '),p:'So lange liegt eine Opp bei dir normalerweise in der Stage. Danach gilt sie als „wartet zu lange“.'});
+  const wk=insWeekday();if(wk)C.push({e:'📈',tone:'#F2B33D',t:'Dein stärkster Tag',v:WDL[wk.best.d],p:`An ${WDL[wk.best.d]}en schaffst du die meisten Demos und Opps, an ${WDL[wk.worst.d]}en die wenigsten.`,bars:wk.avg.map(x=>({l:WDL[x.d].slice(0,2),v:x.v,hi:x.d===wk.best.d}))});
   const ld=insLongDays();if(ld)C.push({e:ld.hi>ld.lo*1.15?'💪':'🧘',t:'Lange Tage',v:ld.hi>ld.lo*1.15?'lohnen sich':'bringen kaum mehr',p:`An Tagen ab 9 h kommst du auf ${fmtN(ld.hi,1)} Punkte, sonst auf ${fmtN(ld.lo,1)} (Demo = 1, Opp = 2).`});
-  const fa=insFcAcc();if(fa)C.push({e:'🔭',t:'Forecast-Treffsicherheit',v:(fa.avg>0?'+':'')+fmtN(fa.avg,0)+' %',p:`Deine erste Abgabe im Monat lag im Schnitt ${Math.abs(fa.avg)<8?'<b>sehr nah</b> am Ergebnis':fa.avg>0?'<b>zu hoch</b>, du bist eher optimistisch':'<b>zu niedrig</b>, du bist eher vorsichtig'} (${fa.rows.length} ${fa.rows.length===1?'Monat':'Monate'}).`,cls:Math.abs(fa.avg)>=15?'iw':''});
-  const tm=insTimes();if(tm)C.push({e:'🕗',t:'Dein Arbeitstag',v:`${tm.start!=null?hhmm(tm.start):'–'}–${tm.end!=null?hhmm(tm.end):'–'}`,p:`Ø ${hm(tm.avg)} gearbeitet an den letzten ${tm.n} Tagen.`});
-  const cs=closedStats();if(cs.reasons&&cs.reasons[0]&&cs.lost>=3)C.push({e:'💔',t:'Häufigster Verlustgrund',v:cs.reasons[0][0],p:`${cs.reasons[0][1]} von ${cs.lost} verlorenen Opps. Lohnt sich, im Gespräch früher anzusprechen.`});
+  const fa=insFcAcc();if(fa)C.push({e:'🔭',tone:'#2F8CF0',t:'Forecast-Treffsicherheit',v:(fa.avg>0?'+':'')+fmtN(fa.avg,0)+' %',p:`Deine erste Abgabe im Monat lag im Schnitt ${Math.abs(fa.avg)<8?'<b>sehr nah</b> am Ergebnis':fa.avg>0?'<b>zu hoch</b>, du bist eher optimistisch':'<b>zu niedrig</b>, du bist eher vorsichtig'} (${fa.rows.length} ${fa.rows.length===1?'Monat':'Monate'}).`,cls:Math.abs(fa.avg)>=15?'iw':''});
+  const cy=insCycle();if(cy)C.push({e:'⏳',t:'Vom Opp zum Abschluss',v:`Ø ${fmtN(cy.med,0)} Tage`,tone:'#F28C28',p:`So lange dauert es bei dir typischerweise vom Anlegen bis zum Gewinn (${cy.n} Deals, ${cy.min}–${cy.max} Tage). Opps von heute landen also eher im ${MON[pD(ymd(new Date(Date.now()+cy.med*864e5))).getMonth()]}.`});
+  const me=insMonthEnd();if(me)C.push({e:'🏁',t:'Monatsendspurt',v:fmtN(me.share,0)+' %',tone:'#E5484D',p:`So viel deines Umsatzes kommt in der letzten Monatswoche rein (${me.n} Monate).${me.share>=45?' Früher im Monat abschließen nimmt Druck raus.':''}`});
+  const tm=insTimes();if(tm)C.push({e:'🕗',tone:'#8B7CF6',t:'Dein Arbeitstag',v:`${tm.start!=null?hhmm(tm.start):'–'}–${tm.end!=null?hhmm(tm.end):'–'}`,p:`Ø ${hm(tm.avg)} gearbeitet an den letzten ${tm.n} Tagen.`});
+  const cs=closedStats();if(cs.reasons&&cs.reasons[0]&&cs.lost>=3)C.push({e:'💔',tone:'#E5484D',t:'Häufigster Verlustgrund',v:cs.reasons[0][0],p:`${cs.reasons[0][1]} von ${cs.lost} verlorenen Opps. Lohnt sich, im Gespräch früher anzusprechen.`});
   return C}
 function insightsPanel(){const C=insCards();
   return `<div class="sh" id="insights"><h2>🔍 Insights</h2><span class="sp"></span><span class="meta">aus deinen Daten</span></div>
-  ${C.length?`<div class="ins-g">${C.map(c=>`<div class="ins ${c.cls||''} ${c.w?'wide':''}"><div class="ins-h"><span>${c.e}</span>${c.t}</div><div class="ins-v">${c.v}</div><p>${c.p}</p>${c.bars?`<div class="ins-b">${(()=>{const mx=Math.max(...c.bars.map(x=>x.v),1);return c.bars.map(x=>`<div><i style="height:${Math.max(4,x.v/mx*42)}px" class="${x.hi?'hi':''}"></i><small>${x.l}</small></div>`).join('')})()}</div>`:''}</div>`).join('')}</div>`
+  ${C.length?`<div class="ins-g">${C.map(c=>`<div class="ins ${c.cls||''} ${c.w?'wide':''}" style="--t:${c.tone||'#9AA3B5'}"><div class="ins-h"><span class="ins-i">${c.e}</span><span>${c.t}</span></div><div class="ins-v">${c.v}</div><p>${c.p}</p>${c.bars?`<div class="ins-b">${(()=>{const mx=Math.max(...c.bars.map(x=>x.v),1);return c.bars.map(x=>`<div><i style="height:${Math.max(4,x.v/mx*42)}px" class="${x.hi?'hi':''}"></i><small>${x.l}</small></div>`).join('')})()}</div>`:''}</div>`).join('')}</div>`
   :`<div class="empty-s">Die App sammelt noch Daten. Nach ein paar Arbeitstagen mit Zeiten, Demos und Opps erscheinen hier die ersten Erkenntnisse.</div>`}`}
 function vVerlauf(){
   const cy=new Date().getFullYear(); const years=[];for(let y=2020;y<=cy+1;y++)years.push(y);
