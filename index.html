@@ -1011,7 +1011,7 @@ html.prelock .lock{display:block}
 .kk-go:active{transform:scale(.98)}
 .cal-hint{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;margin:0 0 12px;border-radius:16px;border:1.5px solid rgba(242,140,40,.45);background:rgba(242,140,40,.12);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
 .cal-hint>span{font-size:22px}.cal-hint div{flex:1;min-width:0}.cal-hint b{display:block;font-size:14.5px}.cal-hint small{display:block;font-size:12.5px;color:var(--ink2);margin-top:2px}.cal-hint svg{width:18px;height:18px;color:var(--ink2)}
-.cal-r{display:grid;grid-template-columns:10px minmax(0,1fr) 58px 58px 70px;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.cal-r{display:grid;grid-template-columns:10px minmax(0,1fr) 56px 62px 66px;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
 .cal-r>i{width:10px;height:10px;border-radius:50%;background:var(--c)}.cal-n b{display:block;font-size:14px}.cal-n small{font-size:12px;color:var(--ink2)}
 .cal-v{text-align:center}.cal-v small{display:block;font-size:10.5px;color:var(--ink2)}.cal-v b{font-size:15px;font-variant-numeric:tabular-nums}
 .cal-a{text-align:right;font-size:12px;color:var(--ink2)}.cal-a .ok{color:#1FAF6B;font-weight:700}.cal-a button{border:0;border-radius:10px;padding:7px 9px;background:#F9DC4A;color:#111318;font:inherit;font-size:13px;font-weight:750;cursor:pointer;white-space:nowrap}
@@ -1472,7 +1472,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='91';const APP_SEMVER='3.6.0';const APP_DATE='2026-11-12';
+const APP_VERSION='92';const APP_SEMVER='3.6.1';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2236,9 +2236,9 @@ function itemDel(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st].s
 function itemSave(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st][i];const cm=curMeta('iev');let nv=Math.abs(toEUR('iev')||0);if(cm&&x.cur==='CHF'&&Math.abs(x.orig-cm.orig)<.01)nv=+x.v;curApply(x,cm);const nn=document.getElementById('ien').value.trim();
   if(nv&&Math.abs(nv-x.v)>=.01){x.vh=x.vh||[];x.vh.push({d:todayK(),v:+x.v});const dl=nv-x.v;x.v=nv;toast(`Wert ${dl>0?'erhöht':'gesenkt'}: ${sgnE(dl)}`,'ok')}if(nn)x.n=nn;
   const f=x.opp?oppFind(x.opp):null;if(f){f.o.amount=x.v;if(nn)f.o.name=nn;curApply(f.o,x.cur?{cur:x.cur,orig:x.orig,fx:x.fx}:null)}
-  let tst=IST||st,tm=IMO||m;if(tst!==st||tm!==m){F.items[st].splice(i,1);fcRecalc(F,st);if(tst!==st){x.since=todayK();x.sh=[...new Set([...(x.sh||[st]),tst])]}S.forecast[tm]=S.forecast[tm]||{};const N=S.forecast[tm];N.items=N.items||{};let it=N.items[tst];if(!it||!it.length){it=[];if(+N[tst])it.push({v:+N[tst],n:'Bisheriger Wert'})}it.push(x);N.items[tst]=it;fcRecalc(N,tst);if(f){f.o.stage=tst;f.o.fm=tm;if(tst!==st)f.o.stageSince=todayK()}
+  let tst=IST||st,tm=IMO||m;if(tst!==st||tm!==m){F.items[st].splice(i,1);fcRecalc(F,st);if(tst!==st){x.since=todayK();x.sh=[...new Set([...(x.sh||[st]),tst])];trLog(st,tst)}S.forecast[tm]=S.forecast[tm]||{};const N=S.forecast[tm];N.items=N.items||{};let it=N.items[tst];if(!it||!it.length){it=[];if(+N[tst])it.push({v:+N[tst],n:'Bisheriger Wert'})}it.push(x);N.items[tst]=it;fcRecalc(N,tst);if(f){f.o.stage=tst;f.o.fm=tm;if(tst!==st)f.o.stageSince=todayK()}
     toast(`${x.n||'Opp'} → ${FCN[tst]}${tm!==m?' · '+MON[pD(tm).getMonth()]:''}`,'ok')}else fcRecalc(F,st);save();closeSheet();render()}
-function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);x.since=todayK();x.sh=[...new Set([...(x.sh||[st]),ns])];
+function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);x.since=todayK();x.sh=[...new Set([...(x.sh||[st]),ns])];trLog(st,ns);
   let it=F.items[ns];if(!it||!it.length){it=[];if(+F[ns])it.push({v:+F[ns],n:'Bisheriger Wert'})}it.push(x);F.items[ns]=it;fcRecalc(F,ns);
   if(x.opp){const f=oppFind(x.opp);if(f){f.o.stage=ns;f.o.stageSince=todayK()}}save();render();toast(`${x.n||'Opp'} → ${FCN[ns]}`,'ok')}
 function fcRecalc(F,st){const it=F.items[st]||[];F[st]=it.reduce((a,y)=>a+(+y.v||0),0);if(!it.length)delete F.items[st]}
@@ -2324,6 +2324,7 @@ function fcOppUnlink(id,only){Object.keys(S.forecast||{}).forEach(m=>{if(only&&m
 function fcOppLink(o,date){if(!OPEN_ST.includes(o.stage)||!(+o.amount))return;const m=date.slice(0,7);S.forecast[m]=S.forecast[m]||{};const F=S.forecast[m];F.items=F.items||{};let it=F.items[o.stage];if(!it||!it.length){it=[];if(+F[o.stage])it.push({v:+F[o.stage],n:'Bisheriger Wert'})}it.push({v:+o.amount,n:o.name||'Opp',opp:o.id,since:o.stageSince||date,...(o.vh?{vh:o.vh}:{}),...(o.cur?{cur:o.cur,orig:o.orig,fx:o.fx}:{})});F.items[o.stage]=it;F[o.stage]=it.reduce((a,x)=>a+(+x.v||0),0)}
 function saveOp(){const amt=Math.abs(toEUR('opa')||0);const cm=curMeta('opa');const k=document.getElementById('opd').value||OPK;const name=document.getElementById('opn').value.trim();
   if(OPST==='__keep'){const f=oppFind(OPID);OPST=f?f.o.stage:'';}
+  {const pv=OPID&&oppFind(OPID);if(pv&&pv.o.stage&&OPST&&pv.o.stage!==OPST)trLog(pv.o.stage,OPST)}
   if(OPEN_ST.includes(OPST)&&!amt){toast('Für den Forecast bitte einen Wert eintragen');document.getElementById('opa').focus();return}
   if(OPID&&k!==OPK)actSet(OPK,a=>{a.ops=a.ops.filter(o=>o.id!==OPID)});
   const prev=OPID?(oppFind(OPID)||{}).o:null;
@@ -2946,19 +2947,30 @@ function closedView(){const cs=closedStats();const c=(S.closed||[]).slice().reve
   ${c.length?`<div class="panel flush" style="margin-top:14px"><div class="list">${c.map(x=>`<div class="li"><div class="ico ${x.res==='won'?'won':'lost'}" style="font-size:20px;display:grid;place-items:center">${x.res==='won'?'🤝':'💔'}</div><div class="t"><b>${esc(x.n||'Opp')}${chfTag(x)}</b><small>${dLabel(x.date)} · ${x.res==='won'?'Gewonnen':'Verloren'}${x.reason?' · '+x.reason:''}</small></div><div class="v ${x.res==='won'?'':'mut'}">${fmtE(x.v)}</div><button class="cl-re" onclick="oppReopenSheet('${x.id}')" aria-label="Zurückholen" title="Zurück in die Pipeline">↩️</button></div>`).join('')}</div></div>`:'<div class="empty-s" style="margin-top:14px">Noch keine abgeschlossenen Opps.</div>'}`}
 /* ---------- Gewichtung kalibrieren ---------- */
 const ST_KEY={offer:'offerRate',proposal:'proposalRate',expected:'expectedRate',signed:'signedRate'};
-const CAL_MIN=8;
+const CAL_MIN=8,STEP_MIN=5;
+function trLog(f,t){if(f===t||!ST_ORDER.includes(f)||!ST_ORDER.includes(t))return;S.trans=S.trans||[];S.trans.push({d:todayK(),f,t});if(S.trans.length>2000)S.trans=S.trans.slice(-2000)}
+function stepRates(){const ex={};ST_ORDER.forEach(st=>ex[st]={n:0,won:0,lost:0,to:{}});
+  (S.trans||[]).forEach(e=>{const r=ex[e.f];r.n++;r.to[e.t]=(r.to[e.t]||0)+1});
+  (S.closed||[]).forEach(e=>{const r=ex[e.st];if(!r)return;r.n++;if(e.res==='won')r.won++;else r.lost++});
+  const out={};[...ST_ORDER].reverse().forEach(st=>{const r=ex[st],i=ST_ORDER.indexOf(st);let p=r.won;ST_ORDER.forEach((y,j)=>{if(j>i&&r.to[y])p+=r.to[y]*((out[y]&&out[y].ready?out[y].rate:stRate(y))/100)});
+    out[st]={n:r.n,rate:r.n?p/r.n*100:null,ready:r.n>=STEP_MIN,fwd:r.won+ST_ORDER.filter((y,j)=>j>i).reduce((a,y)=>a+(r.to[y]||0),0),back:r.lost+ST_ORDER.filter((y,j)=>j<i).reduce((a,y)=>a+(r.to[y]||0),0)}});return out}
 function calib(){const res={};ST_ORDER.forEach(st=>res[st]={n:0,won:0,cur:stRate(st)});
   (S.closed||[]).forEach(e=>{const set=new Set([...((e.item&&e.item.sh)||[]),e.st].filter(Boolean));set.forEach(st=>{if(!res[st])return;res[st].n++;if(e.res==='won')res[st].won++})});
-  ST_ORDER.forEach(st=>{const r=res[st];r.rate=r.n?r.won/r.n*100:null;const k=4;const b=(r.won+k*r.cur/100)/(r.n+k)*100;r.rec=Math.max(5,Math.min(95,Math.round(b/5)*5));r.ready=r.n>=CAL_MIN;r.off=r.ready&&Math.abs(r.rec-r.cur)>=10});return res}
+  const sr=stepRates();
+  ST_ORDER.forEach(st=>{const r=res[st];const k=4;r.closedRate=r.n?r.won/r.n*100:null;
+    if(r.n>=CAL_MIN){r.src='close';r.rate=r.closedRate;r.basis=r.n;r.b=(r.won+k*r.cur/100)/(r.n+k)*100}
+    else if(sr[st].ready){r.src='step';r.rate=sr[st].rate;r.basis=sr[st].n;r.b=(sr[st].rate/100*sr[st].n+k*r.cur/100)/(sr[st].n+k)*100;r.fwd=sr[st].fwd;r.back=sr[st].back}
+    else{r.src=null;r.need=Math.min(CAL_MIN-r.n,STEP_MIN-sr[st].n);r.sn=sr[st].n}
+    r.ready=!!r.src;r.rec=r.ready?Math.max(5,Math.min(95,Math.round(r.b/5)*5)):r.cur;r.off=r.ready&&Math.abs(r.rec-r.cur)>=10});return res}
 function calibHint(){const c=calib();const off=ST_ORDER.filter(st=>c[st].off);if(!off.length)return '';
   return `<button class="cal-hint" onclick="localStorage.setItem('sub_forecast','gew');render();setTimeout(()=>document.getElementById('calp')?.scrollIntoView({behavior:'smooth',block:'start'}),60)"><span>💡</span><div><b>Deine Gewichtung weicht von der Realität ab</b><small>${off.map(st=>`${ST_SHORT[st]} ${c[st].cur} % → ${c[st].rec} %`).join(' · ')}</small></div>${ic('right')}</button>`}
 function calibApply(st){const c=calib()[st];S.fcParams[ST_KEY[st]]=c.rec;save();render();toast(`${FCN[st]} jetzt ${c.rec} %`,'ok')}
 function calibPanel(){const c=calib();
   return `<div class="panel" id="calp" style="margin-top:14px"><div class="ptl" style="margin-bottom:6px">💡 Deine echte Abschlussquote</div>
-  <p class="hint" style="margin:0 0 10px">Aus deinen gewonnenen und verlorenen Opps: Wie viele, die diese Stage erreicht haben, wurden am Ende gewonnen? Empfehlung ab ${CAL_MIN} Abschlüssen pro Stage.</p>
-  ${[...ST_ORDER].reverse().map(st=>{const r=c[st];return `<div class="cal-r" style="--c:${ST_COL[st]}"><i></i><div class="cal-n"><b>${FCN[st]}</b><small>${r.n?`${r.won} von ${r.n} gewonnen`:'noch keine Abschlüsse'}</small></div>
-    <div class="cal-v"><small>eingestellt</small><b>${r.cur} %</b></div><div class="cal-v"><small>deine Quote</small><b>${r.rate!=null?fmtN(r.rate,0)+' %':'–'}</b></div>
-    <div class="cal-a">${r.off?`<button onclick="calibApply('${st}')">→ ${r.rec} %</button>`:r.ready?'<span class="ok">passt ✓</span>':`<span>noch ${CAL_MIN-r.n}</span>`}</div></div>`}).join('')}
+  <p class="hint" style="margin:0 0 10px">Am Anfang rechnet die App mit deinen Verschiebungen (vor = Treffer, zurück oder verloren = kein Treffer), ab ${STEP_MIN} Bewegungen pro Stage. Sobald ${CAL_MIN} Opps aus einer Stage wirklich abgeschlossen sind, zählen nur noch die echten Abschlüsse.</p>
+  ${[...ST_ORDER].reverse().map(st=>{const r=c[st];return `<div class="cal-r" style="--c:${ST_COL[st]}"><i></i><div class="cal-n"><b>${FCN[st]}</b><small>${r.src==='close'?`✓ ${r.won} von ${r.n} gewonnen`:r.src==='step'?`↕ ${r.fwd} vor, ${r.back} zurück`:'noch zu wenig Daten'}</small></div>
+    <div class="cal-v"><small>eingestellt</small><b>${r.cur} %</b></div><div class="cal-v"><small>${r.src==='step'?'geschätzt':'deine Quote'}</small><b>${r.ready?fmtN(r.rate,0)+' %':'–'}</b></div>
+    <div class="cal-a">${r.off?`<button onclick="calibApply('${st}')">→ ${r.rec} %</button>`:r.ready?'<span class="ok">passt ✓</span>':`<span>noch ${r.need}</span>`}</div></div>`}).join('')}
   </div>`}
 function vForecast(){
   const F=forecast(CUR); const P=S.fcParams; const sal=salaryWith(CUR,F.exp);
