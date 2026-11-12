@@ -1556,7 +1556,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='112';const APP_SEMVER='3.10.5';const APP_DATE='2026-11-12';
+const APP_VERSION='114';const APP_SEMVER='3.10.7';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2065,8 +2065,6 @@ function workCard(){const s=workState();if(!s)return '';const a=actOf(s.tk),g=ac
   const done=s.left<=0;const hr=new Date().getHours();const kick=hr<11?'Guten Morgen':hr<14?'Arbeitstag läuft':'Endspurt';
   return `<div class="rest-card rs-work"><div class="rs-sun"></div>${dateLine()}
     <div class="rs-top"><span class="rs-emo">${done?'🏁':hr<11?'☀️':hr<14?'💼':'🔥'}</span><div><div class="rs-kick">${kick}</div><h2 class="rs-h">Seit ${s.e.start} Uhr dabei</h2><div class="rs-sub"><span id="workClock">${hm(s.w)}</span> gearbeitet</div></div></div>
-    <div class="wk-bar"><i id="workBar" style="width:${Math.round(s.pct*100)}%"></i></div>
-    <div class="wk-row"><span>${done?'Soll erreicht ✓':`Soll ${fmtN(s.soll)} h`}</span><span id="workEnd">${done?`seit ${hhmm(s.endMin)} Uhr`:`Feierabend ca. <b>${hhmm(s.endMin)} Uhr</b>`}</span></div>
     <div class="rs-figs">${fig('Demos',`${a.demo}<em>/${g.demo}</em>`)}${fig('Opps',`${a.ops.length}<em>/${g.op}</em>`)}${fig('High-Prios',hpD?'✓':'offen')}</div>
     ${s.pAss?`<div class="rs-note">Inkl. ${s.PA.m} min Pause${s.PA.learned?` (dein Schnitt der letzten ${s.PA.n} Tage)`:''}. Trag deine Pausen ein, dann wird’s genauer.</div>`:''}</div>`}
 setInterval(()=>{const el=document.getElementById('workClock');if(!el||document.hidden)return;const s=workState();if(!s){render();return}el.textContent=hm(s.w);const b=document.getElementById('workBar');if(b)b.style.width=Math.round(s.pct*100)+'%'},30000);
