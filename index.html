@@ -1009,6 +1009,13 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.cal-hint{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;margin:0 0 12px;border-radius:16px;border:1.5px solid rgba(242,140,40,.45);background:rgba(242,140,40,.12);color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.cal-hint>span{font-size:22px}.cal-hint div{flex:1;min-width:0}.cal-hint b{display:block;font-size:14.5px}.cal-hint small{display:block;font-size:12.5px;color:var(--ink2);margin-top:2px}.cal-hint svg{width:18px;height:18px;color:var(--ink2)}
+.cal-r{display:grid;grid-template-columns:10px minmax(0,1fr) 58px 58px 70px;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.cal-r>i{width:10px;height:10px;border-radius:50%;background:var(--c)}.cal-n b{display:block;font-size:14px}.cal-n small{font-size:12px;color:var(--ink2)}
+.cal-v{text-align:center}.cal-v small{display:block;font-size:10.5px;color:var(--ink2)}.cal-v b{font-size:15px;font-variant-numeric:tabular-nums}
+.cal-a{text-align:right;font-size:12px;color:var(--ink2)}.cal-a .ok{color:#1FAF6B;font-weight:700}.cal-a button{border:0;border-radius:10px;padding:7px 9px;background:#F9DC4A;color:#111318;font:inherit;font-size:13px;font-weight:750;cursor:pointer;white-space:nowrap}
+
 .vf-svg{position:absolute;inset:0;overflow:visible}
 .vf-trail{fill:none;stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:vftr 2.6s cubic-bezier(.45,.05,.4,1) .5s forwards,vffade .8s ease 3s forwards}
 @keyframes vftr{to{stroke-dashoffset:0}}@keyframes vffade{to{opacity:0}}
@@ -1465,7 +1472,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='90';const APP_SEMVER='3.5.6';const APP_DATE='2026-11-12';
+const APP_VERSION='91';const APP_SEMVER='3.6.0';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2229,9 +2236,9 @@ function itemDel(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st].s
 function itemSave(){const {m,st,i}=IE;const F=S.forecast[m];const x=F.items[st][i];const cm=curMeta('iev');let nv=Math.abs(toEUR('iev')||0);if(cm&&x.cur==='CHF'&&Math.abs(x.orig-cm.orig)<.01)nv=+x.v;curApply(x,cm);const nn=document.getElementById('ien').value.trim();
   if(nv&&Math.abs(nv-x.v)>=.01){x.vh=x.vh||[];x.vh.push({d:todayK(),v:+x.v});const dl=nv-x.v;x.v=nv;toast(`Wert ${dl>0?'erhöht':'gesenkt'}: ${sgnE(dl)}`,'ok')}if(nn)x.n=nn;
   const f=x.opp?oppFind(x.opp):null;if(f){f.o.amount=x.v;if(nn)f.o.name=nn;curApply(f.o,x.cur?{cur:x.cur,orig:x.orig,fx:x.fx}:null)}
-  let tst=IST||st,tm=IMO||m;if(tst!==st||tm!==m){F.items[st].splice(i,1);fcRecalc(F,st);if(tst!==st)x.since=todayK();S.forecast[tm]=S.forecast[tm]||{};const N=S.forecast[tm];N.items=N.items||{};let it=N.items[tst];if(!it||!it.length){it=[];if(+N[tst])it.push({v:+N[tst],n:'Bisheriger Wert'})}it.push(x);N.items[tst]=it;fcRecalc(N,tst);if(f){f.o.stage=tst;f.o.fm=tm;if(tst!==st)f.o.stageSince=todayK()}
+  let tst=IST||st,tm=IMO||m;if(tst!==st||tm!==m){F.items[st].splice(i,1);fcRecalc(F,st);if(tst!==st){x.since=todayK();x.sh=[...new Set([...(x.sh||[st]),tst])]}S.forecast[tm]=S.forecast[tm]||{};const N=S.forecast[tm];N.items=N.items||{};let it=N.items[tst];if(!it||!it.length){it=[];if(+N[tst])it.push({v:+N[tst],n:'Bisheriger Wert'})}it.push(x);N.items[tst]=it;fcRecalc(N,tst);if(f){f.o.stage=tst;f.o.fm=tm;if(tst!==st)f.o.stageSince=todayK()}
     toast(`${x.n||'Opp'} → ${FCN[tst]}${tm!==m?' · '+MON[pD(tm).getMonth()]:''}`,'ok')}else fcRecalc(F,st);save();closeSheet();render()}
-function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);x.since=todayK();
+function fcItemStage(m,st,i,ns){if(ns===st)return;const F=S.forecast[m];if(!F||!F.items||!F.items[st]||!F.items[st][i])return;const x=F.items[st].splice(i,1)[0];fcRecalc(F,st);x.since=todayK();x.sh=[...new Set([...(x.sh||[st]),ns])];
   let it=F.items[ns];if(!it||!it.length){it=[];if(+F[ns])it.push({v:+F[ns],n:'Bisheriger Wert'})}it.push(x);F.items[ns]=it;fcRecalc(F,ns);
   if(x.opp){const f=oppFind(x.opp);if(f){f.o.stage=ns;f.o.stageSince=todayK()}}save();render();toast(`${x.n||'Opp'} → ${FCN[ns]}`,'ok')}
 function fcRecalc(F,st){const it=F.items[st]||[];F[st]=it.reduce((a,y)=>a+(+y.v||0),0);if(!it.length)delete F.items[st]}
@@ -2937,11 +2944,28 @@ function vOpps(){const cm=ymOf(new Date());const OT=subCur('opps',['now','later'
 function closedView(){const cs=closedStats();const c=(S.closed||[]).slice().reverse().slice(0,25);
   return `<div class="panel"><div class="kr3"><div><small>Gewinnquote</small><b class="num">${cs.rate!=null?fmtN(cs.rate,0)+' %':'–'}</b><span>${cs.won} gewonnen, ${cs.lost} verloren</span></div><div><small>Closed Lost ${MONS[new Date().getMonth()]}</small><b class="num">${cs.lostM}</b><span>${fmtE(cs.lostMV)}</span></div><div><small>Häufigster Grund</small><b>${cs.reasons[0]?cs.reasons[0][0]:'–'}</b><span>${cs.reasons[0]?cs.reasons[0][1]+'×':'noch keine Gründe'}</span></div></div></div>
   ${c.length?`<div class="panel flush" style="margin-top:14px"><div class="list">${c.map(x=>`<div class="li"><div class="ico ${x.res==='won'?'won':'lost'}" style="font-size:20px;display:grid;place-items:center">${x.res==='won'?'🤝':'💔'}</div><div class="t"><b>${esc(x.n||'Opp')}${chfTag(x)}</b><small>${dLabel(x.date)} · ${x.res==='won'?'Gewonnen':'Verloren'}${x.reason?' · '+x.reason:''}</small></div><div class="v ${x.res==='won'?'':'mut'}">${fmtE(x.v)}</div><button class="cl-re" onclick="oppReopenSheet('${x.id}')" aria-label="Zurückholen" title="Zurück in die Pipeline">↩️</button></div>`).join('')}</div></div>`:'<div class="empty-s" style="margin-top:14px">Noch keine abgeschlossenen Opps.</div>'}`}
+/* ---------- Gewichtung kalibrieren ---------- */
+const ST_KEY={offer:'offerRate',proposal:'proposalRate',expected:'expectedRate',signed:'signedRate'};
+const CAL_MIN=8;
+function calib(){const res={};ST_ORDER.forEach(st=>res[st]={n:0,won:0,cur:stRate(st)});
+  (S.closed||[]).forEach(e=>{const set=new Set([...((e.item&&e.item.sh)||[]),e.st].filter(Boolean));set.forEach(st=>{if(!res[st])return;res[st].n++;if(e.res==='won')res[st].won++})});
+  ST_ORDER.forEach(st=>{const r=res[st];r.rate=r.n?r.won/r.n*100:null;const k=4;const b=(r.won+k*r.cur/100)/(r.n+k)*100;r.rec=Math.max(5,Math.min(95,Math.round(b/5)*5));r.ready=r.n>=CAL_MIN;r.off=r.ready&&Math.abs(r.rec-r.cur)>=10});return res}
+function calibHint(){const c=calib();const off=ST_ORDER.filter(st=>c[st].off);if(!off.length)return '';
+  return `<button class="cal-hint" onclick="localStorage.setItem('sub_forecast','gew');render();setTimeout(()=>document.getElementById('calp')?.scrollIntoView({behavior:'smooth',block:'start'}),60)"><span>💡</span><div><b>Deine Gewichtung weicht von der Realität ab</b><small>${off.map(st=>`${ST_SHORT[st]} ${c[st].cur} % → ${c[st].rec} %`).join(' · ')}</small></div>${ic('right')}</button>`}
+function calibApply(st){const c=calib()[st];S.fcParams[ST_KEY[st]]=c.rec;save();render();toast(`${FCN[st]} jetzt ${c.rec} %`,'ok')}
+function calibPanel(){const c=calib();
+  return `<div class="panel" id="calp" style="margin-top:14px"><div class="ptl" style="margin-bottom:6px">💡 Deine echte Abschlussquote</div>
+  <p class="hint" style="margin:0 0 10px">Aus deinen gewonnenen und verlorenen Opps: Wie viele, die diese Stage erreicht haben, wurden am Ende gewonnen? Empfehlung ab ${CAL_MIN} Abschlüssen pro Stage.</p>
+  ${[...ST_ORDER].reverse().map(st=>{const r=c[st];return `<div class="cal-r" style="--c:${ST_COL[st]}"><i></i><div class="cal-n"><b>${FCN[st]}</b><small>${r.n?`${r.won} von ${r.n} gewonnen`:'noch keine Abschlüsse'}</small></div>
+    <div class="cal-v"><small>eingestellt</small><b>${r.cur} %</b></div><div class="cal-v"><small>deine Quote</small><b>${r.rate!=null?fmtN(r.rate,0)+' %':'–'}</b></div>
+    <div class="cal-a">${r.off?`<button onclick="calibApply('${st}')">→ ${r.rec} %</button>`:r.ready?'<span class="ok">passt ✓</span>':`<span>noch ${CAL_MIN-r.n}</span>`}</div></div>`}).join('')}
+  </div>`}
 function vForecast(){
   const F=forecast(CUR); const P=S.fcParams; const sal=salaryWith(CUR,F.exp);
   const set=f=>`onchange="fcSet('${f}',this.value)"`; const v=n=>n?String(n).replace('.',','):'';
   const ST=subCur('forecast',['ueb','gew']);const nO=(()=>{try{return openItems(CUR).length}catch(e){return 0}})();
   return `${head()}
+  ${calibHint()}
   ${subBar('forecast',[['ueb','Übersicht'],['gew','Gewichtung']],ST)}
   ${ST==='ueb'?`
   ${CUR===ymOf(new Date())?carryBanner():''}
@@ -2981,7 +3005,7 @@ function vForecast(){
       <div class="field"><label>Neue Opp in %</label><input class="inp" type="number" value="${P.weekRate}" onchange="S.fcParams.weekRate=+this.value;save();render()"></div>
     </div>
     ${F.autoWeeks?'':`<button class="btn sm" style="margin-top:12px" onclick="delete S.forecast['${CUR}'].weeks;save();render()">Wochen wieder automatisch rechnen</button>`}
-  </div>`:''}`;
+  </div>${calibPanel()}`:''}`;
 }
 function fcSet(f,v){const cv=calcEval(v);if(cv!=null)v=String(cv);S.forecast[CUR]=S.forecast[CUR]||{};S.forecast[CUR][f]=v===''?(f==='weeks'?null:0):numIn(v);if((f==='weeks'||f==='closed')&&v==='')delete S.forecast[CUR][f];save();render()}
 function salaryWith(m,amount){const backup=S.deals;const extra=amount-rev(m).tot;S.deals=[...backup,{id:'tmp',date:`${m}-28`,amount:Math.max(0,extra),channel:'in',name:''}];const s=salary(m);S.deals=backup;return s}
