@@ -1551,7 +1551,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='104';const APP_SEMVER='3.9.0';const APP_DATE='2026-11-12';
+const APP_VERSION='105';const APP_SEMVER='3.9.1';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2253,13 +2253,13 @@ function focusActions(){const k=todayK(),cm=ymOf(new Date()),nm=addM(cm,1);const
   const nxt=openItems(nm).reduce((a,x)=>a+(+x.v||0)*stRate(x.st)/100,0);
   let T=[];try{T=trCalc().filter(t=>t.good<0)}catch(e){}
   const names=L=>L.slice(0,3).map(x=>esc(x.n||'Opp')).join(', ')+(L.length>3?` +${L.length-3}`:'');
-  if(hot.length&&left<=6&&!(bc&&bc.done))A.push({id:'close',e:'🏁',t:`${hot.length} ${hot.length===1?'Abschluss':'Abschlüsse'} holen`,d:`Noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'} im ${MON[pD(cm).getMonth()]}: ${names(hot)}. Heute nach dem nächsten Schritt fragen.`,go:"location.hash='#opps'",p:100});
-  if(stale.length)A.push({id:'follow',e:'📞',t:`${stale.length} ${stale.length===1?'Opp':'Opps'} nachfassen`,d:`Liegen länger als bei dir üblich: ${names(stale)}.`,go:"location.hash='#opps'",p:70+Math.min(20,stale.length*4)+(h>=12?15:0)});
+  if(hot.length&&left<=6&&!(bc&&bc.done))A.push({id:'close',e:'🏁',t:`${hot.length} ${hot.length===1?'Abschluss':'Abschlüsse'} holen`,d:`Ziel: noch im ${MON[pD(cm).getMonth()]} einbuchen, ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'} bleiben. ${names(hot)}: heute nach Unterschrift bzw. Unterlagen fragen.`,go:"location.hash='#opps'",p:100});
+  if(stale.length)A.push({id:'follow',e:'📞',t:`${names(stale.slice(0,2))} nachfassen`,d:`Ziel: nächsten Schritt festmachen, bevor die Opp kalt wird. ${stale.length>2?`Insgesamt ${stale.length} Opps liegen`:stale.length===2?'Beide liegen':'Sie liegt'} länger als bei dir üblich in ihrer Stage.`,go:"location.hash='#opps'",p:70+Math.min(20,stale.length*4)+(h>=12?15:0)});
   const cover=bc&&!bc.done?bc.cover:null;const thin=cover!=null&&cover<1;const tpipe=T.find(t=>t.id==='pipe'||t.id==='ops');
   if(thin||tpipe||phase<.3){const n=thin&&cover<.6?3:2;const srcTip=best?` Am besten aus ${best==='old'?'deinem Bestand':'neuen Leads'}: Da gewinnst du ${fmtN(ss[best].rate,0)} % statt ${fmtN(ss[best==='new'?'old':'new'].rate,0)} %.`:'';
-    A.push({id:'build',e:'🌱',t:`Heute ${n} neue Opps schreiben`,d:(thin?`Deine gewichtete Pipeline deckt nur ${fmtN(cover*100,0)} % der Lücke bis 100 %.`:tpipe?`Neue Pipeline ist gerade schwächer als sonst.`:`Monatsanfang: Jetzt Pipeline aufbauen, die am Monatsende abschließt.`)+srcTip,go:"opSheet()",p:(thin?85:60)+(h<12?15:0)})}
+    A.push({id:'build',e:'🌱',t:`Heute ${n} neue Opps schreiben`,d:(thin?`Ziel: genug Pipeline für 100 %. Aktuell deckt deine gewichtete Pipeline nur ${fmtN(cover*100,0)} % der Lücke.`:tpipe?`Ziel: neue Pipeline wieder auf altes Niveau. Sie ist gerade schwächer als sonst.`:`Ziel: Pipeline, die am Monatsende abschließt. Jetzt ist die beste Zeit dafür.`)+srcTip,go:"opSheet()",p:(thin?85:60)+(h<12?15:0)})}
   if(phase>=.6&&nxt<(rev(nm).target||0)*.3)A.push({id:'next',e:'📅',t:`Pipeline für ${MON[pD(nm).getMonth()]} vorbereiten`,d:`Für ${MON[pD(nm).getMonth()]} liegen erst ${fmtE(nxt)} gewichtet bereit. Opps, die erst später kommen, direkt in den ${MON[pD(nm).getMonth()]} legen.`,go:"opSheet()",p:50});
-  T.filter(t=>!['pipe','ops'].includes(t.id)).slice(0,1).forEach(t=>A.push({id:'tr_'+t.id,e:t.e,t:`${t.n}: wieder hoch`,d:trTip(t),go:"localStorage.setItem('sub_verlauf','trend');location.hash='#verlauf'",p:45}));
+  T.filter(t=>!['pipe','ops'].includes(t.id)&&!(t.id==='rev'&&A.some(a=>a.id==='close'))).sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff)).slice(0,2).forEach((t,i)=>{const a=trAction(t);A.push({id:'tr_'+t.id,e:t.e,t:a.t,d:a.d,go:t.id==='rev'||t.id==='move'||t.id==='dwell'?"location.hash='#opps'":"",p:(t.id==='rev'?75:48)-i*3+Math.min(20,Math.abs(t.diff)/4)})});
   if(!A.length)A.push({id:'goal',e:'🎯',t:'Alles im Plan',d:'Keine offenen Baustellen. Tagesziel angehen und eine neue Opp schreiben.',go:'',p:10});
   return A.sort((a,b)=>b.p-a.p).slice(0,3)}
 function focusDone(id){const k=todayK();S.focusDone=S.focusDone||{};const L=S.focusDone[k]=S.focusDone[k]||[];const i=L.indexOf(id);if(i<0){L.push(id);toast('Erledigt 💪','ok')}else L.splice(i,1);save();render()}
@@ -3372,6 +3372,27 @@ function trCalc(){const y=ymd(new Date(Date.now()-864e5));const rS=ymd(new Date(
     const spark=[7,6,5,4,3,2,1,0].map(w=>{const e=ymd(new Date(pD(y)-w*7*864e5)),s=ymd(new Date(pD(e)-6*864e5));const X=trWin(s,e);return X.W.wd.length?m.c(X.K,X.W):null});
     out.push({...m,cur,base,diff,dir,good,spark,bS,bE})});out.rS=rS;out.rE=y;return out}
 function trSev(t){const d=Math.abs(t.diff);const crit=t.pt?d>=20:d>=40,warn=t.pt?d>=10:d>=20;return crit?{c:'crit',l:'Kritisch'}:warn?{c:'warn',l:'Achtung'}:{c:'watch',l:'Beobachten'}}
+function trAction(t){const cm=ymOf(new Date());const now=openItems(cm);const hot=now.filter(x=>x.st==='expected'||x.st==='signed').sort((a,b)=>(+b.v||0)-(+a.v||0));const prop=now.filter(x=>x.st==='proposal').sort((a,b)=>(+b.v||0)-(+a.v||0));
+  const nm=L=>L.slice(0,2).map(x=>esc(x.n||'Opp')).join(' und ');const why=`Aktuell ${t.f(t.cur)} statt ${t.f(t.base)}.`;const wk=insWeekday();
+  return {
+   rev:hot.length?{t:`${nm(hot)} heute anrufen`,d:`Ziel: Unterschrift bzw. Starttermin festmachen. ${hot.length>1?'Die beiden':'Die Opp'} ${hot.length>1?'sind':'ist'} am nächsten am Umsatz. Dein Umsatz pro Woche: ${why}`}:prop.length?{t:`${nm(prop)} nach einem Entscheidungstermin fragen`,d:`Ziel: Proposals in Richtung Abschluss schieben. Dein Umsatz pro Woche: ${why}`}:{t:'Heute 2 neue Angebote rausschicken',d:`Ziel: Ohne Opps in der Pipeline kommt kein Umsatz nach. Dein Umsatz pro Woche: ${why}`},
+   demo:{t:'Heute 2 Demo-Termine vereinbaren',d:`Ziel: zurück auf ${t.f(t.base)} Demos pro Tag. ${why}${wk?` Leg sie am besten auf einen ${WDL[wk.best.d]}, da läuft es bei dir am besten.`:''}`},
+   ops:{t:'Heute 1 Angebot aus einer Demo dieser Woche schicken',d:`Ziel: wieder ${t.f(t.base)} neue Opps pro Tag. ${why} Wer aus deinen letzten Demos hatte Interesse, aber noch kein Angebot?`},
+   pipe:{t:'Heute 2 neue Opps anlegen',d:`Ziel: neue Pipeline wieder auf ${t.f(t.base)} pro Woche. ${why}`},
+   size:{t:'Im nächsten Angebot das größere Paket zuerst zeigen',d:`Ziel: Ø Deal wieder auf ${t.f(t.base)}. ${why}`},
+   oppv:{t:'Im nächsten Angebot das größere Paket zuerst zeigen',d:`Ziel: Ø Opp-Wert wieder auf ${t.f(t.base)}. ${why}`},
+   win:{t:'In der nächsten Demo Budget, Entscheider und Zeitplan klären',d:`Ziel: Gewinnquote zurück auf ${t.f(t.base)}. ${why} So sortierst du Absagen früher aus.`},
+   lost:{t:'Bei 2 offenen Opps aktiv nach Bedenken fragen',d:`Ziel: weniger verlorene Opps. ${why}`},
+   goal:{t:'Bis 12 Uhr die 2 Demo-Calls erledigen',d:`Ziel: Tagesziel wieder an ${t.f(t.base)} der Tage schaffen. ${why}`},
+   move:{t:prop.length?`${nm(prop)}: nächsten Schritt vereinbaren`:'15 Minuten: bei jeder offenen Opp nach dem nächsten Schritt fragen',d:`Ziel: Opps wieder in Bewegung bringen. ${why}`},
+   dwell:{t:prop.length?`${nm(prop)}: nächsten Schritt vereinbaren`:'Älteste Opp heute nachfassen',d:`Ziel: kürzere Liegezeiten. ${why}`},
+   hp:{t:'High-Prios direkt nach Arbeitsbeginn erledigen',d:`Ziel: wieder an ${t.f(t.base)} der Tage. ${why}`},
+   mis:{t:'Heute eine Tagesmission auswählen und erledigen',d:`Ziel: ${t.f(t.base)} Missionen pro Tag. ${why}`},
+   hpo:{t:'Einen 90-Minuten-Block nur für Calls einplanen',d:`Ziel: weniger Stunden pro neuer Opp. ${why}`},
+   rph:{t:'Heute zuerst die Opps mit dem höchsten Wert bearbeiten',d:`Ziel: mehr Umsatz pro Stunde. ${why}`},
+   fcsub:{t:'Forecast-Abgabe für Montag im Kalender blocken',d:`Ziel: pünktlich abgeben. ${why}`},
+   cover:{t:'Heute Start, Pausen und Ende eintragen',d:`Ziel: vollständige Daten für bessere Tipps. ${why}`},
+   free:{t:'Heute Abend die App zu lassen',d:`Ziel: echte Erholung. ${why}`}}[t.id]||{t:`${t.n} verbessern`,d:why}}
 function trTip(t){const wk=insWeekday();const cs=closedStats();const cm=ymOf(new Date());const ex=openItems(cm).filter(x=>x.st==='expected'||x.st==='signed');
   return {demo:wk?`Dein stärkster Tag ist der ${WDL[wk.best.d]}. Blocke dir dort und an einem weiteren Tag feste Demo-Slots, z. B. 9–11 Uhr.`:'Blocke dir morgens zwei feste Slots nur für Demos, bevor E-Mails und Admin dazwischenkommen.',
    ops:'Geh deine Demos der letzten zwei Wochen durch: Wer hatte Interesse, aber noch kein Angebot bekommen? Daraus werden schnell neue Opps.',
