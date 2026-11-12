@@ -1551,7 +1551,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='105';const APP_SEMVER='3.9.1';const APP_DATE='2026-11-12';
+const APP_VERSION='106';const APP_SEMVER='3.9.2';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2409,13 +2409,15 @@ function oppAction(act){const f=oppFind(OPID);if(!f)return;const m=f.o.fm||f.k.s
   if((act==='won'||act==='lost')&&!oppAction._ok){oppConfirm({n:f.o.name,v:f.o.amount,st:f.o.stage,cur:f.o.cur,orig:f.o.orig},act,()=>{oppAction._ok=1;OPID=f.o.id;oppAction(act);oppAction._ok=0});return}
   f.o.stage=act==='won'?'won':'lost';f.o.stageSince=todayK();const ce=closedLog(f.o.stage,{...f.o,opp:f.o.id},f.o.fm||f.k.slice(0,7),'');save();render();if(act==='won')setTimeout(()=>dealSheet(null,false,{closedId:ce.id,amount:f.o.amount,name:f.o.name,...(f.o.cur?{cur:f.o.cur,orig:f.o.orig}:{}),...((f.o.fm||'')>ymOf(new Date())?{date:f.o.fm+'-01'}:{})}),300);else fxLost(ce)}
 /* Rückwärtsrechner */
+function revSum(from,to){let t=0;S.deals.forEach(d=>{if(!d.retro){if(d.date>=from&&d.date<=to)t+=+d.amount;return}const m=d.date.slice(0,7);const dim=new Date(+m.slice(0,4),+m.slice(5,7),0).getDate();const a=m+'-01',b=m+'-'+pad(dim);const s0=from>a?from:a,e0=to<b?to:b;if(s0>e0)return;t+=+d.amount*(dDiff(s0,e0)+1)/dim});return t}
+function avgDeal(){const L=realDeals();if(!L.length)return null;const from=addM(ymOf(new Date()),-5)+'-01';const R=L.filter(d=>d.date>=from);const X=R.length>=3?R:L;return{avg:X.reduce((a,d)=>a+ +d.amount,0)/X.length,n:X.length,recent:X===R}}
 function funnelData(){const st=S.settings.startMonth;const cur=ymOf(new Date());let demos=0,opps=0,leads=0;Object.keys(S.act||{}).forEach(k=>{if(k.slice(0,7)<st)return;demos+=+S.act[k].demo||0;opps+=(S.act[k].ops||[]).length});
   (S.leads||[]).forEach(l=>{if(l.date.slice(0,7)>=st)leads+=+l.count||0});
   const deals=S.deals.filter(d=>!d.retro&&!d.storno&&+d.amount>0);const dealsSince=deals.filter(d=>d.date.slice(0,7)>=st);
   const won=allOpps().filter(o=>o.stage==='won').length;
-  const avgAll=deals.length?deals.reduce((a,d)=>a+ +d.amount,0)/deals.length:0;
+  const AD=avgDeal();const avgAll=AD?AD.avg:0;
   const FN=S.funnel||{};
-  const autoDemoOpp=demos>=5&&opps?opps/demos*100:null;const cst=closedStats();const autoOppDeal=cst.won+cst.lost>=5?cst.rate:(opps>=5&&dealsSince.length>=2?Math.min(100,dealsSince.length/opps*100):null);
+  const autoDemoOpp=demos>=5&&opps?opps/demos*100:null;const cst=closedStats();const firstOpp=Object.keys(S.act||{}).filter(k=>(S.act[k].ops||[]).length).sort()[0];const dealsOppEra=firstOpp?deals.filter(d=>d.date>=firstOpp).length:0;const autoOppDeal=cst.won+cst.lost>=5?cst.rate:(opps>=5&&dealsOppEra>=2?Math.min(100,dealsOppEra/opps*100):null);
   return {demos,opps,leads,deals:dealsSince.length,won,
     avg:FN.avg!=null?FN.avg:(avgAll||null),avgAuto:FN.avg==null&&!!avgAll,
     rDO:FN.rDO!=null?FN.rDO:(autoDemoOpp??50),rDOAuto:FN.rDO==null&&autoDemoOpp!=null,
@@ -3285,13 +3287,13 @@ function insWin(days){const out=[];const d=new Date();for(let i=0;i<days;i++){ou
 function realDeals(){return S.deals.filter(d=>!d.retro&&!d.storno&&+d.amount>0)}
 function insBase(){let ks=insWin(90).filter(k=>k<=todayK());const tr=ks.filter(k=>{const e=S.days[k];return e&&!isFree(e.type)&&worked(e)!=null});const from=tr.length?tr[tr.length-1]:ks[ks.length-1];ks=ks.filter(k=>k>=from);let h=0,wd=0,demo=0,ops=0,opVal=0;
   ks.forEach(k=>{const e=S.days[k];const w=e&&!isFree(e.type)?worked(e):null;if(w!=null){h+=w;wd++}const a=actOf(k);demo+=a.demo;ops+=a.ops.length;opVal+=a.ops.reduce((s,o)=>s+(+o.amount||0),0)});
-  const weeks=Math.max(1,dDiff(from,todayK())/7);const dl=realDeals().filter(d=>d.date>=from);const rv=dl.reduce((s,d)=>s+ +d.amount,0);
+  const weeks=Math.max(1,dDiff(from,todayK())/7);const dl=realDeals().filter(d=>d.date>=from);const rv=revSum(from,todayK());
   const cl=(S.closed||[]).filter(e=>e.date>=from);const won=cl.filter(e=>e.res==='won').length,lost=cl.length-won;
   const allCl=S.closed||[];const wonA=allCl.filter(e=>e.res==='won').length;
-  return{h,wd,demo,ops,opVal,deals:dl.length,rv,won,lost,winRate:allCl.length>=5?wonA/allCl.length:null,from,weeks}}
+  return{h,wd,demo,ops,opVal,deals:dl.length,rv,won,lost,winRate:(()=>{const c=closedStats();return c.won+c.lost>=5?c.won/(c.won+c.lost):null})(),from,weeks}}
 function insDealSize(){const L=realDeals();if(!L.length)return null;const cm=ymOf(new Date());const ms=[5,4,3,2,1,0].map(d=>addM(cm,-d));
   const by=ms.map(m=>{const x=L.filter(d=>d.date.slice(0,7)===m);return{m,n:x.length,avg:x.length?x.reduce((s,d)=>s+ +d.amount,0)/x.length:null}});
-  const recent=L.filter(d=>d.date>=addM(cm,-5)+'-01');const avg=(recent.length?recent:L).reduce((s,d)=>s+ +d.amount,0)/(recent.length||L.length);
+  const AD=avgDeal();const avg=AD.avg;
   const big=L.filter(d=>+d.amount>(+S.comp?.bigThreshold||2500)).length;return{avg,by,n:L.length,bigShare:big/L.length,max:Math.max(...L.map(d=>+d.amount))}}
 function insDwell(){const out={};ST_ORDER.forEach(st=>out[st]=[]);(S.trans||[]).forEach(e=>{if(e.dw!=null&&out[e.f])out[e.f].push(e.dw)});
   (S.closed||[]).forEach(e=>{if(e.item&&e.item.since&&out[e.st])out[e.st].push(Math.max(0,dDiff(e.item.since,e.date)))});
@@ -3303,16 +3305,16 @@ function insLongDays(){const lo=[],hi=[];insWin(120).forEach(k=>{const e=S.days[
 function insFcAcc(){const cm=ymOf(new Date());const ms=[...new Set((S.fcSubs||[]).map(x=>x.m))].filter(m=>m<cm);const rows=ms.map(m=>{const L=(S.fcSubs||[]).filter(x=>x.m===m);const first=L[0];const act=rev(m).tot;return first&&first.exp?{m,fc:first.exp,act,dev:(first.exp-act)/Math.max(1,act)*100}:null}).filter(Boolean);if(!rows.length)return null;return{rows,avg:rows.reduce((s,r)=>s+r.dev,0)/rows.length}}
 function insTimes(){const st=[],en=[],w=[];insWin(60).forEach(k=>{const e=S.days[k];if(!e||isFree(e.type))return;if(e.start)st.push(toMin(e.start));if(e.end)en.push(toMin(e.end));const x=worked(e);if(x!=null)w.push(x)});if(w.length<5)return null;const A=a=>a.reduce((x,y)=>x+y,0)/a.length;return{start:st.length?A(st):null,end:en.length?A(en):null,avg:A(w),n:w.length}}
 function insBackcalc(){const cm=ymOf(new Date());const r=rev(cm);if(!r.target)return null;const gap=r.target-r.tot;const ds=insDealSize();const b=insBase();if(gap<=0)return{done:true};
-  const avg=ds&&ds.avg||null;if(!avg)return null;const deals=Math.ceil(gap/avg);
-  const opsPerDeal=b.winRate?1/b.winRate:(b.deals?b.ops/b.deals:null);const demosPerOpp=b.ops?b.demo/b.ops:null;
+  const FD=funnelData();const avg=FD.avg||null;if(!avg)return null;const deals=Math.ceil(gap/avg);
+  const opsPerDeal=FD.rOD?100/FD.rOD:null;const demosPerOpp=FD.rDO?100/FD.rDO:null;
   const fc=forecast(cm);const pipe=fc.wS+fc.wO+fc.wP+fc.wE;const left=workdaysLeft(cm,todayK());
-  return{gap,avg,deals,opps:opsPerDeal?Math.ceil(deals*opsPerDeal):null,demos:null,pipe,cover:gap>0?pipe/gap:null,left,opsPerDeal,demosPerOpp,winRate:b.winRate}}
+  return{gap,avg,deals,rOD:FD.rOD,rODAuto:FD.rODAuto,opps:opsPerDeal?Math.ceil(deals*opsPerDeal):null,demos:null,pipe,cover:gap>0?pipe/gap:null,left,opsPerDeal,demosPerOpp,winRate:b.winRate}}
 function insCycle(){const cr={};Object.entries(S.act||{}).forEach(([k,a])=>(a.ops||[]).forEach(o=>cr[o.id]=k));const d=(S.closed||[]).filter(e=>e.res==='won'&&e.opp&&cr[e.opp]).map(e=>dDiff(cr[e.opp],e.date));return d.length>=3?{med:median(d),n:d.length,min:Math.min(...d),max:Math.max(...d)}:null}
 function insMonthEnd(){const L=realDeals();const ms=[...new Set(L.map(d=>d.date.slice(0,7)))].filter(m=>m<ymOf(new Date()));if(ms.length<2)return null;let tot=0,end=0;L.forEach(d=>{const m=d.date.slice(0,7);if(!ms.includes(m))return;tot+=+d.amount;const last=new Date(+m.slice(0,4),+m.slice(5,7),0).getDate();if(+d.date.slice(8)>last-7)end+=+d.amount});return tot?{share:end/tot*100,n:ms.length}:null}
 function insCards(){const C=[];const b=insBase();const fmtH=h=>h>=10?fmtN(h,0)+' h':fmtN(h,1)+' h';
   const bc=insBackcalc();
   if(bc&&bc.done)C.push({e:'🏆',t:'Ziel 100 %',v:'erreicht',p:'Alles ab jetzt ist Bonus.'});
-  else if(bc)C.push({e:'🎯',tone:'#F2B33D',t:'Bis 100 % fehlen',v:fmtE(bc.gap),p:`Bei Ø ${fmtE(bc.avg)} pro Deal sind das <b>${bc.deals} ${bc.deals===1?'Abschluss':'Abschlüsse'}</b>${bc.opps?`, also ca. <b>${bc.opps} Opps</b>`:''}${bc.demos?` bzw. <b>${bc.demos} Demos</b>`:''}. Noch ${one(bc.left)} Arbeitstage.`,w:1});
+  else if(bc)C.push({e:'🎯',tone:'#F2B33D',t:'Bis 100 % fehlen',v:fmtE(bc.gap),p:`Bei Ø ${fmtE(bc.avg)} pro Deal sind das <b>${bc.deals} ${bc.deals===1?'Abschluss':'Abschlüsse'}</b>${bc.opps?`. Bei ${fmtN(bc.rOD,0)} % Abschlussquote brauchst du dafür ca. <b>${bc.opps} Opps</b>`:''}. Noch ${one(bc.left)} Arbeitstage. Gleiche Rechnung wie im Forecast.`,w:1});
   if(bc&&!bc.done&&bc.cover!=null)C.push({e:bc.cover>=1?'🛡️':'⚠️',t:'Pipeline-Deckung',v:fmtN(bc.cover,1)+'×',p:bc.cover>=1.2?'Deine gewichtete Pipeline deckt die Lücke bis 100 % gut ab.':bc.cover>=1?'Knapp: Die Pipeline reicht gerade so. Jeder Ausfall tut weh.':`Die gewichtete Pipeline (${fmtE(bc.pipe)}) reicht nicht. Neue Opps haben Vorrang.`,cls:bc.cover>=1?'':'iw'});
   const since=`seit ${dLabel(b.from)} (${b.wd} ${b.wd===1?'Arbeitstag':'Arbeitstage'} mit Zeiterfassung)`;
   if(b.wd>=5&&b.ops){C.push({e:'⏱️',t:'Arbeitszeit pro Opp',v:fmtH(b.h/b.ops),tone:'#2F8CF0',p:`${fmtN(b.h,0)} h und ${b.ops} neue Opps ${since}${b.deals?`. Pro Abschluss: <b>${fmtH(b.h/b.deals)}</b>`:''}.`})}
@@ -3340,7 +3342,7 @@ const TR_DEF=[
  {id:'demo',since:()=>firstKey(Object.fromEntries(Object.entries(S.act||{}).filter(([,a])=>a&&(a.demo||(a.ops||[]).length)))),n:'Demos pro Arbeitstag',e:'🎬',g:1,f:v=>fmtN(v,1),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).demo,0)/W.wd.length:null},
  {id:'ops',since:()=>firstKey(Object.fromEntries(Object.entries(S.act||{}).filter(([,a])=>a&&(a.demo||(a.ops||[]).length)))),n:'Neue Opps pro Arbeitstag',e:'🎯',g:1,f:v=>fmtN(v,1),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).ops.length,0)/W.wd.length:null},
  {id:'pipe',since:()=>firstKey(Object.fromEntries(Object.entries(S.act||{}).filter(([,a])=>a&&(a.demo||(a.ops||[]).length)))),n:'Neue Pipeline pro Woche',e:'🌱',g:1,f:v=>fmtE(v),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).ops.reduce((s,o)=>s+(+o.amount||0),0),0)/W.weeks:null},
- {id:'rev',n:'Umsatz pro Woche',e:'💶',g:1,f:v=>fmtE(v),c:(K,W)=>realDeals().filter(d=>d.date>=K[0]&&d.date<=K[K.length-1]).reduce((a,d)=>a+ +d.amount,0)/W.weeks},
+ {id:'rev',n:'Umsatz pro Woche',e:'💶',g:1,f:v=>fmtE(v),c:(K,W)=>revSum(K[0],K[K.length-1])/W.weeks},
  {id:'size',n:'Ø Deal-Größe',e:'📦',g:1,f:v=>fmtE(v),c:(K)=>{const L=realDeals().filter(d=>d.date>=K[0]&&d.date<=K[K.length-1]);return L.length>=2?L.reduce((a,d)=>a+ +d.amount,0)/L.length:null}},
  {id:'win',n:'Gewinnquote',e:'🤝',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K)=>{const L=(S.closed||[]).filter(e=>e.date>=K[0]&&e.date<=K[K.length-1]);return L.length>=3?L.filter(e=>e.res==='won').length/L.length*100:null}},
  {id:'goal',since:()=>firstKey(Object.fromEntries(Object.entries(S.act||{}).filter(([,a])=>a&&(a.demo||(a.ops||[]).length)))),n:'Tagesziel geschafft',e:'✅',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K,W)=>W.wd.length?W.wd.filter(actHit).length/W.wd.length*100:null},
@@ -3350,7 +3352,7 @@ const TR_DEF=[
  {id:'oppv',since:()=>firstKey(Object.fromEntries(Object.entries(S.act||{}).filter(([,a])=>a&&(a.demo||(a.ops||[]).length)))),n:'Ø Wert neuer Opps',e:'💎',g:1,f:v=>fmtE(v),c:(K,W)=>{const L=W.wd.flatMap(k=>actOf(k).ops).filter(o=>+o.amount>0);return L.length>=3?L.reduce((a,o)=>a+ +o.amount,0)/L.length:null}},
  {id:'lost',n:'Verlorene Opps pro Woche',e:'💔',g:-1,f:v=>fmtN(v,1),since:()=>(S.closed||[]).map(e=>e.date).sort()[0],c:(K,W)=>(S.closed||[]).filter(e=>e.res==='lost'&&e.date>=K[0]&&e.date<=K[K.length-1]).length/W.weeks},
  {id:'hpo',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Arbeitsstunden pro neuer Opp',e:'⏳',g:-1,f:v=>fmtN(v,1)+' h',c:(K,W)=>{const o=W.tr.reduce((a,k)=>a+actOf(k).ops.length,0);return W.tr.length>=5&&o>=2?W.tr.reduce((a,k)=>a+worked(S.days[k]),0)/o:null}},
- {id:'rph',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Umsatz pro Arbeitsstunde',e:'⚙️',g:1,f:v=>fmtE(v),c:(K,W)=>{if(W.tr.length<5)return null;const h=W.tr.reduce((a,k)=>a+worked(S.days[k]),0);const r=realDeals().filter(d=>d.date>=W.tr[0]&&d.date<=K[K.length-1]).reduce((a,d)=>a+ +d.amount,0);return h?r/h:null}},
+ {id:'rph',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Umsatz pro Arbeitsstunde',e:'⚙️',g:1,f:v=>fmtE(v),c:(K,W)=>{if(W.tr.length<5)return null;const h=W.tr.reduce((a,k)=>a+worked(S.days[k]),0);const r=revSum(W.tr[0],K[K.length-1]);return h?r/h:null}},
  {id:'dwell',n:'Ø Tage pro Stage',e:'🐢',g:-1,f:v=>fmtN(v,0)+' Tage',since:()=>{const t=(S.trans||[]).find(e=>e.dw!=null);return t&&t.d},c:(K)=>{const a=(S.trans||[]).filter(e=>e.dw!=null&&e.d>=K[0]&&e.d<=K[K.length-1]).map(e=>e.dw);return a.length>=3?median(a):null}},
  {id:'fcsub',n:'Forecast pünktlich abgegeben',e:'📋',g:1,f:v=>fmtN(v,0)+' %',pt:1,since:()=>(S.fcSubs||[]).map(x=>x.date).sort()[0],c:(K)=>{const mons=K.filter(k=>pD(k).getDay()===1&&actWorkday(k));if(mons.length<2)return null;return mons.filter(k=>(S.fcSubs||[]).some(x=>x.date>=k&&x.date<=k)).length/mons.length*100}},
  {id:'cover',since:()=>firstKey(Object.fromEntries(Object.entries(S.days||{}).filter(([,e])=>e&&!isFree(e.type)&&worked(e)!=null))),n:'Tage mit Zeiterfassung',e:'🗂️',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K,W)=>W.wd.length?W.tr.length/W.wd.length*100:null},
