@@ -1556,7 +1556,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='114';const APP_SEMVER='3.10.7';const APP_DATE='2026-11-12';
+const APP_VERSION='115';const APP_SEMVER='3.10.8';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -3423,7 +3423,15 @@ function trTip(t){const wk=insWeekday();const cs=closedStats();const cm=ymOf(new
    move:'Viele Opps stehen still. Nimm dir heute 15 Minuten und frag bei jeder Proposal kurz nach dem nächsten Schritt.',
    hp:'Mach die High-Prios wieder direkt nach dem Arbeitsbeginn. Danach ist der Kopf frei für Calls.',
    mis:'Die Tagesmissionen sind kleine Extra-Hebel. Schau morgens kurz rein und such dir eine aus, die zum Tag passt.',
-   free:'Du schaust in der Freizeit öfter in die App als sonst. Die Zahlen laufen nicht weg, Abschalten macht dich am Montag schneller.'}[t.id]}
+   free:'Du schaust in der Freizeit öfter in die App als sonst. Die Zahlen laufen nicht weg, Abschalten macht dich am Montag schneller.',
+   own:'Plan dir zwei feste 20-Minuten-Slots pro Woche für Eigenrecherche, z. B. Instagram oder KI nach passenden Shops durchsuchen. Jeder gute Treffer wird direkt als Opp angelegt.',
+   oppv:'Frag in der Demo gezielt nach Umsatz, Sortiment und weiteren Shops oder Ländern. Größere Shops ergeben größere Angebote.',
+   lost:'Schau dir die letzten verlorenen Opps an: Woran lag es? Kläre Budget, Entscheider und Zeitplan früher, dann gehen weniger Angebote verloren.',
+   hpo:'Mehr Zeit pro neuer Opp heißt: Admin frisst Vertriebszeit. Leg die erste Stunde des Tages auf Demos und Angebote, Mails danach.',
+   rph:ex.length?`Dein Umsatz pro Stunde ist gesunken. Der schnellste Hebel: die ${ex.length} ${ex.length===1?'Opp':'Opps'} in Expected und Signed heute nachfassen.`:'Dein Umsatz pro Stunde ist gesunken. Konzentrier die nächsten Tage auf Opps kurz vor dem Abschluss statt auf neue Kaltakquise.',
+   dwell:'Opps bleiben länger in einer Stage hängen. Vereinbare nach jedem Termin direkt den nächsten Schritt mit Datum.',
+   fcsub:'Trag dir einen festen Termin für die Forecast-Abgabe in den Kalender, z. B. montags 9 Uhr. Die App erinnert dich zusätzlich.',
+   cover:'Trag Arbeitsbeginn und Ende direkt beim Start bzw. Feierabend ein, dann stimmen auch alle anderen Auswertungen.'}[t.id]||'Schau dir die Kennzahl in Ruhe an und überleg, was sich in den letzten Wochen verändert hat.'}
 function trSpark(t){const v=t.spark.map(x=>x==null?0:x);const mx=Math.max(...v.map(Math.abs),1e-9);return `<div class="tr-sp">${v.map((x,i)=>`<i style="height:${Math.max(3,Math.abs(x)/mx*26)}px" class="${i===v.length-1?'l':''}"></i>`).join('')}</div>`}
 function trPending(P){if(!P.length)return '';return `<div class="tr-grp">🔒 Sammelt noch Daten</div><div class="tr-l">${P.map(t=>`<div class="tr-r pend"><span class="tr-a">⏳</span><div class="tr-n"><b>${t.e} ${t.n}</b><small><span class="tr-now">${t.cur!=null?t.f(t.cur):'–'}</span><span class="tr-c">${t.cur!=null?'bisher':'noch keine Daten'}</span></small><em>${t.eta?(t.eta<=todayK()?'Trend kommt, sobald genug Arbeitstage da sind':`Trend ab ca. ${dLabel(t.eta)}`):t.since?'Startet mit dem ersten Eintrag':'Braucht noch ein paar Einträge in den letzten 4 Wochen'}${t.g<0?' · weniger ist besser':t.g===0?' · nur Richtung, keine Wertung':''}</em></div></div>`).join('')}</div>`}
 function trendsPanel(){const T=trCalc();if(!T.length)return `<p class="hint" style="margin:0 4px 12px">Die App vergleicht deine letzten 4 Wochen mit den Wochen davor. Sobald genug Daten da sind, bekommt jede Kennzahl einen Pfeil. Bis dahin siehst du hier schon, worauf es ankommt.</p>${trPending(T.pending)}`;
