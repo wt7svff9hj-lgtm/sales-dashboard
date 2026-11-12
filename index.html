@@ -1009,6 +1009,13 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.tr-per{display:flex;align-items:stretch;gap:8px;margin-bottom:8px}.tr-per>div{flex:1;background:var(--paper);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow)}.tr-per small{display:block;font-size:11px;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.05em}.tr-per b{display:block;font-size:14px;margin-top:2px}.tr-per span{font-size:12px;color:var(--ink2)}
+.tr-vs{align-self:center;font-weight:800;color:var(--ink2);font-size:13px}
+.tr-n small{display:flex;align-items:baseline;gap:8px}.tr-now{font-size:17px;font-weight:800}
+.tr-c{font-size:12px;font-weight:800;padding:2px 7px;border-radius:99px;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink2)}
+.tr-r.g .tr-c{background:rgba(31,175,107,.14);color:#1FAF6B}.tr-r.b .tr-c{background:rgba(242,140,40,.16);color:#E0761A}
+.tr-n>em{display:block;margin-top:3px;font-style:normal;font-size:12.5px;color:var(--ink2)}
+
 .tr-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.tr-hero div{background:var(--paper);border-radius:18px;padding:14px 8px;text-align:center;box-shadow:var(--shadow)}
 .tr-hero b{display:block;font-size:30px;font-weight:800;font-stretch:var(--cond)}.tr-hero small{font-size:12.5px;color:var(--ink2);font-weight:650}
 .tr-hero div:nth-child(1) b{color:#1FAF6B}.tr-hero div:nth-child(2) b{color:#E0761A}
@@ -1509,7 +1516,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='99';const APP_SEMVER='3.8.0';const APP_DATE='2026-11-12';
+const APP_VERSION='100';const APP_SEMVER='3.8.1';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -3273,18 +3280,29 @@ const TR_DEF=[
  {id:'move',n:'Opps nach vorn bewegt / Woche',e:'⏩',g:1,f:v=>fmtN(v,1),since:()=>(S.trans||[])[0]&&S.trans[0].d,c:(K,W)=>(S.trans||[]).filter(e=>e.d>=K[0]&&e.d<=K[K.length-1]&&ST_ORDER.indexOf(e.t)>ST_ORDER.indexOf(e.f)).length/W.weeks},
  {id:'hp',n:'High-Prios zuerst erledigt',e:'⚡',g:1,f:v=>fmtN(v,0)+' %',pt:1,since:()=>firstKey(S.hiprio),c:(K,W)=>W.wd.length?W.wd.filter(k=>hpDone(k)).length/W.wd.length*100:null},
  {id:'mis',n:'Missionen pro Arbeitstag',e:'🏅',g:1,f:v=>fmtN(v,1),since:()=>firstKey(S.missions),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+missionState(k).filter(Boolean).length,0)/W.wd.length:null},
+ {id:'oppv',n:'Ø Wert neuer Opps',e:'💎',g:1,f:v=>fmtE(v),c:(K,W)=>{const L=W.wd.flatMap(k=>actOf(k).ops).filter(o=>+o.amount>0);return L.length>=3?L.reduce((a,o)=>a+ +o.amount,0)/L.length:null}},
+ {id:'lost',n:'Verlorene Opps pro Woche',e:'💔',g:-1,f:v=>fmtN(v,1),since:()=>(S.closed||[]).map(e=>e.date).sort()[0],c:(K,W)=>(S.closed||[]).filter(e=>e.res==='lost'&&e.date>=K[0]&&e.date<=K[K.length-1]).length/W.weeks},
+ {id:'hpo',n:'Arbeitsstunden pro neuer Opp',e:'⏳',g:-1,f:v=>fmtN(v,1)+' h',c:(K,W)=>{const o=W.tr.reduce((a,k)=>a+actOf(k).ops.length,0);return W.tr.length>=5&&o>=2?W.tr.reduce((a,k)=>a+worked(S.days[k]),0)/o:null}},
+ {id:'rph',n:'Umsatz pro Arbeitsstunde',e:'⚙️',g:1,f:v=>fmtE(v),c:(K,W)=>{if(W.tr.length<5)return null;const h=W.tr.reduce((a,k)=>a+worked(S.days[k]),0);const r=realDeals().filter(d=>d.date>=W.tr[0]&&d.date<=K[K.length-1]).reduce((a,d)=>a+ +d.amount,0);return h?r/h:null}},
+ {id:'dwell',n:'Ø Tage pro Stage',e:'🐢',g:-1,f:v=>fmtN(v,0)+' Tage',since:()=>{const t=(S.trans||[]).find(e=>e.dw!=null);return t&&t.d},c:(K)=>{const a=(S.trans||[]).filter(e=>e.dw!=null&&e.d>=K[0]&&e.d<=K[K.length-1]).map(e=>e.dw);return a.length>=3?median(a):null}},
+ {id:'fcsub',n:'Forecast pünktlich abgegeben',e:'📋',g:1,f:v=>fmtN(v,0)+' %',pt:1,since:()=>(S.fcSubs||[]).map(x=>x.date).sort()[0],c:(K)=>{const mons=K.filter(k=>pD(k).getDay()===1&&actWorkday(k));if(mons.length<2)return null;return mons.filter(k=>(S.fcSubs||[]).some(x=>x.date>=k&&x.date<=k)).length/mons.length*100}},
+ {id:'cover',n:'Tage mit Zeiterfassung',e:'🗂️',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K,W)=>W.wd.length?W.tr.length/W.wd.length*100:null},
  {id:'hours',n:'Ø Arbeitszeit',e:'⏱️',g:0,f:v=>hm(v),c:(K,W)=>W.tr.length?W.tr.reduce((a,k)=>a+worked(S.days[k]),0)/W.tr.length:null},
  {id:'start',n:'Ø Arbeitsbeginn',e:'🌅',g:0,f:v=>hhmm(v),abs:1,c:(K,W)=>{const a=W.tr.map(k=>S.days[k].start).filter(Boolean);return a.length?a.reduce((x,y)=>x+toMin(y),0)/a.length:null}},
+ {id:'end',n:'Ø Feierabend',e:'🌙',g:0,f:v=>hhmm(v),abs:1,c:(K,W)=>{const a=W.tr.map(k=>S.days[k].end).filter(Boolean);return a.length?a.reduce((x,y)=>x+toMin(y),0)/a.length:null}},
+ {id:'pause',n:'Ø Pause',e:'☕',g:0,f:v=>fmtN(v,0)+' min',abs:1,c:(K,W)=>{const a=W.tr.map(k=>+S.days[k].pause||0).filter(x=>x>0);return a.length>=3?a.reduce((x,y)=>x+y,0)/a.length:null}},
+ {id:'ot',n:'Überstunden pro Woche',e:'⚖️',g:0,f:v=>hmS(v),abs:1,c:(K,W)=>W.tr.length?W.tr.reduce((a,k)=>a+worked(S.days[k])-(dayInfo(k).soll||8),0)/W.weeks:null},
+ {id:'office',n:'Office-Tage pro Woche',e:'🏢',g:0,f:v=>fmtN(v,1),abs:1,c:(K,W)=>W.wd.filter(k=>(S.days[k]||{}).type==='koeln').length/W.weeks},
  {id:'free',n:'App-Besuche in der Freizeit / Woche',e:'🏝️',g:-1,f:v=>fmtN(v,1),since:()=>firstKey(S.gateLog),c:(K,W)=>Object.entries(S.gateLog||{}).filter(([k])=>k.slice(0,10)>=K[0]&&k.slice(0,10)<=K[K.length-1]).reduce((a,[,v])=>a+v,0)/W.weeks}];
 function trWin(from,to){const K=rangeKs(from,to);const wd=K.filter(k=>actWorkday(k));const tr=wd.filter(k=>{const e=S.days[k];return e&&!isFree(e.type)&&worked(e)!=null});return{K,W:{wd,tr,weeks:K.length/7}}}
 function trCalc(){const y=ymd(new Date(Date.now()-864e5));const rS=ymd(new Date(pD(y)-27*864e5));const bE=ymd(new Date(pD(rS)-864e5));const bS0=ymd(new Date(pD(bE)-83*864e5));
   const R=trWin(rS,y);const out=[];
   TR_DEF.forEach(m=>{const sd=m.since?m.since():null;if(m.since&&!sd)return;let bS=bS0;if(sd&&sd>bS)bS=sd;if(bS>bE||rangeKs(bS,bE).length<14)return;
     const B=trWin(bS,bE);if(B.W.wd.length<5||R.W.wd.length<5)return;const cur=m.c(R.K,R.W),base=m.c(B.K,B.W);if(cur==null||base==null)return;
-    const diff=m.abs?cur-base:m.pt?cur-base:(base?(cur-base)/Math.abs(base)*100:(cur>0?100:0));const thr=m.abs?10:m.pt?8:10;const dir=Math.abs(diff)<thr?0:diff>0?1:-1;
+    const diff=m.abs?cur-base:m.pt?cur-base:(base?(cur-base)/Math.abs(base)*100:(cur>0?100:0));const thr=m.thr!=null?m.thr:m.abs?({start:10,end:10,pause:5,ot:.75,office:.5}[m.id]??10):m.pt?8:10;const dir=Math.abs(diff)<thr?0:diff>0?1:-1;
     const good=m.g===0?0:dir*m.g;
     const spark=[7,6,5,4,3,2,1,0].map(w=>{const e=ymd(new Date(pD(y)-w*7*864e5)),s=ymd(new Date(pD(e)-6*864e5));const X=trWin(s,e);return X.W.wd.length?m.c(X.K,X.W):null});
-    out.push({...m,cur,base,diff,dir,good,spark})});return out}
+    out.push({...m,cur,base,diff,dir,good,spark,bS,bE})});out.rS=rS;out.rE=y;return out}
 function trTip(t){const wk=insWeekday();const cs=closedStats();const cm=ymOf(new Date());const ex=openItems(cm).filter(x=>x.st==='expected'||x.st==='signed');
   return {demo:wk?`Dein stärkster Tag ist der ${WDL[wk.best.d]}. Blocke dir dort und an einem weiteren Tag feste Demo-Slots, z. B. 9–11 Uhr.`:'Blocke dir morgens zwei feste Slots nur für Demos, bevor E-Mails und Admin dazwischenkommen.',
    ops:'Geh deine Demos der letzten zwei Wochen durch: Wer hatte Interesse, aber noch kein Angebot bekommen? Daraus werden schnell neue Opps.',
@@ -3300,12 +3318,16 @@ function trTip(t){const wk=insWeekday();const cs=closedStats();const cm=ymOf(new
 function trSpark(t){const v=t.spark.map(x=>x==null?0:x);const mx=Math.max(...v.map(Math.abs),1e-9);return `<div class="tr-sp">${v.map((x,i)=>`<i style="height:${Math.max(3,Math.abs(x)/mx*26)}px" class="${i===v.length-1?'l':''}"></i>`).join('')}</div>`}
 function trendsPanel(){const T=trCalc();if(!T.length)return `<div class="empty-s">Trends brauchen etwas Vorlauf: Die App vergleicht deine letzten 4 Wochen mit den 12 Wochen davor. Nach gut zwei Wochen mit Einträgen erscheinen die ersten Pfeile.</div>`;
   const up=T.filter(t=>t.good>0),dn=T.filter(t=>t.good<0);const tips=dn.sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff)).slice(0,3);
-  const row=t=>`<div class="tr-r ${t.good>0?'g':t.good<0?'b':''}"><span class="tr-a">${t.dir>0?'↑':t.dir<0?'↓':'→'}</span><div class="tr-n"><b>${t.e} ${t.n}</b><small>${t.f(t.cur)} <em>· vorher ${t.f(t.base)}</em></small></div>${trSpark(t)}</div>`;
+  const chg=t=>t.abs?(t.dir?`${t.dir>0?'+':'−'}${t.id==='start'||t.id==='end'?Math.round(Math.abs(t.cur-t.base))+' min':t.f(Math.abs(t.cur-t.base)).replace(/^[+−-]/,'')}`:'±0'):t.pt?`${t.diff>=0?'+':'−'}${fmtN(Math.abs(t.diff),0)} Pkt.`:`${t.diff>=0?'+':'−'}${fmtN(Math.abs(t.diff),0)} %`;
+  const say=t=>{const more={start:['später','früher'],end:['später','früher']}[t.id]||['mehr','weniger'];return t.dir===0?'praktisch unverändert':`${chg(t)} ${t.dir>0?more[0]:more[1]} als vorher`};
+  const row=t=>`<div class="tr-r ${t.good>0?'g':t.good<0?'b':''}"><span class="tr-a">${t.dir>0?'↑':t.dir<0?'↓':'→'}</span><div class="tr-n"><b>${t.e} ${t.n}</b><small><span class="tr-now">${t.f(t.cur)}</span><span class="tr-c">${chg(t)}</span></small><em>vorher ${t.f(t.base)}${t.dir===0?' · unverändert':''}</em></div>${trSpark(t)}</div>`;
+  const srt=a=>a.sort((x,y)=>Math.abs(y.diff)-Math.abs(x.diff));
   return `<div class="tr-hero"><div><b>${up.length}</b><small>↑ besser</small></div><div><b>${dn.length}</b><small>↓ schwächer</small></div><div><b>${T.length-up.length-dn.length}</b><small>→ stabil</small></div></div>
-  <p class="hint" style="margin:-4px 4px 12px">Letzte 4 Wochen im Vergleich zu den 12 Wochen davor. Die Balken zeigen die letzten 8 Wochen.</p>
+  <div class="tr-per"><div><small>Jetzt</small><b>letzte 4 Wochen</b><span>${dLabel(T.rS)} – ${dLabel(T.rE)}</span></div><span class="tr-vs">vs.</span><div><small>Vorher</small><b>Ø der Wochen davor</b><span>bis zu 12 Wochen</span></div></div>
+  <p class="hint" style="margin:0 4px 12px">Pro-Woche- und Pro-Tag-Werte sind Durchschnitte, damit beide Zeiträume vergleichbar sind. Die kleinen Balken zeigen die letzten 8 Wochen einzeln.</p>
   ${tips.length?`<div class="tr-plan"><div class="tr-ph">🧭 Dein Plan für die nächsten Tage</div>${tips.map(t=>`<div class="tr-tip"><span>↓</span><div><b>${t.n}: ${t.f(t.cur)} statt ${t.f(t.base)}</b><p>${trTip(t)}</p></div></div>`).join('')}</div>`:`<div class="tr-plan ok"><div class="tr-ph">🚀 Alles im grünen Bereich</div><p style="margin:0;font-size:14px">Keine Kennzahl hat sich verschlechtert. Weiter so!</p></div>`}
-  ${up.length?`<div class="tr-grp">Läuft besser</div><div class="panel flush tr-l">${up.map(row).join('')}</div>`:''}
-  ${dn.length?`<div class="tr-grp">Läuft schwächer</div><div class="panel flush tr-l">${dn.map(row).join('')}</div>`:''}
+  ${up.length?`<div class="tr-grp">Läuft besser</div><div class="panel flush tr-l">${srt(up).map(row).join('')}</div>`:''}
+  ${dn.length?`<div class="tr-grp">Läuft schwächer</div><div class="panel flush tr-l">${srt(dn).map(row).join('')}</div>`:''}
   ${T.filter(t=>!t.good).length?`<div class="tr-grp">Stabil &amp; neutral</div><div class="panel flush tr-l">${T.filter(t=>!t.good).map(row).join('')}</div>`:''}`}
 function vVerlauf(){
   const VT=subCur('verlauf',['trend','ins','hist']);
