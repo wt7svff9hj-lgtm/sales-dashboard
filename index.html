@@ -1009,6 +1009,23 @@ html.prelock .lock{display:block}
 .kk-q{font-size:16px;font-style:italic;color:rgba(255,255,255,.75);border-left:3px solid #F9DC4A;padding-left:12px}
 .kk-go{height:58px;border-radius:18px;background:linear-gradient(100deg,#FBE46C,#F6C700);color:#111318;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 12px 30px rgba(249,220,74,.35)}
 .kk-go:active{transform:scale(.98)}
+.tr-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.tr-hero div{background:var(--paper);border-radius:18px;padding:14px 8px;text-align:center;box-shadow:var(--shadow)}
+.tr-hero b{display:block;font-size:30px;font-weight:800;font-stretch:var(--cond)}.tr-hero small{font-size:12.5px;color:var(--ink2);font-weight:650}
+.tr-hero div:nth-child(1) b{color:#1FAF6B}.tr-hero div:nth-child(2) b{color:#E0761A}
+.tr-plan{border-radius:22px;padding:16px;margin-bottom:16px;background:linear-gradient(150deg,rgba(242,140,40,.16),rgba(242,140,40,.04)),var(--paper);border:1.5px solid rgba(242,140,40,.35)}
+.tr-plan.ok{background:linear-gradient(150deg,rgba(31,175,107,.16),rgba(31,175,107,.04)),var(--paper);border-color:rgba(31,175,107,.35)}
+.tr-ph{font-weight:800;font-size:16px;margin-bottom:8px}
+.tr-tip{display:flex;gap:12px;padding:10px 0;border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent)}.tr-tip:first-of-type{border-top:0}
+.tr-tip>span{flex:none;width:28px;height:28px;border-radius:50%;background:#F28C28;color:#fff;display:grid;place-items:center;font-weight:800}
+.tr-tip b{font-size:14.5px}.tr-tip p{margin:4px 0 0;font-size:13.5px;line-height:1.45;color:var(--ink2)}
+.tr-grp{margin:16px 4px 8px;font-size:13px;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em}
+.tr-r{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line)}.tr-l .tr-r:first-child{border-top:0}
+.tr-a{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:18px;font-weight:800;background:color-mix(in srgb,var(--ink) 10%,transparent);color:var(--ink2)}
+.tr-r.g .tr-a{background:#1FAF6B;color:#fff}.tr-r.b .tr-a{background:#F28C28;color:#fff}
+.tr-n{flex:1;min-width:0}.tr-n b{display:block;font-size:14.5px;font-weight:650}.tr-n small{display:block;margin-top:2px;font-size:15px;font-weight:750;font-variant-numeric:tabular-nums}.tr-n em{font-style:normal;font-weight:500;font-size:12.5px;color:var(--ink2)}
+.tr-sp{flex:none;display:flex;align-items:flex-end;gap:2px;height:28px}.tr-sp i{width:5px;border-radius:2px;background:color-mix(in srgb,var(--ink) 15%,transparent)}
+.tr-r.g .tr-sp i.l{background:#1FAF6B}.tr-r.b .tr-sp i.l{background:#F28C28}.tr-r .tr-sp i.l{background:var(--ink2)}
+
 .ins{position:relative;overflow:hidden;border-radius:22px;padding:16px;background:linear-gradient(160deg,color-mix(in srgb,var(--t) 10%,var(--paper)) 0%,var(--paper) 55%);border:1px solid color-mix(in srgb,var(--t) 18%,transparent)}
 .ins::after{content:"";position:absolute;right:-30px;top:-30px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--t) 22%,transparent),transparent 70%);pointer-events:none}
 .ins-h{gap:9px;font-size:12.5px;color:var(--ink2);min-width:0}.ins-h>span:last-child{min-width:0;overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto}.ins{min-width:0}.ins-h .ins-i{flex:none;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:color-mix(in srgb,var(--t) 18%,transparent)}
@@ -1492,7 +1509,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='98';const APP_SEMVER='3.7.3';const APP_DATE='2026-11-12';
+const APP_VERSION='99';const APP_SEMVER='3.8.0';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -3239,10 +3256,59 @@ function insCards(){const C=[];const b=insBase();const fmtH=h=>h>=10?fmtN(h,0)+'
   const cs=closedStats();if(cs.reasons&&cs.reasons[0]&&cs.lost>=3)C.push({e:'💔',tone:'#E5484D',t:'Häufigster Verlustgrund',v:cs.reasons[0][0],p:`${cs.reasons[0][1]} von ${cs.lost} verlorenen Opps. Lohnt sich, im Gespräch früher anzusprechen.`});
   return C}
 function insightsPanel(){const C=insCards();
-  return `<div class="sh" id="insights"><h2>🔍 Insights</h2><span class="sp"></span><span class="meta">aus deinen Daten</span></div>
+  return `
   ${C.length?`<div class="ins-g">${C.map(c=>`<div class="ins ${c.cls||''} ${c.w?'wide':''}" style="--t:${c.tone||'#9AA3B5'}"><div class="ins-h"><span class="ins-i">${c.e}</span><span>${c.t}</span></div><div class="ins-v">${c.v}</div><p>${c.p}</p>${c.bars?`<div class="ins-b">${(()=>{const mx=Math.max(...c.bars.map(x=>x.v),1);return c.bars.map(x=>`<div><i style="height:${Math.max(4,x.v/mx*42)}px" class="${x.hi?'hi':''}"></i><small>${x.l}</small></div>`).join('')})()}</div>`:''}</div>`).join('')}</div>`
   :`<div class="empty-s">Die App sammelt noch Daten. Nach ein paar Arbeitstagen mit Zeiten, Demos und Opps erscheinen hier die ersten Erkenntnisse.</div>`}`}
+/* ---------- Trends ---------- */
+function rangeKs(from,to){const out=[];const d=pD(from);while(ymd(d)<=to){out.push(ymd(d));d.setDate(d.getDate()+1)}return out}
+function firstKey(o){const k=Object.keys(o||{}).filter(x=>/^\d{4}-\d\d-\d\d/.test(x)).sort()[0];return k?k.slice(0,10):null}
+const TR_DEF=[
+ {id:'demo',n:'Demos pro Arbeitstag',e:'🎬',g:1,f:v=>fmtN(v,1),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).demo,0)/W.wd.length:null},
+ {id:'ops',n:'Neue Opps pro Arbeitstag',e:'🎯',g:1,f:v=>fmtN(v,1),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).ops.length,0)/W.wd.length:null},
+ {id:'pipe',n:'Neue Pipeline pro Woche',e:'🌱',g:1,f:v=>fmtE(v),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+actOf(k).ops.reduce((s,o)=>s+(+o.amount||0),0),0)/W.weeks:null},
+ {id:'rev',n:'Umsatz pro Woche',e:'💶',g:1,f:v=>fmtE(v),c:(K,W)=>realDeals().filter(d=>d.date>=K[0]&&d.date<=K[K.length-1]).reduce((a,d)=>a+ +d.amount,0)/W.weeks},
+ {id:'size',n:'Ø Deal-Größe',e:'📦',g:1,f:v=>fmtE(v),c:(K)=>{const L=realDeals().filter(d=>d.date>=K[0]&&d.date<=K[K.length-1]);return L.length>=2?L.reduce((a,d)=>a+ +d.amount,0)/L.length:null}},
+ {id:'win',n:'Gewinnquote',e:'🤝',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K)=>{const L=(S.closed||[]).filter(e=>e.date>=K[0]&&e.date<=K[K.length-1]);return L.length>=3?L.filter(e=>e.res==='won').length/L.length*100:null}},
+ {id:'goal',n:'Tagesziel geschafft',e:'✅',g:1,f:v=>fmtN(v,0)+' %',pt:1,c:(K,W)=>W.wd.length?W.wd.filter(actHit).length/W.wd.length*100:null},
+ {id:'move',n:'Opps nach vorn bewegt / Woche',e:'⏩',g:1,f:v=>fmtN(v,1),since:()=>(S.trans||[])[0]&&S.trans[0].d,c:(K,W)=>(S.trans||[]).filter(e=>e.d>=K[0]&&e.d<=K[K.length-1]&&ST_ORDER.indexOf(e.t)>ST_ORDER.indexOf(e.f)).length/W.weeks},
+ {id:'hp',n:'High-Prios zuerst erledigt',e:'⚡',g:1,f:v=>fmtN(v,0)+' %',pt:1,since:()=>firstKey(S.hiprio),c:(K,W)=>W.wd.length?W.wd.filter(k=>hpDone(k)).length/W.wd.length*100:null},
+ {id:'mis',n:'Missionen pro Arbeitstag',e:'🏅',g:1,f:v=>fmtN(v,1),since:()=>firstKey(S.missions),c:(K,W)=>W.wd.length?W.wd.reduce((a,k)=>a+missionState(k).filter(Boolean).length,0)/W.wd.length:null},
+ {id:'hours',n:'Ø Arbeitszeit',e:'⏱️',g:0,f:v=>hm(v),c:(K,W)=>W.tr.length?W.tr.reduce((a,k)=>a+worked(S.days[k]),0)/W.tr.length:null},
+ {id:'start',n:'Ø Arbeitsbeginn',e:'🌅',g:0,f:v=>hhmm(v),abs:1,c:(K,W)=>{const a=W.tr.map(k=>S.days[k].start).filter(Boolean);return a.length?a.reduce((x,y)=>x+toMin(y),0)/a.length:null}},
+ {id:'free',n:'App-Besuche in der Freizeit / Woche',e:'🏝️',g:-1,f:v=>fmtN(v,1),since:()=>firstKey(S.gateLog),c:(K,W)=>Object.entries(S.gateLog||{}).filter(([k])=>k.slice(0,10)>=K[0]&&k.slice(0,10)<=K[K.length-1]).reduce((a,[,v])=>a+v,0)/W.weeks}];
+function trWin(from,to){const K=rangeKs(from,to);const wd=K.filter(k=>actWorkday(k));const tr=wd.filter(k=>{const e=S.days[k];return e&&!isFree(e.type)&&worked(e)!=null});return{K,W:{wd,tr,weeks:K.length/7}}}
+function trCalc(){const y=ymd(new Date(Date.now()-864e5));const rS=ymd(new Date(pD(y)-27*864e5));const bE=ymd(new Date(pD(rS)-864e5));const bS0=ymd(new Date(pD(bE)-83*864e5));
+  const R=trWin(rS,y);const out=[];
+  TR_DEF.forEach(m=>{const sd=m.since?m.since():null;if(m.since&&!sd)return;let bS=bS0;if(sd&&sd>bS)bS=sd;if(bS>bE||rangeKs(bS,bE).length<14)return;
+    const B=trWin(bS,bE);if(B.W.wd.length<5||R.W.wd.length<5)return;const cur=m.c(R.K,R.W),base=m.c(B.K,B.W);if(cur==null||base==null)return;
+    const diff=m.abs?cur-base:m.pt?cur-base:(base?(cur-base)/Math.abs(base)*100:(cur>0?100:0));const thr=m.abs?10:m.pt?8:10;const dir=Math.abs(diff)<thr?0:diff>0?1:-1;
+    const good=m.g===0?0:dir*m.g;
+    const spark=[7,6,5,4,3,2,1,0].map(w=>{const e=ymd(new Date(pD(y)-w*7*864e5)),s=ymd(new Date(pD(e)-6*864e5));const X=trWin(s,e);return X.W.wd.length?m.c(X.K,X.W):null});
+    out.push({...m,cur,base,diff,dir,good,spark})});return out}
+function trTip(t){const wk=insWeekday();const cs=closedStats();const cm=ymOf(new Date());const ex=openItems(cm).filter(x=>x.st==='expected'||x.st==='signed');
+  return {demo:wk?`Dein stärkster Tag ist der ${WDL[wk.best.d]}. Blocke dir dort und an einem weiteren Tag feste Demo-Slots, z. B. 9–11 Uhr.`:'Blocke dir morgens zwei feste Slots nur für Demos, bevor E-Mails und Admin dazwischenkommen.',
+   ops:'Geh deine Demos der letzten zwei Wochen durch: Wer hatte Interesse, aber noch kein Angebot bekommen? Daraus werden schnell neue Opps.',
+   pipe:`Neue Pipeline ist der Umsatz von morgen. Vorher hattest du ${fmtE(t.base)} pro Woche, das ist das Ziel für die nächsten Wochen.`,
+   rev:ex.length?`In Expected und Signed liegen ${ex.length} ${ex.length===1?'Opp':'Opps'} mit ${fmtE(ex.reduce((a,x)=>a+(+x.v||0),0))}. Nachfassen bringt hier am schnellsten Umsatz.`:'Ohne Opps in Expected oder Signed fehlt der Nachschub. Fokus diese Woche: Proposals in Richtung Entscheidung bringen.',
+   size:'Zeig in Angeboten öfter zuerst das größere Paket und begründe den Mehrwert. Runterhandeln geht immer noch.',
+   win:cs.reasons&&cs.reasons[0]?`Zuletzt häufigster Verlustgrund: „${cs.reasons[0][0]}“. Sprich das künftig schon in der Demo aktiv an.`:'Kläre in der Demo früher Budget, Entscheider und Zeitplan. Das spart Angebote, die nichts werden.',
+   goal:'Kleiner Hebel: Erst die Demos und die neue Opp, danach Admin und Mails. So ist das Tagesziel oft schon mittags durch.',
+   move:'Viele Opps stehen still. Nimm dir heute 15 Minuten und frag bei jeder Proposal kurz nach dem nächsten Schritt.',
+   hp:'Mach die High-Prios wieder direkt nach dem Arbeitsbeginn. Danach ist der Kopf frei für Calls.',
+   mis:'Die Tagesmissionen sind kleine Extra-Hebel. Schau morgens kurz rein und such dir eine aus, die zum Tag passt.',
+   free:'Du schaust in der Freizeit öfter in die App als sonst. Die Zahlen laufen nicht weg, Abschalten macht dich am Montag schneller.'}[t.id]}
+function trSpark(t){const v=t.spark.map(x=>x==null?0:x);const mx=Math.max(...v.map(Math.abs),1e-9);return `<div class="tr-sp">${v.map((x,i)=>`<i style="height:${Math.max(3,Math.abs(x)/mx*26)}px" class="${i===v.length-1?'l':''}"></i>`).join('')}</div>`}
+function trendsPanel(){const T=trCalc();if(!T.length)return `<div class="empty-s">Trends brauchen etwas Vorlauf: Die App vergleicht deine letzten 4 Wochen mit den 12 Wochen davor. Nach gut zwei Wochen mit Einträgen erscheinen die ersten Pfeile.</div>`;
+  const up=T.filter(t=>t.good>0),dn=T.filter(t=>t.good<0);const tips=dn.sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff)).slice(0,3);
+  const row=t=>`<div class="tr-r ${t.good>0?'g':t.good<0?'b':''}"><span class="tr-a">${t.dir>0?'↑':t.dir<0?'↓':'→'}</span><div class="tr-n"><b>${t.e} ${t.n}</b><small>${t.f(t.cur)} <em>· vorher ${t.f(t.base)}</em></small></div>${trSpark(t)}</div>`;
+  return `<div class="tr-hero"><div><b>${up.length}</b><small>↑ besser</small></div><div><b>${dn.length}</b><small>↓ schwächer</small></div><div><b>${T.length-up.length-dn.length}</b><small>→ stabil</small></div></div>
+  <p class="hint" style="margin:-4px 4px 12px">Letzte 4 Wochen im Vergleich zu den 12 Wochen davor. Die Balken zeigen die letzten 8 Wochen.</p>
+  ${tips.length?`<div class="tr-plan"><div class="tr-ph">🧭 Dein Plan für die nächsten Tage</div>${tips.map(t=>`<div class="tr-tip"><span>↓</span><div><b>${t.n}: ${t.f(t.cur)} statt ${t.f(t.base)}</b><p>${trTip(t)}</p></div></div>`).join('')}</div>`:`<div class="tr-plan ok"><div class="tr-ph">🚀 Alles im grünen Bereich</div><p style="margin:0;font-size:14px">Keine Kennzahl hat sich verschlechtert. Weiter so!</p></div>`}
+  ${up.length?`<div class="tr-grp">Läuft besser</div><div class="panel flush tr-l">${up.map(row).join('')}</div>`:''}
+  ${dn.length?`<div class="tr-grp">Läuft schwächer</div><div class="panel flush tr-l">${dn.map(row).join('')}</div>`:''}
+  ${T.filter(t=>!t.good).length?`<div class="tr-grp">Stabil &amp; neutral</div><div class="panel flush tr-l">${T.filter(t=>!t.good).map(row).join('')}</div>`:''}`}
 function vVerlauf(){
+  const VT=subCur('verlauf',['trend','ins','hist']);
   const cy=new Date().getFullYear(); const years=[];for(let y=2020;y<=cy+1;y++)years.push(y);
   const mode=S.settings.heatBest||'year';
   const vals={};years.forEach(y=>{for(let i=1;i<=12;i++){const k=`${y}-${pad(i)}`;vals[k]=heatVal(k)}});
@@ -3265,7 +3331,8 @@ function vVerlauf(){
   const maxAvg=Math.max(100,...valid.map(a=>a.v));
   return `${head()}
   ${streaksHtml()}
-  ${insightsPanel()}
+  ${subBar('verlauf',[['trend','Trends'],['ins','Insights'],['hist','Rückblick']],VT)}
+  ${VT==='trend'?trendsPanel():''}${VT==='ins'?insightsPanel():''}${VT==='hist'?`
   <div class="panel" style="margin-bottom:14px">
     <div class="ptl">${ic('trend','class="pi"')}Ø Zielerreichung pro Jahr</div>
     <div class="lbl" style="margin-top:2px">Durchschnitt aller Monate eines Jahres. Die gestrichelte Linie markiert 100 %.</div>
@@ -3317,7 +3384,7 @@ function vVerlauf(){
       <span class="k"><span class="sw" style="outline:2px dashed var(--ink);outline-offset:-2px"></span>läuft noch</span>
     </div>
   </div>
-  <p class="hint" style="margin:14px 4px 0">Zielerreichung ohne Urlaubsberücksichtigung, immer einen Monat verzögert: Umsatz im November steht im Dezember, weil die Provision im Folgemonat kommt. Werte bis November 2026 stammen aus deiner Excel und bleiben fest, auch wenn du frühere Umsätze nachträgst. Ab Dezember 2026 (Leistung November) rechnet die App selbst.</p>`;
+  <p class="hint" style="margin:14px 4px 0">Zielerreichung ohne Urlaubsberücksichtigung, immer einen Monat verzögert: Umsatz im November steht im Dezember, weil die Provision im Folgemonat kommt. Werte bis November 2026 stammen aus deiner Excel und bleiben fest, auch wenn du frühere Umsätze nachträgst. Ab Dezember 2026 (Leistung November) rechnet die App selbst.</p>`:''}`;
 }
 function heatSheet(k){
   const h=heatVal(k);const [y,m]=k.split('-');
