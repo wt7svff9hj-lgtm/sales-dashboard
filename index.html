@@ -507,6 +507,12 @@ textarea.inp{height:auto;padding:12px 14px}
 .seg.pill button{height:34px;background:none;border-radius:10px}
 .seg.pill button.on{background:var(--paper);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
+.cl-grp{margin-top:14px;background:var(--paper);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}.cl-grp .list{padding:0 20px 4px}.cl-grp summary{list-style:none;display:flex;align-items:center;gap:10px;padding:16px 20px;cursor:pointer;-webkit-user-select:none;user-select:none}.cl-grp summary::-webkit-details-marker{display:none}
+.cl-grp summary b{font-size:16px}.cl-grp summary em{font-style:normal;font-size:12.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--raise)}.cl-grp.won summary em{background:rgba(31,169,113,.15);color:#1FA971}.cl-grp.lost summary em{background:rgba(229,72,77,.13);color:#E5484D}
+.cl-grp .cl-e{font-size:20px}.cl-grp .cl-s{margin-left:auto;font-weight:650;color:var(--ink2);font-size:14px}.cl-grp .cl-a{color:var(--muted);transition:transform .2s;font-size:16px}.cl-grp[open] .cl-a{transform:rotate(180deg)}
+.cl-grp.won{border-left:4px solid #1FA971}.cl-grp.lost{border-left:4px solid #E5484D}.cl-grp[open] summary{border-bottom:1px solid var(--hair)}
+.cl-li{width:100%;text-align:left;background:none;border:0;font:inherit;color:inherit}.cl-li .cl-ch{color:var(--muted);font-size:20px;margin-left:6px}.ce-r button{font-size:13px}
+
 .wi-g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:end}.wi-c{min-width:0;display:block}.wi-c.r{text-align:right}.wi-c .mid{font-size:clamp(22px,7vw,30px)}.wi-c .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wi-in{display:inline-flex;align-items:baseline;gap:4px;border-bottom:2px dashed var(--line,rgba(127,127,127,.35));padding-bottom:1px;margin-bottom:2px;max-width:100%;line-height:1.05}.wi-in:focus-within{border-bottom-color:var(--acc,#F5C400);border-bottom-style:solid}
 .wi-sz{display:inline-grid;min-width:0;max-width:100%;font-family:'SD Display','SD Text',sans-serif;font-size:clamp(22px,7vw,30px);font-weight:650;font-stretch:var(--cond);font-variant-numeric:tabular-nums;line-height:1.05}.wi-sz::after{content:attr(data-v);grid-area:1/1;visibility:hidden;white-space:pre;padding-right:2px}.wi-in input{grid-area:1/1;width:100%;min-width:1ch;border:0;background:none;padding:0;margin:0;color:var(--ink);font:inherit;outline:none}.wi-in>span:last-child{font-family:'SD Display','SD Text',sans-serif;font-size:clamp(22px,7vw,30px);font-weight:650;color:var(--ink)}
@@ -1560,7 +1566,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='122';const APP_SEMVER='3.10.15';const APP_DATE='2026-11-12';
+const APP_VERSION='124';const APP_SEMVER='3.10.17';const APP_DATE='2026-11-12';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -3074,9 +3080,35 @@ function vOpps(){const cm=ymOf(new Date());const OT=subCur('opps',['now','later'
   ${OT==='now'?(now.length?`${stale?`<div class="oc-stale">⏳ ${stale} ${stale===1?'Opp wartet':'Opps warten'} länger als üblich auf Bewegung. Kurz nachfassen?</div>`:''}${oppGroups(cm,now)}`:`<div class="empty-s">Keine offenen Opps im ${MON[pD(cm).getMonth()]}.<br><button class="btn pri sm" style="margin-top:12px" onclick="opSheet()">${ic('plus')} Neue Opp</button></div>`):''}
   ${OT==='later'?(later.length?later.map(g=>`<div class="og-m"><b>${MON[pD(g.m).getMonth()]} ${pD(g.m).getFullYear()}</b><span>${g.it.length} · ${fmtE(g.it.reduce((a,x)=>a+(+x.v||0),0))}</span></div>${g.it.sort((a,b)=>ST_ORDER.indexOf(b.st)-ST_ORDER.indexOf(a.st)).map(x=>oppCard(g.m,x)).join('')}`).join(''):`<div class="empty-s">Noch keine Opps für die nächsten Monate.<br><span style="font-size:13px">Beim Anlegen einfach „Dezember“ oder „Januar“ wählen.</span></div>`):''}
   ${OT==='closed'?closedView():''}`}
-function closedView(){const cs=closedStats();const c=(S.closed||[]).slice().reverse().slice(0,25);
+function closedView(){const cs=closedStats();const all=(S.closed||[]).slice().reverse();
+  const row=x=>`<button class="li cl-li" onclick="closedEdit('${x.id}')"><div class="ico ${x.res==='won'?'won':'lost'}" style="font-size:20px;display:grid;place-items:center">${x.res==='won'?'🤝':'💔'}</div><div class="t"><b>${pn(x.n||'Opp')}${chfTag(x)}</b><small>${dLabel(x.date)}${x.res==='lost'&&x.reason?' · '+x.reason:''}${(x.item&&x.item.src)||x.src?' · '+({new:'🆕',old:'📂',own:'🔎',ag:'🏢'})[(x.item&&x.item.src)||x.src]:''}</small></div><div class="v ${x.res==='won'?'':'mut'}">${fmtE(x.v)}</div><span class="cl-ch">›</span></button>`;
+  const grp=(res,emo,title,L)=>{const sum=L.reduce((a,x)=>a+(+x.v||0),0);const open=(S.clOpen||{})[res]!==false;
+    return `<details class="cl-grp ${res}" ${open?'open':''} ontoggle="S.clOpen=S.clOpen||{};S.clOpen['${res}']=this.open;save()"><summary><span class="cl-e">${emo}</span><b>${title}</b><em>${L.length}</em><span class="cl-s num">${fmtE(sum)}</span><span class="cl-a">⌄</span></summary>${L.length?`<div class="list">${L.map(row).join('')}</div>`:`<div class="empty-s" style="margin:4px 14px 14px">Noch keine.</div>`}</details>`};
   return `<div class="panel"><div class="kr3"><div><small>Gewinnquote</small><b class="num">${cs.rate!=null?fmtN(cs.rate,0)+' %':'–'}</b><span>${cs.won} gewonnen, ${cs.lost} verloren</span></div><div><small>Closed Lost ${MONS[new Date().getMonth()]}</small><b class="num">${cs.lostM}</b><span>${fmtE(cs.lostMV)}</span></div><div><small>Häufigster Grund</small><b>${cs.reasons[0]?cs.reasons[0][0]:'–'}</b><span>${cs.reasons[0]?cs.reasons[0][1]+'×':'noch keine Gründe'}</span></div></div></div>
-  ${c.length?`<div class="panel flush" style="margin-top:14px"><div class="list">${c.map(x=>`<div class="li"><div class="ico ${x.res==='won'?'won':'lost'}" style="font-size:20px;display:grid;place-items:center">${x.res==='won'?'🤝':'💔'}</div><div class="t"><b>${pn(x.n||'Opp')}${chfTag(x)}</b><small>${dLabel(x.date)} · ${x.res==='won'?'Gewonnen':'Verloren'}${x.reason?' · '+x.reason:''}</small></div><div class="v ${x.res==='won'?'':'mut'}">${fmtE(x.v)}</div><button class="cl-re" onclick="oppReopenSheet('${x.id}')" aria-label="Zurückholen" title="Zurück in die Pipeline">↩️</button></div>`).join('')}</div></div>`:'<div class="empty-s" style="margin-top:14px">Noch keine abgeschlossenen Opps.</div>'}`}
+  ${all.length?grp('won','🤝','Gewonnen',all.filter(x=>x.res==='won'))+grp('lost','💔','Verloren',all.filter(x=>x.res==='lost')):'<div class="empty-s" style="margin-top:14px">Noch keine abgeschlossenen Opps.</div>'}`}
+let CLE=null;
+function closedEdit(id){const e=(S.closed||[]).find(x=>x.id===id);if(!e)return;const d=e.res==='won'?closedDeal(e):null;const won=e.res==='won';
+  CLE={id,src:(e.item&&e.item.src)||e.src||null,ch:(d&&d.channel)||e.ch||null,reason:e.reason||null};
+  openSheet(`${sheetHead(won?'🤝 Gewonnene Opp':'💔 Verlorene Opp')}
+   <p class="hint" style="margin:0 0 12px">${won?'Gewonnen':'Verloren'} am ${dLabel(e.date)}${d?' · verknüpft mit dem Umsatz-Eintrag vom '+dLabel(d.date):''}</p>
+   <div class="grid2"><div class="field"><label>Kunde</label><input class="inp" id="cen" value="${esc(e.n||'')}" placeholder="Name"></div>
+   <div class="field"><label>Wert in €</label><input class="inp" id="cev" inputmode="decimal" value="${String(+e.v||0).replace('.',',')}"></div></div>
+   ${won?`<div class="field" style="margin-top:14px"><label>Kanal</label><div class="seg">${[['in','inb','Inbound'],['out','outb','Outbound']].map(([v,i,l])=>`<button type="button" class="${CLE.ch===v?'on':''}" data-v="${v}" onclick="CLE.ch='${v}';this.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v==='${v}'))">${ic(i)}${l}</button>`).join('')}</div></div>`:
+   `<div class="field" style="margin-top:14px"><label>Verlustgrund</label><div class="quick ce-r">${LOST_REASONS.map(r=>`<button type="button" class="${CLE.reason===r?'on':''}" data-v="${esc(r)}" onclick="CLE.reason=CLE.reason===this.dataset.v?null:this.dataset.v;this.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===CLE.reason))">${r}</button>`).join('')}</div></div>`}
+   ${srcField(CLE.src,'CLE.src')}
+   ${d?`<p class="hint" style="margin:10px 0 0">Name, Wert und Kanal werden im Umsatz-Eintrag mit angepasst.</p>`:''}
+   <button class="btn pri block" style="margin-top:18px" onclick="closedSave()">Speichern</button>
+   <button class="undo-l" style="margin-top:10px" onclick="closeSheet();setTimeout(()=>oppReopenSheet('${id}'),250)">↩️ Zurück in die Pipeline</button>`)}
+function closedSave(){const e=(S.closed||[]).find(x=>x.id===CLE.id);if(!e)return;const d=e.res==='won'?closedDeal(e):null;
+  const n=document.getElementById('cen').value.trim()||'Opp';const vRaw=document.getElementById('cev').value;const cv=calcEval(vRaw);const v=Math.max(0,cv!=null?cv:numIn(vRaw)||0);
+  const vChg=Math.abs(v-(+e.v||0))>.005;
+  e.n=n;e.v=v;if(vChg){delete e.cur;delete e.orig;delete e.fx}
+  if(e.item){e.item.n=n;e.item.v=v;if(CLE.src)e.item.src=CLE.src;else delete e.item.src;if(vChg){delete e.item.cur;delete e.item.orig;delete e.item.fx}}
+  if(CLE.src)e.src=CLE.src;else delete e.src;
+  if(e.res==='lost'){if(CLE.reason)e.reason=CLE.reason;else delete e.reason}else if(CLE.ch)e.ch=CLE.ch;
+  if(d&&!d.retro&&!d.storno){d.name=n;if(CLE.ch)d.channel=CLE.ch;if(vChg){d.amount=v;delete d.cur;delete d.orig;delete d.fx}if(!d.closedId)d.closedId=e.id}
+  save();closeSheet();render();toast('Gespeichert','ok')}
+
 /* ---------- Gewichtung kalibrieren ---------- */
 const ST_KEY={offer:'offerRate',proposal:'proposalRate',expected:'expectedRate',signed:'signedRate'};
 const CAL_MIN=8,STEP_MIN=5;
