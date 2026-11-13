@@ -616,6 +616,49 @@ html[data-theme=light] #amb i:not(.g):not(.e){background:radial-gradient(circle,
 .yp-bar .t,.yp-leg i.t{background:#22A35A}.yp-bar .p,.yp-leg i.p{background:color-mix(in srgb,#22A35A 40%,transparent)}.yp-leg i.o{background:var(--hair2)}
 .yp-leg{display:flex;flex-wrap:wrap;gap:4px 11px;margin-top:8px;font-size:11.5px;color:var(--muted);font-weight:600}.yp-leg span{display:inline-flex;align-items:center;gap:5px}.yp-leg i{width:9px;height:9px;border-radius:3px;display:inline-block}.yp-leg b{color:var(--ink);font-weight:800}
 @media(max-width:360px){.yp-g b{font-size:17px}}
+
+.ucl{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;color:#fff}
+.ucl-sky{position:absolute;inset:0;opacity:0;animation:uclFade .45s ease forwards}
+.ucl-morgen .ucl-sky{background:linear-gradient(180deg,#3E5BB8 0%,#8C7BD6 38%,#F49A8A 68%,#FFD18C 100%)}
+.ucl-tag .ucl-sky{background:linear-gradient(180deg,#1F6FD6 0%,#4A9AF0 45%,#9FD3FF 100%)}
+.ucl-abend .ucl-sky{background:linear-gradient(180deg,#1C1846 0%,#5A2E7A 40%,#C9507A 70%,#F7955A 100%)}
+.ucl-nacht .ucl-sky{background:radial-gradient(120% 70% at 75% 10%,#26346E 0%,#121A3D 45%,#070A1C 100%)}
+.ucl-stars i{position:absolute;width:var(--z);height:var(--z);border-radius:50%;background:#fff;opacity:0;animation:uclFade .5s .25s forwards,uclTw 1.6s var(--w) ease-in-out infinite alternate}
+.ucl-orb{position:absolute;border-radius:50%;opacity:0}
+.ucl-morgen .ucl-orb{width:120px;height:120px;left:10%;top:79%;background:radial-gradient(circle,#FFF6D6 0 38%,#FFD36B 40% 52%,rgba(255,200,90,0) 72%);animation:uclRise 1.3s .1s cubic-bezier(.2,.8,.2,1) forwards;--fy:90px}
+.ucl-tag .ucl-orb{width:130px;height:130px;right:6%;top:6%;background:radial-gradient(circle,#FFFBE8 0 34%,#FFE070 36% 48%,rgba(255,224,112,0) 72%);animation:uclRise 1.1s .1s cubic-bezier(.2,.8,.2,1) forwards,uclSpin 14s linear infinite;--fy:40px}
+.ucl-abend .ucl-orb{width:130px;height:130px;right:8%;top:74%;background:radial-gradient(circle,#FFE2B0 0 34%,#FF9A55 36% 50%,rgba(255,120,60,0) 72%);animation:uclSet 1.4s .1s cubic-bezier(.2,.8,.2,1) forwards;--fy:-40px}
+.ucl-nacht .ucl-orb{width:64px;height:64px;right:16%;top:10%;background:transparent;box-shadow:inset -16px 8px 0 0 #F4EFD8;filter:drop-shadow(0 0 22px rgba(244,239,216,.55));animation:uclRise 1.2s .1s cubic-bezier(.2,.8,.2,1) forwards;--fy:30px}
+.ucl-cl{position:absolute;height:34px;border-radius:40px;background:rgba(255,255,255,.75);filter:blur(1px);opacity:0;animation:uclFade .6s .3s forwards,uclDrift 6s linear infinite}
+.ucl-cl::before,.ucl-cl::after{content:'';position:absolute;border-radius:50%;background:inherit}
+.ucl-cl::before{width:44px;height:44px;left:16px;top:-22px}.ucl-cl::after{width:30px;height:30px;left:52px;top:-14px}
+.ucl-cl.c1{width:110px;left:6%;top:16%}.ucl-cl.c2{width:90px;right:-4%;top:30%;transform:scale(.8);animation-duration:.6s,8s}
+.ucl-mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 24px}
+.ucl-stage{position:relative;width:200px;height:211px;animation:uclPop .5s .08s cubic-bezier(.2,1.4,.4,1) both}
+.ucl-svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 18px 40px rgba(0,0,0,.28))}
+.ucl-glow{position:absolute;left:50%;top:55%;width:190px;height:190px;margin:-95px 0 0 -95px;border-radius:50%;box-shadow:0 0 0 0 color-mix(in srgb,var(--y) 60%,transparent);opacity:0}
+.ucl.hit .ucl-glow{animation:uclPulse .7s cubic-bezier(.2,.7,.3,1) forwards}
+.ucl-ring{animation:uclRing .9s .1s cubic-bezier(.45,0,.2,1) forwards}
+.ucl-h{animation:uclH .95s .05s cubic-bezier(.3,0,.15,1) both}
+.ucl-m{animation:uclM .95s .05s cubic-bezier(.3,0,.15,1) both}
+.ucl.hit .ucl-stage{animation:uclTick .35s cubic-bezier(.3,1.8,.5,1)}
+.ucl-txt{margin-top:26px;text-align:center;opacity:0;transform:translateY(12px);animation:uclTxt .5s .45s cubic-bezier(.2,.8,.2,1) forwards;text-shadow:0 2px 14px rgba(0,0,0,.25)}
+.ucl-txt b{display:block;font-family:'SD Display','SD Text',sans-serif;font-size:min(32px,8.4vw);font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.ucl-txt span{display:block;margin-top:6px;font-size:16px;font-weight:600;opacity:.88;font-variant-numeric:tabular-nums}
+.ucl-txt em{display:inline-block;margin-top:14px;font-style:normal;font-size:14px;font-weight:700;padding:7px 14px;border-radius:99px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+@keyframes uclFade{to{opacity:1}}
+@keyframes uclTw{from{transform:scale(.6)}to{transform:scale(1.25)}}
+@keyframes uclRise{from{opacity:0;transform:translateY(var(--fy))}to{opacity:1;transform:none}}
+@keyframes uclSet{from{opacity:0;transform:translateY(var(--fy))}to{opacity:1;transform:none}}
+@keyframes uclSpin{to{rotate:360deg}}
+@keyframes uclDrift{from{translate:-20px 0}to{translate:20px 0}}
+@keyframes uclPop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+@keyframes uclRing{to{stroke-dashoffset:0}}
+@keyframes uclH{from{transform:rotate(calc(var(--ha) - 360deg))}to{transform:rotate(var(--ha))}}
+@keyframes uclM{from{transform:rotate(calc(var(--ma) - 1080deg))}to{transform:rotate(var(--ma))}}
+@keyframes uclTick{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes uclPulse{0%{opacity:1;box-shadow:0 0 0 0 color-mix(in srgb,var(--y) 65%,transparent)}100%{opacity:0;box-shadow:0 0 0 70px color-mix(in srgb,var(--y) 0%,transparent)}}
+@keyframes uclTxt{to{opacity:1;transform:none}}
 html.mask .app,html.mask .tabs,html.mask .side{display:none!important}
 #srf{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:40;background:#F3F6FB;display:block}
 
@@ -1700,7 +1743,7 @@ html[data-theme=dark] .hp-c{border-color:color-mix(in srgb,var(--y) 60.0%,transp
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='152';const APP_SEMVER='1.3.0';const APP_DATE='2026-11-13';
+const APP_VERSION='153';const APP_SEMVER='1.4.0';const APP_DATE='2026-11-13';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -4093,22 +4136,42 @@ async function pinKey(k){if(Date.now()<LOCKUNTIL)return;if(k==='del'){PINBUF=PIN
   if(PINBUF.length===4){const h=await sha(PINBUF);if(h===SEC().pin){FAILS=0;unlock()}else{FAILS++;dots(4,true);if(navigator.vibrate)try{navigator.vibrate([30,40,30])}catch(e){}const sub=document.getElementById('lkSub');
     if(FAILS>=5){LOCKUNTIL=Date.now()+30000;sub.textContent='Zu viele Versuche. Bitte 30 Sekunden warten.';setTimeout(()=>{FAILS=0;const s2=document.getElementById('lkSub');if(s2)s2.textContent='PIN eingeben'},30000)}else sub.textContent='Falsche PIN, bitte nochmal';
     setTimeout(()=>{PINBUF='';dots(0)},450)}}}
-function unlock(){LOCKED=false;setTimeout(()=>{const k=document.getElementById('kick');if(!(k&&k.classList.contains('on')))festMaybe()},1800);const el=document.getElementById('lock');
+function unlock(){LOCKED=false;setTimeout(()=>{const k=document.getElementById('kick');if(!(k&&k.classList.contains('on')))festMaybe()},(RM()?1800:2500));const el=document.getElementById('lock');
   const plain=()=>{ANIM_PENDING=true;setTimeout(render,60);el.classList.add('out');document.documentElement.classList.remove('islocked','prelock');setTimeout(()=>{el.classList.remove('on','out','fx');el.innerHTML=''},420);setTimeout(()=>afterInitial(dailyFlow),450)};
   if(RM()||!el.classList.contains('on')){plain();return}
-  /* Volltreffer-Animation: Pfeil trifft ins Schwarze, Schockwelle, dann öffnet sich die App */
+  /* Uhr-Animation: Zeiger drehen auf die echte Uhrzeit, Himmel je nach Tageszeit */
+  const fx=unlockClockFx();el.appendChild(fx);el.classList.add('fx');
+  setTimeout(()=>fx.classList.add('hit'),980);
+  setTimeout(()=>{ANIM_PENDING=true;render();document.documentElement.classList.remove('islocked','prelock');document.documentElement.classList.add('appin');el.classList.add('zoomout')},1500);
+  setTimeout(()=>{el.classList.remove('on','out','fx','zoomout');el.innerHTML='';document.documentElement.classList.remove('appin')},2050);
+  setTimeout(()=>afterInitial(dailyFlow),2100)}
+function unlockMood(d){const h=d.getHours()+d.getMinutes()/60;return h<5||h>=22?'nacht':h<10?'morgen':h<17?'tag':'abend'}
+function unlockClockFx(){const d=new Date(),mood=unlockMood(d),tk=todayK(),di=dayInfo(tk),e=S.days[tk];
+  const hh=d.getHours(),mm=d.getMinutes();const ha=(hh%12)*30+mm*.5,ma=mm*6;
   const nm=S.settings.name?', '+esc(S.settings.name):'';
-  const parts=[...Array(14)].map((_,i)=>`<i style="--a:${i*360/14+Math.random()*12}deg;--d:${110+Math.random()*90}px;--s:${4+Math.random()*5}px;--t:${.5+Math.random()*.3}s"></i>`).join('');
-  const fx=document.createElement('div');fx.className='ufx';
-  fx.innerHTML=`<div class="ufx-stage"><div class="ufx-wave"></div><div class="ufx-wave w2"></div><div class="ufx-sp">${parts}</div>
-    <svg class="ufx-tg" viewBox="-110 -110 220 220"><circle r="104" fill="#F9DC4A"/><circle r="80" fill="#15171D"/><circle r="56" fill="#F9DC4A"/><circle r="32" fill="#15171D"/><circle r="13" fill="#F9DC4A"/><circle r="104" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/></svg>
-    <svg class="ufx-dart" viewBox="-10 -150 160 160" overflow="visible"><g transform="rotate(45)"><path d="M0 0 L-5 -16 L5 -16Z" fill="#F3F4F8"/><rect x="-3" y="-60" width="6" height="46" rx="3" fill="#F3F4F8"/><rect x="-4.5" y="-74" width="9" height="16" rx="3" fill="#F9DC4A"/><path d="M0 -74 L-16 -104 L-3 -96 Z M0 -74 L16 -104 L3 -96 Z" fill="#F9DC4A"/><path d="M0 -76 L0 -108" stroke="#F9DC4A" stroke-width="3" stroke-linecap="round"/></g></svg></div>
-    <div class="ufx-txt"><b>Volltreffer!</b><span>Los geht's${nm} 🎯</span></div>`;
-  el.appendChild(fx);el.classList.add('fx');
-  setTimeout(()=>fx.classList.add('hit'),560);
-  setTimeout(()=>{ANIM_PENDING=true;render();document.documentElement.classList.remove('islocked','prelock');document.documentElement.classList.add('appin');el.classList.add('zoomout')},1250);
-  setTimeout(()=>{el.classList.remove('on','out','fx','zoomout');el.innerHTML='';document.documentElement.classList.remove('appin')},1800);
-  setTimeout(()=>afterInitial(dailyFlow),1850)}
+  const hi={morgen:'Guten Morgen',tag:hh<14&&hh>=11?'Mahlzeit':'Hallo',abend:'Guten Abend',nacht:hh>=22||hh<1?'Gute Nacht':'Noch wach?'}[mood];
+  let badge='';
+  if(e&&e.type==='urlaub')badge='✈️ Urlaub – genieß die freie Zeit';
+  else if(e&&e.type==='krank')badge='🫖 Gute Besserung';
+  else if(di.hol)badge='🎈 '+esc(di.hol);
+  else if(di.sp)badge='🎄 '+esc(di.sp);
+  else if(di.weekend)badge='🏖️ Wochenende';
+  else{try{const t1=new Date(d);t1.setDate(t1.getDate()+1);const b=vacBlock(ymd(t1));if(b){const n=Math.round((pD(b.first)-pD(tk))/864e5);if(n<=60)badge=`🌴 Noch ${n} ${n===1?'Tag':'Tage'} bis zum Urlaub`}}catch(_){}
+    if(!badge){const w=e&&worked(e);badge=e&&e.start&&!e.end?`⏱️ Läuft seit ${e.start} Uhr`:w?`✅ Heute ${hm(w)} erfasst`:(d.getDay()===5?'🎉 Freitag – gleich Wochenende':'💼 Arbeitstag')}}
+  const ticks=[...Array(12)].map((_,i)=>`<line x1="0" y1="-78" x2="0" y2="${i%3?-72:-66}" transform="rotate(${i*30})" stroke="rgba(255,255,255,${i%3?.45:.9})" stroke-width="${i%3?2:3.4}" stroke-linecap="round"/>`).join('');
+  const stars=mood==='nacht'||mood==='abend'?[...Array(mood==='nacht'?34:12)].map(()=>`<i style="left:${Math.random()*100}%;top:${Math.random()*(mood==='nacht'?70:35)}%;--z:${1+Math.random()*2}px;--w:${(Math.random()*1.6).toFixed(2)}s"></i>`).join(''):'';
+  const fx=document.createElement('div');fx.className='ucl ucl-'+mood;fx.style.setProperty('--ha',ha+'deg');fx.style.setProperty('--ma',ma+'deg');
+  fx.innerHTML=`<div class="ucl-sky"></div><div class="ucl-stars">${stars}</div><div class="ucl-orb"></div>${mood==='tag'?'<div class="ucl-cl c1"></div><div class="ucl-cl c2"></div>':''}
+  <div class="ucl-mid"><div class="ucl-stage"><div class="ucl-glow"></div>
+    <svg viewBox="-110 -122 220 232" class="ucl-svg"><rect x="-13" y="-121" width="26" height="15" rx="5" fill="var(--y)"/><rect x="-5" y="-108" width="10" height="10" fill="var(--y)"/>
+      <circle r="92" fill="rgba(10,14,30,.38)" stroke="rgba(255,255,255,.18)" stroke-width="2"/>
+      <circle r="92" class="ucl-ring" fill="none" stroke="var(--y)" stroke-width="7" stroke-linecap="round" transform="rotate(-90)" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+      ${ticks}
+      <g class="ucl-h"><line x1="0" y1="10" x2="0" y2="-44" stroke="#fff" stroke-width="7" stroke-linecap="round"/></g>
+      <g class="ucl-m"><line x1="0" y1="14" x2="0" y2="-66" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/></g>
+      <circle r="8" fill="var(--y)"/><circle r="3" fill="#fff"/></svg></div>
+    <div class="ucl-txt"><b>${hi}${nm}</b><span>${WDL[d.getDay()]}, ${d.getDate()}. ${MON[d.getMonth()]} · ${pad(hh)}:${pad(mm)}</span>${badge?`<em>${badge}</em>`:''}</div></div>`;
+  return fx}
 async function tryFace(auto){try{if(!SEC().faceId||!window.PublicKeyCredential)throw 0;await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:'public-key',id:unb64(SEC().faceId)}],userVerification:'required',timeout:60000}});unlock()}catch(e){if(!auto){const s=document.getElementById('lkSub');if(s)s.textContent='Face ID hat nicht geklappt, bitte PIN eingeben'}}}
 function forgotPin(){const el=document.querySelector('#lock .lk-in');el.innerHTML=`<div class="lk-logo">${logoSvg(S.settings.logo)}</div><div class="lk-hi">PIN vergessen?</div><p class="lk-txt">Ohne PIN lässt sich die App nur zurücksetzen. Dabei werden alle Daten auf diesem Gerät gelöscht. Hast du ein Backup, kannst du es danach wieder einspielen.</p><div class="stack" style="width:100%;max-width:300px"><button class="btn block" onclick="showLock()">Abbrechen</button><button class="btn danger block" onclick="try{localStorage.removeItem(LS_KEY)}catch(e){};location.reload()">Alles löschen und neu starten</button></div>`}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){HIDDEN_AT=Date.now();return}
