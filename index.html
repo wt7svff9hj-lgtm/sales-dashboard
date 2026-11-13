@@ -362,7 +362,7 @@ html[data-theme="dark"]{--pIst:var(--y);--pGh:#A99BFF}
   --hover:#F5F6F9; --slim:#FAFBFC; --shadow:0 1px 2px rgba(15,18,30,.04),0 8px 28px rgba(15,18,30,.06);
   --acc:#111318; --acc2:var(--y2); --accFill:var(--y); --accLine:var(--yD); --accSoft:var(--ySoft); --grad:linear-gradient(100deg,var(--yL),var(--y2)); --tY:var(--yD);
   --green:#12945A; --greenSoft:rgba(18,148,90,.11); --red:#D93036; --redSoft:rgba(217,48,54,.10); --amber:#B97A00; --amberSoft:rgba(232,160,20,.16);
-  --u:#3DA35D; --uBg:#EBF6ED; --k:#0E9FB3; --kBg:#E4F6F8; --h:#9095A0; --hBg:#F1F2F4; --s:#C2557A; --sBg:#FBEAF0; --w:#9AA0AC; --wBg:#F0F1F4;
+  --u:#3DA35D; --uBg:#EBF6ED; --k:#E0A800; --kBg:#FFF1B8; --h:#9095A0; --hBg:#F1F2F4; --s:#C2557A; --sBg:#FBEAF0; --w:#9AA0AC; --wBg:#F0F1F4;
   --in:var(--yD); --out:#3A3F4B;
   --c0:#D93036; --c0t:#fff; --c1:#F8B4B0; --c1t:#7A1418; --c2:#FFE29E; --c2t:#5E4100; --c3:#26A065; --c3t:#fff; --empty:#F1F2F6;
   --tab:rgba(255,255,255,.96);
@@ -375,7 +375,7 @@ html[data-theme=dark]{
   --hover:#161922; --slim:#0E1016; --shadow:0 0 0 1px rgba(255,255,255,.05);
   --acc:var(--y); --acc2:var(--y2); --accFill:var(--y); --accLine:var(--y); --accSoft:color-mix(in srgb,var(--y) 13.0%,transparent); --grad:linear-gradient(100deg,var(--yL),var(--y2)); --tY:var(--y);
   --green:#34D186; --greenSoft:rgba(52,209,134,.13); --red:#FF5C61; --redSoft:rgba(255,92,97,.13); --amber:#F5B83D; --amberSoft:rgba(245,184,61,.14);
-  --u:#4CC170; --uBg:rgba(76,193,112,.10); --k:#3CC8DA; --kBg:rgba(60,200,218,.10); --h:#9AA0AE; --hBg:rgba(154,160,174,.09); --s:#F07AA5; --sBg:rgba(240,122,165,.10); --w:#7D8293; --wBg:rgba(255,255,255,.035);
+  --u:#4CC170; --uBg:rgba(76,193,112,.10); --k:#F5C518; --kBg:rgba(245,197,24,.16); --h:#9AA0AE; --hBg:rgba(154,160,174,.09); --s:#F07AA5; --sBg:rgba(240,122,165,.10); --w:#7D8293; --wBg:rgba(255,255,255,.035);
   --in:var(--y); --out:#C9CCD6;
   --c0:#E0353C; --c0t:#fff; --c1:rgba(255,105,100,.30); --c1t:#FFC2BF; --c2:rgba(255,200,70,.26); --c2t:#FFE09A; --c3:#22A866; --c3t:#fff; --empty:#171A22;
   --tab:rgba(12,14,20,.96);
@@ -524,6 +524,42 @@ a.mr-cta{text-decoration:none}
 .hbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 14px}.hbtns .btn{height:48px;padding:0 10px;justify-content:center;white-space:nowrap;font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis}.hbtns .btn svg{flex:none}
 @media (max-width:380px){.hbtns .btn{font-size:13.5px;gap:6px}.t3 .tile .tv{font-size:19px}.t3 .tile .tl,.t3 .tile .ts{font-size:11px}.dchips .dch2,.dchips .dchip{font-size:12.5px}}
 .dchips{min-width:0}.dch2,.dchip{max-width:100%;white-space:nowrap}
+
+.hbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 14px}
+.hbtn{display:flex;align-items:center;gap:10px;background:var(--paper);border-radius:20px;padding:10px 12px;box-shadow:var(--shadow);border:0;font:inherit;color:var(--ink);font-weight:600;font-size:15px;cursor:pointer;min-width:0;text-align:left;white-space:nowrap;overflow:hidden;transition:transform .15s}.hbtn:active{transform:scale(.97)}
+.hbtn .ti{--tc:var(--ink2);margin:0;width:34px;height:34px;border-radius:11px;flex:none;display:grid;place-items:center;color:var(--tc);background:color-mix(in srgb,var(--tc) 14%,transparent)}.hbtn .ti svg{width:18px;height:18px}
+@media (max-width:380px){.hbtn{font-size:13.5px;gap:8px;padding:9px 10px}.hbtn .ti{width:28px;height:28px}}
+.acc-c{position:relative;display:inline-block}.acc-c>button{width:38px;height:38px;border-radius:50%;border:3px solid var(--paper);box-shadow:0 0 0 1.5px var(--hair2);cursor:pointer;padding:0}.acc-c>button.on{box-shadow:0 0 0 2.5px var(--ink)}
+.acc-e{position:absolute;right:-6px;bottom:-6px;width:20px;height:20px;border-radius:50%;background:var(--paper);box-shadow:0 0 0 1px var(--hair2);display:grid;place-items:center;cursor:pointer;color:var(--ink2)}.acc-e svg{width:11px;height:11px}.acc-e input,.acc-add input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.acc-add{position:relative;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:2px dashed var(--hair2);color:var(--muted);font-size:22px;font-weight:400;cursor:pointer}
+/* Feste Icon-Farben (gleiches Icon = gleiche Farbe), nicht in Einstellungen */
+#view:not([data-v=einstellungen]){--ic-clock:#0EA5E9;--ic-brief:#6366F1;--ic-building:#E0A800;--ic-plane:#22A35A;--ic-halfplane:#84CC16;--ic-thermo:#EC4899;--ic-flag:#E11D48;--ic-sun:#F97316;--ic-coffee:#B7791F;--ic-cal:#14B8A6;--ic-target:#EF4444;--ic-trend:#10B981;--ic-wallet:#8B5CF6;--ic-trophy:#F59E0B;--ic-crown:#D97706;--ic-flame:#F43F5E;--ic-edit:#64748B;--ic-grid:#0891B2;--ic-zap:#F472B6;--ic-check:#22C55E;--ic-alert:#DC2626;--ic-range:#0284C7;--ic-down:#475569;--ic-moon:#7C3AED;--ic-shield:#4F46E5}
+#view:not([data-v=einstellungen]) svg.i-clock{color:var(--ic-clock)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-clock){--tc:var(--ic-clock)!important}
+#view:not([data-v=einstellungen]) svg.i-brief{color:var(--ic-brief)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-brief){--tc:var(--ic-brief)!important}
+#view:not([data-v=einstellungen]) svg.i-building{color:var(--ic-building)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-building){--tc:var(--ic-building)!important}
+#view:not([data-v=einstellungen]) svg.i-plane{color:var(--ic-plane)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-plane){--tc:var(--ic-plane)!important}
+#view:not([data-v=einstellungen]) svg.i-halfplane{color:var(--ic-halfplane)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-halfplane){--tc:var(--ic-halfplane)!important}
+#view:not([data-v=einstellungen]) svg.i-thermo{color:var(--ic-thermo)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-thermo){--tc:var(--ic-thermo)!important}
+#view:not([data-v=einstellungen]) svg.i-flag{color:var(--ic-flag)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-flag){--tc:var(--ic-flag)!important}
+#view:not([data-v=einstellungen]) svg.i-sun{color:var(--ic-sun)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-sun){--tc:var(--ic-sun)!important}
+#view:not([data-v=einstellungen]) svg.i-coffee{color:var(--ic-coffee)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-coffee){--tc:var(--ic-coffee)!important}
+#view:not([data-v=einstellungen]) svg.i-cal{color:var(--ic-cal)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-cal){--tc:var(--ic-cal)!important}
+#view:not([data-v=einstellungen]) svg.i-target{color:var(--ic-target)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-target){--tc:var(--ic-target)!important}
+#view:not([data-v=einstellungen]) svg.i-trend{color:var(--ic-trend)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-trend){--tc:var(--ic-trend)!important}
+#view:not([data-v=einstellungen]) svg.i-wallet{color:var(--ic-wallet)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-wallet){--tc:var(--ic-wallet)!important}
+#view:not([data-v=einstellungen]) svg.i-trophy{color:var(--ic-trophy)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-trophy){--tc:var(--ic-trophy)!important}
+#view:not([data-v=einstellungen]) svg.i-crown{color:var(--ic-crown)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-crown){--tc:var(--ic-crown)!important}
+#view:not([data-v=einstellungen]) svg.i-flame{color:var(--ic-flame)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-flame){--tc:var(--ic-flame)!important}
+#view:not([data-v=einstellungen]) svg.i-edit{color:var(--ic-edit)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-edit){--tc:var(--ic-edit)!important}
+#view:not([data-v=einstellungen]) svg.i-grid{color:var(--ic-grid)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-grid){--tc:var(--ic-grid)!important}
+#view:not([data-v=einstellungen]) svg.i-zap{color:var(--ic-zap)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-zap){--tc:var(--ic-zap)!important}
+#view:not([data-v=einstellungen]) svg.i-check{color:var(--ic-check)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-check){--tc:var(--ic-check)!important}
+#view:not([data-v=einstellungen]) svg.i-alert{color:var(--ic-alert)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-alert){--tc:var(--ic-alert)!important}
+#view:not([data-v=einstellungen]) svg.i-range{color:var(--ic-range)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-range){--tc:var(--ic-range)!important}
+#view:not([data-v=einstellungen]) svg.i-down{color:var(--ic-down)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-down){--tc:var(--ic-down)!important}
+#view:not([data-v=einstellungen]) svg.i-moon{color:var(--ic-moon)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-moon){--tc:var(--ic-moon)!important}
+#view:not([data-v=einstellungen]) svg.i-shield{color:var(--ic-shield)}#view:not([data-v=einstellungen]) .ti:has(>svg.i-shield){--tc:var(--ic-shield)!important}
+#view .btn.pri svg.ic,#view .addbtn svg.ic,#view .dchip svg.ic,#view .seg button svg.ic,#view .subtabs svg.ic,#view .dstart svg.ic,#view .cd svg.ic,#view .chip svg.ic,#view .tq button svg.ic,#view .ibtn svg.ic,#view .cr svg.ic,#view .chev,#view svg.i-right,#view svg.i-x,#view .paynet svg.ic,#view .dico svg.ic{color:inherit}
 html.mask .app,html.mask .tabs,html.mask .side{display:none!important}
 #srf{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:40;background:#F3F6FB;display:block}
 
@@ -802,7 +838,7 @@ a.panel{display:block;text-decoration:none;color:inherit}
 .cd .lt{display:none}
 .cd.pad{background:none}
 .cd.arbeit{background:var(--accSoft);color:var(--acc)} .cd.arbeit b{color:var(--ink)}
-.cd.koeln{background:var(--kBg);color:var(--k)} .cd.koeln b{color:var(--ink)}
+.cd.koeln{background:#F5C518;color:#3A2E00} .cd.koeln b{color:var(--ink)}
 .cd.urlaub{background:var(--u);color:#fff}
 .cd.halb{background:var(--hBg);color:var(--ink2)}
 .cd.krank{background:var(--s);color:#fff}
@@ -1608,7 +1644,7 @@ html[data-theme=dark] .hp-c{border-color:color-mix(in srgb,var(--y) 60.0%,transp
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='147';const APP_SEMVER='3.13.1';const APP_DATE='2026-11-13';
+const APP_VERSION='148';const APP_SEMVER='1.0.0';const APP_DATE='2026-11-13';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1701,7 +1737,7 @@ const I={
  lock:'<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>',
  range:'<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14.5h8"/>',
 };
-const ic=(n,extra='')=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${extra}>${I[n]||''}</svg>`;
+const ic=(n,extra='')=>{const cl='ic i-'+n;const ex=/class="/.test(extra)?extra.replace('class="','class="'+cl+' '):`class="${cl}" ${extra}`;return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${ex}>${I[n]||''}</svg>`};
 
 /* ---------- Logos (neue Entwürfe) ---------- */
 const LOGOS={
@@ -1919,6 +1955,7 @@ function hsl2hx(h,s0,l){s0/=100;l/=100;const k=n=>(n+h/30)%12,a=s0*Math.min(l,1-
 const ACCENTS=[['#F9DC4A','Gelb'],['#FFA94D','Orange'],['#FF7A7A','Rot'],['#F78FB3','Pink'],['#B197FC','Lila'],['#74B4FF','Blau'],['#4FD1C5','Türkis'],['#69DB7C','Grün']];
 function applyAccent(){const c=/^#[0-9a-f]{6}$/i.test(S.settings.accent||'')?S.settings.accent:'#F9DC4A';const r=document.documentElement.style;if(c.toUpperCase()==='#F9DC4A'){['--y','--y2','--yL','--yD','--ySoft'].forEach(k=>r.removeProperty(k));return}
   const [h,sa,l]=hx2hsl(c);const cl=x=>Math.max(4,Math.min(97,x));r.setProperty('--y',c);r.setProperty('--y2',hsl2hx(h,Math.min(100,sa+5),cl(l-9)));r.setProperty('--yL',hsl2hx(h,sa,cl(l+9)));r.setProperty('--yD',hsl2hx(h,Math.min(100,sa),cl(Math.min(l,60)-20)));r.setProperty('--ySoft',hsl2hx(h,Math.min(100,sa),93))}
+function accOwn(i,c){S.settings.accOwn=S.settings.accOwn||[];S.settings.accOwn[i]=c;setAccent(c)}
 function setAccent(c){S.settings.accent=c;save();applyAccent();render()}
 function applyTheme(){applyAccent();const t=MASK?'light':(S.settings.theme||'auto');const d=t==='dark'||(t==='auto'&&mq.matches);document.documentElement.dataset.theme=d?'dark':'light';barSync()}
 let _barC=null;function barSync(){const d=document.documentElement.dataset.theme==='dark';const dark=document.documentElement.classList.contains('prelock')||['lock','kick','eod','moment'].some(id=>{const e=document.getElementById(id);return e&&e.classList.contains('on')&&!e.classList.contains('out')});const c=d?'#06070B':(MASK?'#F3F6FB':'#EEF0F5');if(c===_barC)return;_barC=c;const o=document.querySelector('meta[name=theme-color]');const n=document.createElement('meta');n.name='theme-color';n.content=c;if(o)o.replaceWith(n);else document.head.appendChild(n)}
@@ -2047,7 +2084,7 @@ let VIEW='home'; let CUR=ymOf(new Date());
 const NAV=[['home','Home','home'],['zeit','Zeit','clock'],['gehalt','Gehalt','wallet'],['verlauf','Verlauf','grid']];
 const TITLES={aktiv:'Aktivität',home:'Home',zeit:'Arbeitszeit',umsatz:'Monatsergebnis',opps:'Opportunities',forecast:'Forecast',gehalt:'Gehalt',verlauf:'Verlauf',einstellungen:'Einstellungen'};
 let PREV='home';const vIdx=v=>v==='einstellungen'||v==='aktiv'?99:NAV.findIndex(n=>n[0]===v);
-function route(){ANIM_PENDING=true;const h=(location.hash||'').replace('#','');const old=VIEW;VIEW=MASK?(MNAV.some(n=>n[0]===h)||h==='einstellungen'?h:'prognose'):[...NAV.map(n=>n[0]),'einstellungen'].includes(h)?h:'home';if((VIEW==='einstellungen'||VIEW==='aktiv')&&old!==VIEW)PREV=old;closeSheet();render();window.scrollTo(0,0);const v=document.getElementById('view');v.classList.remove('fade');void v.offsetWidth;v.classList.add('fade')}
+function route(){ANIM_PENDING=true;setTimeout(()=>{const v=document.getElementById('view');if(v)v.dataset.v=VIEW},0);const h=(location.hash||'').replace('#','');const old=VIEW;VIEW=MASK?(MNAV.some(n=>n[0]===h)||h==='einstellungen'?h:'prognose'):[...NAV.map(n=>n[0]),'einstellungen'].includes(h)?h:'home';if((VIEW==='einstellungen'||VIEW==='aktiv')&&old!==VIEW)PREV=old;closeSheet();render();window.scrollTo(0,0);const v=document.getElementById('view');v.classList.remove('fade');void v.offsetWidth;v.classList.add('fade')}
 function goBack(){go(PREV&&PREV!=='einstellungen'&&PREV!=='aktiv'?PREV:'home')}
 window.addEventListener('hashchange',route);
 function go(v){if(location.hash==='#'+v){window.scrollTo({top:0,behavior:'smooth'})}else location.hash=v}
@@ -2079,7 +2116,7 @@ function countUp(root){if(RM())return;
     const f=v=>pre+sign+v.toLocaleString('de-DE',{minimumFractionDigits:dec,maximumFractionDigits:dec,useGrouping:grp})+post;
     const d=900,t0=performance.now();tn.nodeValue=f(0);
     const step=now=>{const k=Math.min(1,(now-t0)/d),e=1-Math.pow(1-k,3);tn.nodeValue=k<1?f(num*e):t;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
-function render(){try{restSync();privSync()}catch(e){}try{if(cleanData())save()}catch(e){}
+function render(){try{restSync();privSync();document.getElementById('view').dataset.v=VIEW}catch(e){}try{if(cleanData())save()}catch(e){}
   if(MASK){maskRender();return}
   if(window.event&&window.event.type==='change'&&!render._d){render._d=1;setTimeout(()=>{render._d=0;render()},0);return}
   const _ae=document.activeElement,_fl=[...document.querySelectorAll('#view input,#view select,#view textarea')];const _fi=_fl.indexOf(_ae);const _sel=_fi>=0&&_ae.select?[_ae.selectionStart,_ae.selectionEnd]:null;
@@ -2351,9 +2388,9 @@ function vacCard(){if(S.settings.vacWarn===false)return '';const v=vacAhead();if
   const open=VAC_OPEN||!all;
   if(!VAC_FLOWN&&!RM()&&!_vacT)_vacT=setTimeout(vacFlyMaybe,700);
   return `<div class="vac ${all?'ok':''}"><div class="vac-hd" onclick="vacOpen()"><span class="vac-e">${all?'✅':'✈️'}</span><div class="vac-t"><b>${when}</b><small>${range} · ${v.n} ${v.n===1?'Urlaubstag':'Urlaubstage'} · zurück ${WDL[pD(v.back).getDay()]}, ${dmy(v.back)}</small></div>${last?`<span class="vac-n">${done}/${VAC_TASKS.length}</span>`:''}</div>
-  ${open?`<div class="vac-fu">📅 Follow-ups erst ab <b>${WDL[pD(v.back).getDay()]}, ${dmy(v.back)}</b> planen</div>
+  ${open?`<div class="vac-fu">📅 Follow-ups / Termine erst ab <b>${WDL[pD(v.back).getDay()]}, ${dmy(v.back)}</b> planen</div>
   ${last?`<div class="vac-lh">Checkliste für heute</div><div class="vac-l">${VAC_TASKS.map(([id,l])=>`<label class="${c[id]?'on':''}"><input type="checkbox" ${c[id]?'checked':''} onchange="vacTick('${id}')"><span>${l}</span></label>`).join('')}</div>`:''}
-  <button class="vac-cp" onclick="vacCopy()">${ic('copy')} Hinweis-Text für Kunden kopieren</button>`:''}</div>`}
+`:''}</div>`}
 function vacMissing(v){const c=(S.vacPrep||{})[v.start]||{};return VAC_TASKS.filter(([id])=>!c[id])}
 function vacEndFlow(k){const v=vacAhead(k);if(!v)return;if(vacMissing(v).length)vacWarnSheet();else vacBye(k)}
 function vacWarnSheet(){const v=vacAhead();if(!v)return;const c=(S.vacPrep||{})[v.start]||{};const miss=vacMissing(v);
@@ -2730,7 +2767,7 @@ function vHome(){
   <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={bday:'Happy Birthday',nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',vacgo:'Schönen Urlaub',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();return rs?({eve:'🌙',vacgo:'🏖️',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
   ${saveOk?'':`<div class="warn" style="margin-bottom:14px">${ic('alert')} Daten können hier nicht gespeichert werden. Bitte Backup nutzen.</div>`}
   ${dayTile()}
-  <div class="hbtns"><button class="btn pri" onclick="editDay('${tk}')">${ic(S.days[tk]?'edit':'clock')}${S.days[tk]?'Zeit bearbeiten':'Zeit eintragen'}</button><button class="btn" onclick="rangeSheet()">${ic('plane')}Urlaub planen</button></div>
+  <div class="hbtns"><button class="hbtn" onclick="editDay('${tk}')"><span class="ti">${ic('clock')}</span>${S.days[tk]?'Zeit bearbeiten':'Zeit eintragen'}</button><button class="hbtn" onclick="rangeSheet()"><span class="ti">${ic('plane')}</span>Urlaub planen</button></div>
   <div class="bento">
     ${vacCard()}
     <div class="t3">${B.tiles}</div>
@@ -3773,8 +3810,8 @@ function vSettings(){
   <div class="panel" style="margin-bottom:14px">
     <div class="row" style="flex-wrap:wrap;gap:12px"><div><b style="font-weight:600">Design</b><div class="lbl">Automatisch folgt dem Hell- oder Dunkelmodus deines Geräts.</div></div><span class="sp"></span>
     <div class="seg pill">${[['auto','auto','Automatisch'],['light','sun','Hell'],['dark','moon','Dunkel']].map(([k,i,l])=>`<button class="${(st.theme||'auto')===k?'on':''}" onclick="setTheme('${k}')">${ic(i)}${l}</button>`).join('')}</div></div>
-    <div style="margin-top:16px"><b style="font-weight:600">Farbe</b><div class="lbl">Ersetzt das Gelb überall in der App</div>
-    <div class="acc-sw">${ACCENTS.map(([c,n])=>`<button class="${(st.accent||'#F9DC4A').toUpperCase()===c.toUpperCase()?'on':''}" style="background:${c}" onclick="setAccent('${c}')" aria-label="${n}" title="${n}"></button>`).join('')}<label title="Eigene Farbe" aria-label="Eigene Farbe"><input type="color" value="${st.accent||'#F9DC4A'}" onchange="setAccent(this.value)"></label></div></div>
+    <div style="margin-top:16px"><b style="font-weight:600">Farbe</b><div class="lbl">Ersetzt das Gelb überall in der App. Unter „Eigene Farben“ kannst du dir bis zu 5 Farben speichern.</div>
+    <div class="acc-sw">${ACCENTS.map(([c,n])=>`<button class="${(st.accent||'#F9DC4A').toUpperCase()===c.toUpperCase()?'on':''}" style="background:${c}" onclick="setAccent('${c}')" aria-label="${n}" title="${n}"></button>`).join('')}</div><div class="lbl" style="margin-top:14px">Eigene Farben</div><div class="acc-sw">${[0,1,2,3,4].map(i=>{const c=(st.accOwn||[])[i];return c?`<span class="acc-c"><button class="${(st.accent||'').toUpperCase()===c.toUpperCase()?'on':''}" style="background:${c}" onclick="setAccent('${c}')" aria-label="Eigene Farbe ${i+1}"></button><label class="acc-e" aria-label="Farbe ändern">${ic('edit')}<input type="color" value="${c}" onchange="accOwn(${i},this.value)"></label></span>`:`<label class="acc-add" aria-label="Eigene Farbe hinzufügen">+<input type="color" value="#4F8CFF" onchange="accOwn(${i},this.value)"></label>`}).join('')}</div></div>
   </div>
   <div class="cols half" style="margin-bottom:14px">
     <div class="panel">
@@ -3830,7 +3867,7 @@ function vSettings(){
       </div>
     </div>
   </div>
-  <p class="hint" style="text-align:center;margin-top:20px"><span class="ver-lp" ${lpAttr()}>Zeiterfassung, ${verTxt()} <span style="opacity:.6">(Build ${APP_VERSION})</span></span><br><span style="font-size:12px;opacity:.75">Versionsnummer: große Umbauten · neue Funktionen · Korrekturen</span><br><button class="btn sm" style="margin-top:10px" onclick="checkUpdate(true)">Nach Update suchen</button></p>`;
+  <p class="hint" style="text-align:center;margin-top:20px"><span class="ver-lp" ${lpAttr()}>Zeiterfassung, ${verTxt()}</span><br><span style="font-size:12px;opacity:.75">Versionsnummer: große Umbauten · neue Funktionen · Korrekturen</span><br><button class="btn sm" style="margin-top:10px" onclick="checkUpdate(true)">Nach Update suchen</button></p>`;
 }
 function importFile(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>doImport(r.result);r.readAsText(f)}
 function doImport(txt){try{const o=JSON.parse(txt);if(!o.settings||!o.days)throw 0;try{localStorage.setItem(LS_KEY,JSON.stringify(o))}catch(_){} S=o;load();if(!saveOk)S=o;save();closeSheet();render();toast('Backup eingespielt')}catch(e){toast('Das ist keine gültige Backup-Datei')}}
