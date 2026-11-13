@@ -1,6 +1,6 @@
 {
-  "name": "Sales Dashboard",
-  "short_name": "Sales",
+  "name": "Zeiterfassung",
+  "short_name": "Zeiterfassung",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

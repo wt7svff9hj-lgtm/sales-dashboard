@@ -6,10 +6,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Sales Dashboard">
+<meta name="apple-mobile-web-app-title" content="Zeiterfassung">
 <meta name="theme-color" content="#EEF0F5">
 <meta name="format-detection" content="telephone=no">
-<title>Sales Dashboard – Zeit, Umsatz &amp; Provision</title>
+<title>Zeiterfassung</title>
 <script>try{var t=(JSON.parse(localStorage.getItem("quota_v1")||"{}").settings||{}).theme||"auto";var mk=localStorage.getItem("sd_pv")==="1";var d=!mk&&(t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches));if(mk)document.documentElement.classList.add("mask");document.documentElement.dataset.theme=d?"dark":"light";var sc=(JSON.parse(localStorage.getItem("quota_v1")||"{}").security||{});if(sc.pin&&!mk)document.documentElement.classList.add("prelock");var tm=document.querySelector("meta[name=theme-color]");if(tm)tm.setAttribute("content",d?"#06070B":(mk?"#F3F6FB":"#EEF0F5"))}catch(e){}</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -507,6 +507,16 @@ textarea.inp{height:auto;padding:12px 14px}
 .seg.pill button{height:34px;background:none;border-radius:10px}
 .seg.pill button.on{background:var(--paper);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
+
+.dbtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.dbtns .dstart{margin:0;justify-content:center;white-space:nowrap;font-size:14.5px;padding-left:8px;padding-right:8px}.dbtns .dsec{background:rgba(127,127,127,.16)!important;color:inherit!important;box-shadow:none!important}.dbtns .dsec svg{color:inherit}
+.mr-cta{display:flex;align-items:center;gap:12px;width:100%;text-align:left;margin-bottom:14px;cursor:pointer;font:inherit;color:inherit}.mr-cta .mr-i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);flex:none}.mr-cta .mr-i svg{width:20px;height:20px}.mr-cta b{display:block;font-size:16px}.mr-cta small{display:block;color:var(--muted);font-size:13px;margin-top:2px}.mr-cta .chev{margin-left:auto;color:var(--muted);width:18px;height:18px;flex:none}
+
+.t3{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.t3 .tile{min-height:0;padding:12px 12px 13px;border-radius:20px}.t3 .tile .ti{width:28px;height:28px;border-radius:9px}.t3 .tile .ti svg{width:16px;height:16px}.t3 .tile .tl{margin-top:10px;font-size:12px}.t3 .tile .tv{font-size:22px}.t3 .tile .tv small{font-size:12px}.t3 .tile .ts{font-size:11px}
+.gin-pay{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted);background:var(--raise);padding:5px 10px;border-radius:99px}.gin-pay i{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block}
+.gin-f{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:12px;font-size:14px;color:var(--muted)}.gin-f b{color:var(--ink);font-variant-numeric:tabular-nums}.gin-f .chip.sm{height:26px;padding:0 8px;vertical-align:middle}
+.hm td.live,.hm td.e.live{outline:2px dashed var(--ink);outline-offset:-3px}
+.gin-b{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit;margin:0}.gin-b .mr-i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);flex:none}.gin-b .mr-i svg{width:20px;height:20px}.gin-b b{display:block;font-size:16px}.gin-b small{display:block;color:var(--muted);font-size:13px;margin-top:2px}.gin-b .chev{margin-left:auto;color:var(--muted);width:18px;height:18px;flex:none}
+a.mr-cta{text-decoration:none}
 html.mask .app,html.mask .tabs,html.mask .side{display:none!important}
 #srf{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:40;background:#F3F6FB;display:block}
 
@@ -1566,7 +1576,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
 </style>
 </head>
 <body>
-<div class="cbar" id="cbar" aria-hidden="true"><button class="cb-s" id="cbsync" onclick="syncSheet()" aria-label="Sync-Status"></button><div class="cb-t" onclick="window.scrollTo({top:0,behavior:'smooth'})">Sales Dashboard</div><span class="cb-r"><button class="cb-s" id="cbpriv" onclick="privToggle()" aria-label="Namen ausblenden"></button></span></div>
+<div class="cbar" id="cbar" aria-hidden="true"><button class="cb-s" id="cbsync" onclick="syncSheet()" aria-label="Sync-Status"></button><div class="cb-t" onclick="window.scrollTo({top:0,behavior:'smooth'})">Zeiterfassung</div><span class="cb-r"></span></div>
 <div class="app">
   <nav class="side" id="side"></nav>
   <main class="main"><div class="wrap">
@@ -1591,7 +1601,7 @@ html[data-theme=dark] .hp-c{border-color:rgba(249,220,74,.6)}
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='142';const APP_SEMVER='3.10.35';const APP_DATE='2026-11-12';
+const APP_VERSION='145';const APP_SEMVER='3.12.0';const APP_DATE='2026-11-13';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -1688,6 +1698,7 @@ const ic=(n,extra='')=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColo
 
 /* ---------- Logos (neue Entwürfe) ---------- */
 const LOGOS={
+ z:{name:'Zeit',svg:`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="zt1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34D3B4"/><stop offset="1" stop-color="#0E7C6B"/></linearGradient><linearGradient id="zt2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E6FBF6"/></linearGradient></defs><rect width="120" height="120" rx="27" fill="url(#zt1)"/><rect x="53" y="17" width="14" height="10" rx="3.5" fill="#fff"/><rect x="57" y="24" width="6" height="8" fill="#fff"/><circle cx="60" cy="66" r="35" fill="url(#zt2)"/><g stroke="#0E7C6B" stroke-linecap="round"><line x1="60" y1="38" x2="60" y2="43" stroke-width="3.5"/><line x1="88" y1="66" x2="83" y2="66" stroke-width="3.5"/><line x1="60" y1="94" x2="60" y2="89" stroke-width="3.5"/><line x1="32" y1="66" x2="37" y2="66" stroke-width="3.5"/></g><path d="M60 66 L60 47" stroke="#0B3B34" stroke-width="6" stroke-linecap="round"/><path d="M60 66 L74 74" stroke="#14B89A" stroke-width="6" stroke-linecap="round"/><circle cx="60" cy="66" r="5.5" fill="#0B3B34"/></svg>`},
  a:{name:'Tacho',svg:`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bg" cx="50%" cy="28%" r="85%"><stop offset="0" stop-color="#2E313B"/><stop offset="1" stop-color="#08090C"/></radialGradient><linearGradient id="arc" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C9A20E"/><stop offset=".6" stop-color="#F9DC4A"/><stop offset="1" stop-color="#FFF0A0"/></linearGradient><linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><radialGradient id="hub" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#FFF3A6"/><stop offset="1" stop-color="#E0B400"/></radialGradient><filter id="sh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#000" flood-opacity=".7"/></filter><filter id="gw" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3.5"/></filter></defs><rect width="120" height="120" rx="27" fill="url(#bg)"/><path d="M22 74A38 38 0 0 1 98 74" fill="none" stroke="#24272F" stroke-width="12" stroke-linecap="round"/><path d="M22 74A38 38 0 0 1 90.7 51.7" fill="none" stroke="#F9DC4A" stroke-opacity=".55" stroke-width="12" stroke-linecap="round" filter="url(#gw)"/><path d="M22 74A38 38 0 0 1 90.7 51.7" fill="none" stroke="url(#arc)" stroke-width="12" stroke-linecap="round"/><g stroke="#5A5E69" stroke-width="2.6" stroke-linecap="round"><path d="M35 74h4"/><path d="M42.3 56.3l2.8 2.8"/><path d="M60 49v4"/><path d="M77.7 56.3l-2.8 2.8"/><path d="M85 74h-4"/></g><polygon points="62.6,77.4 57.4,70.6 86.5,54.2" fill="#fff" filter="url(#sh)"/><circle cx="60" cy="74" r="8" fill="url(#hub)" filter="url(#sh)"/><circle cx="60" cy="74" r="3.2" fill="#111318"/><g fill="#F9DC4A"><rect x="38" y="90" width="8" height="8" rx="2" opacity=".45"/><rect x="50" y="86" width="8" height="12" rx="2" opacity=".7"/><rect x="62" y="82" width="8" height="16" rx="2" opacity=".85"/><rect x="74" y="78" width="8" height="20" rx="2"/></g><rect x="2" y="2" width="116" height="58" rx="25" fill="url(#gl)"/></svg>`},
  b:{name:'Wachstum',svg:`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFEB80"/><stop offset="1" stop-color="#F0BB00"/></linearGradient><linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2A2D36"/><stop offset="1" stop-color="#0E0F13"/></linearGradient><filter id="sh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#6B5000" flood-opacity=".45"/></filter></defs><rect width="120" height="120" rx="27" fill="url(#bg)"/><rect x="2" y="2" width="116" height="56" rx="25" fill="url(#gl)"/><g filter="url(#sh)"><rect x="25" y="70" width="16" height="26" rx="5" fill="url(#bar)"/><rect x="47" y="56" width="16" height="40" rx="5" fill="url(#bar)"/><rect x="69" y="42" width="16" height="54" rx="5" fill="url(#bar)"/></g><g filter="url(#sh)" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 58 44 41 58 51 92 22"/><path d="M76 21h17v17"/></g></svg>`},
  c:{name:'Volltreffer',svg:`<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bg" cx="50%" cy="25%" r="85%"><stop offset="0" stop-color="#2E313B"/><stop offset="1" stop-color="#08090C"/></radialGradient><radialGradient id="ring" cx="38%" cy="32%" r="75%"><stop offset="0" stop-color="#FFF19A"/><stop offset=".55" stop-color="#F9DC4A"/><stop offset="1" stop-color="#D4A600"/></radialGradient><linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".14"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><filter id="sh" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#000" flood-opacity=".65"/></filter></defs><rect width="120" height="120" rx="27" fill="url(#bg)"/><g filter="url(#sh)"><circle cx="56" cy="64" r="36" fill="url(#ring)"/><circle cx="56" cy="64" r="26" fill="#111318"/><circle cx="56" cy="64" r="17" fill="url(#ring)"/><circle cx="56" cy="64" r="7" fill="#111318"/></g><g filter="url(#sh)"><path d="M58 62 92 28" stroke="#fff" stroke-width="5.5" stroke-linecap="round"/><path d="M86 22l12-4-4 12-6 2z" fill="#fff"/><path d="M84 26l-2-9 7 2z" fill="#F9DC4A"/><path d="M90 32l9 2-2-7z" fill="#F9DC4A"/></g><rect x="2" y="2" width="116" height="56" rx="25" fill="url(#gl)"/></svg>`},
@@ -1739,7 +1750,7 @@ function defaultState(){
   const W=(s,e,p)=>({type:'arbeit',start:s,end:e,pause:p,note:''});
   return {
     v:1,
-    settings:{name:'Alexander',appName:'Sales Dashboard',theme:'auto',heatBest:'year',sollTag:8,sollHalb:4,urlaubAnspruch:29,urlaubVorher:{'2026':20},startMonth:'2026-11',startSaldo:-1.46,logo:'a',fronleichnam:false,allerheiligen:false},
+    settings:{name:'Alexander',appName:'Zeiterfassung',theme:'auto',heatBest:'year',sollTag:8,sollHalb:4,urlaubAnspruch:29,urlaubVorher:{'2026':20},startMonth:'2026-11',startSaldo:-1.46,logo:'a',fronleichnam:false,allerheiligen:false},
     days:{
       '2026-11-02':W('07:52','17:09',42),'2026-11-03':W('07:45','16:30',10),'2026-11-04':W('06:55','17:27',28),
       '2026-11-05':W('07:27','17:15',31),'2026-11-06':W('07:55','17:24',136),
@@ -1750,7 +1761,7 @@ function defaultState(){
     targets:{'2026-10':12000,'2026-11':12500,'2026-12':10600},
     deals:[
       {id:uid(),date:'2026-10-31',amount:2628,channel:'out',name:'',retro:true},
-      {id:uid(),date:'2026-11-06',amount:1611,channel:'in',name:''}
+      {id:uid(),date:'2026-11-30',amount:1611,channel:'in',name:'',retro:true}
     ],
     leads:[{id:uid(),date:'2026-10-31',count:100,note:''}],
     forecast:{},
@@ -1769,7 +1780,7 @@ function load(){
   S=defaultState();
 }
 let saveOk=true;
-function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(S));saveOk=true}catch(e){saveOk=false}}
+function save(){try{cleanData()}catch(e){}try{localStorage.setItem(LS_KEY,JSON.stringify(S));saveOk=true}catch(e){saveOk=false}}
 
 /* ---------- Feiertage (bundesweit + optional) ---------- */
 function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,da)}
@@ -1834,7 +1845,8 @@ function urlaubYear(y){
 
 /* ---------- Umsatz-Logik ---------- */
 const dealsOf=m=>S.deals.filter(d=>d.date.startsWith(m)).sort((a,b)=>b.date.localeCompare(a.date));
-function rev(m){const ds=dealsOf(m);let tot=0,inb=0,out=0;ds.forEach(d=>{tot+=+d.amount;if(d.channel==='in')inb+=+d.amount;else out+=+d.amount});const t=+S.targets[m]||0;return {ds,tot,inb,out,target:t,pct:t?tot/t*100:0}}
+function tgtOf(m){if(+S.targets[m])return +S.targets[m];const ks=Object.keys(S.targets||{}).filter(k=>k<m&&+S.targets[k]).sort();return ks.length?+S.targets[ks[ks.length-1]]:0}
+function rev(m){const ds=[];const t=tgtOf(m);const rs=(S.revSum||{})[m];if(rs!=null){const tot=+rs;return {ds,tot,inb:0,out:0,target:t,pct:t?tot/t*100:0,has:true,sum:true}}const hv=(S.heat||{})[addM(m,1)];const tot=hv!=null&&t?(+hv)/100*t:0;return {ds,tot,inb:0,out:0,target:t,pct:hv!=null?+hv:0,has:hv!=null}}
 const leadsOf=m=>S.leads.filter(l=>l.date.startsWith(m)).sort((a,b)=>b.date.localeCompare(a.date));
 const LEVELS=[70,100,120,140,160,180,200];
 
@@ -1849,9 +1861,7 @@ function salary(m,noComp){
   const neu=r.tot;
   /* Big Deal: Storno im selben Monat = wie gelöscht; Storno in späterem Monat kürzt den Bonus nicht */
   const stM=r.ds.filter(d=>d.storno).map(d=>({...d,left:Math.abs(+d.amount)}));
-  const big=r.ds.filter(d=>!d.retro&&!d.storno&&+d.amount>0).map(d=>{let v=+d.amount;
-    stM.filter(x=>x.left>0&&(x.ref?x.ref===d.id:((x.name||'')&&(x.name||'').trim().toLowerCase()===(d.name||'').trim().toLowerCase())||(!x.name&&Math.abs(x.left-v)<.01))).forEach(x=>{const c=Math.min(v,x.left);v-=c;x.left-=c});
-    return v}).filter(v=>v>+P.bigThreshold).reduce((s,v)=>s+v,0);
+  const big=+((S.bigSum||{})[m])||0;
   const att=target?neu/target*100:0;
   let over=0; const tiers=[...P.tiers].sort((a,b)=>a.from-b.from); tiers.forEach(t=>{if(att>=t.from)over=+t.rate});
   const rate=att>=tiers[0].from?otePct+over:0;
@@ -1860,7 +1870,7 @@ function salary(m,noComp){
   const bigBonus=big*(+P.bigRate)/100;
   let comp=0,compDays=0,perDay=0,hist=[];
   if(!noComp){
-    compDays=P.compDays[m]!=null?+P.compDays[m]:compDaysAuto(m);
+    compDays=compDaysAuto(m);
     hist=[m,addM(m,-1),addM(m,-2)].map(k=>({k,v:provisionOf(k),wd:workDaysOf(k)}));
     const sumV=hist.reduce((s,h)=>s+h.v,0),sumW=hist.reduce((s,h)=>s+h.wd,0); perDay=sumW?sumV/sumW:0; comp=perDay*compDays;
   }
@@ -1889,7 +1899,6 @@ function forecast(m){
 /* ---------- Heatmap-Logik ---------- */
 function heatVal(dk){ // dk = Anzeige-Monat; Wert = Zielerreichung Vormonat
   const src=addM(dk,-1); const cur=ymOf(new Date());
-  if(S.targets[src]&&src>=S.settings.startMonth){ if(src>cur)return {v:null}; return {v:rev(src).pct,auto:true,live:src===cur,src}; }
   const v=S.heat[dk]; return {v:v==null?null:+v,auto:false,src};
 }
 const heatCls=v=>v<50?'c0':v<70?'c1':v<100?'c2':'c3';
@@ -2022,21 +2031,21 @@ function mSettings(){return `${mHead()}
   <p class="hint" style="text-align:center;margin-top:20px"><span class="ver-lp" ${lpAttr()}>Sales Cockpit · Demo · ${verTxt()}</span></p>`}
 /* ---------- Routing ---------- */
 let VIEW='home'; let CUR=ymOf(new Date());
-const NAV=[['home','Home','home'],['zeit','Zeit','clock'],['umsatz','Umsatz','target'],['opps','Opps','funnel'],['forecast','Forecast','scope'],['gehalt','Gehalt','wallet'],['verlauf','Verlauf','grid']];
-const TITLES={aktiv:'Aktivität',home:'Home',zeit:'Arbeitszeit',umsatz:'Umsatz',opps:'Opportunities',forecast:'Forecast',gehalt:'Gehalt',verlauf:'Verlauf',einstellungen:'Einstellungen'};
+const NAV=[['home','Home','home'],['zeit','Zeit','clock'],['gehalt','Gehalt','wallet'],['verlauf','Verlauf','grid']];
+const TITLES={aktiv:'Aktivität',home:'Home',zeit:'Arbeitszeit',umsatz:'Monatsergebnis',opps:'Opportunities',forecast:'Forecast',gehalt:'Gehalt',verlauf:'Verlauf',einstellungen:'Einstellungen'};
 let PREV='home';const vIdx=v=>v==='einstellungen'||v==='aktiv'?99:NAV.findIndex(n=>n[0]===v);
-function route(){ANIM_PENDING=true;const h=(location.hash||'').replace('#','');const old=VIEW;VIEW=MASK?(MNAV.some(n=>n[0]===h)||h==='einstellungen'?h:'prognose'):[...NAV.map(n=>n[0]),'einstellungen','aktiv'].includes(h)?h:'home';if((VIEW==='einstellungen'||VIEW==='aktiv')&&old!==VIEW)PREV=old;closeSheet();render();window.scrollTo(0,0);const v=document.getElementById('view');v.classList.remove('fade');void v.offsetWidth;v.classList.add('fade')}
+function route(){ANIM_PENDING=true;const h=(location.hash||'').replace('#','');const old=VIEW;VIEW=MASK?(MNAV.some(n=>n[0]===h)||h==='einstellungen'?h:'prognose'):[...NAV.map(n=>n[0]),'einstellungen'].includes(h)?h:'home';if((VIEW==='einstellungen'||VIEW==='aktiv')&&old!==VIEW)PREV=old;closeSheet();render();window.scrollTo(0,0);const v=document.getElementById('view');v.classList.remove('fade');void v.offsetWidth;v.classList.add('fade')}
 function goBack(){go(PREV&&PREV!=='einstellungen'&&PREV!=='aktiv'?PREV:'home')}
 window.addEventListener('hashchange',route);
 function go(v){if(location.hash==='#'+v){window.scrollTo({top:0,behavior:'smooth'})}else location.hash=v}
 function shiftMonth(n){CUR=addM(CUR,n);render()}
 
 function renderChrome(){
-  const mk=()=>`<div class="mark"><div class="lg" onclick="egg(event)">${logoSvg(S.settings.logo)}</div>${esc(S.settings.appName||'Sales Dashboard')}</div>`;document.title=(S.settings.appName||'Sales Dashboard')+' – Zeit, Umsatz & Provision';
+  const mk=()=>`<div class="mark"><div class="lg" onclick="egg(event)">${logoSvg(S.settings.logo)}</div>Zeiterfassung</div>`;document.title='Zeiterfassung';
   document.getElementById('side').innerHTML=mk()+NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''}" onclick="if(VIEW==='${k}'){event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}">${ic(i)}${l}</a>`).join('')+`<div class="grow"></div><a href="#einstellungen" class="${VIEW==='einstellungen'?'on':''}">${ic('gear')}Einstellungen</a>`;
   const _due=(()=>{try{return fcDue()}catch(e){return false}})();document.getElementById('tabs').innerHTML=NAV.map(([k,l,i])=>`<a href="#${k}" class="${VIEW===k?'on':''} ${k==='forecast'&&_due?'dot':''}" onclick="if(VIEW==='${k}'){event.preventDefault();window.scrollTo({top:0,behavior:'smooth'})}">${ic(i)}${l}</a>`).join('');
   {const sb0=document.getElementById('syncbar');if(sb0&&sb0.parentNode&&sb0.parentNode.id==='bar')document.querySelector('.wrap').insertBefore(sb0,document.getElementById('view'))}
-  document.getElementById('bar').innerHTML=`${mk()}<span id="syncslot"></span><div class="sp"></div><button class="ibtn ${privOn()?'acc':''}" onclick="privToggle()" aria-label="Namen ausblenden" title="${privOn()?'Namen wieder anzeigen':'Namen ausblenden'}">${ic(privOn()?'eyeoff':'eye')}</button><button class="ibtn" onclick="cycleTheme()" aria-label="Design wechseln" title="Design: ${({auto:'Automatisch',light:'Hell',dark:'Dunkel'})[S.settings.theme||'auto']}">${ic(({auto:'auto',light:'sun',dark:'moon'})[S.settings.theme||'auto'])}</button><button class="ibtn ${VIEW==='einstellungen'?'acc':''}" onclick="VIEW==='einstellungen'?goBack():go('einstellungen')" aria-label="${VIEW==='einstellungen'?'Einstellungen schließen':'Einstellungen'}">${ic(VIEW==='einstellungen'?'x':'gear')}</button>`;
+  document.getElementById('bar').innerHTML=`${mk()}<span id="syncslot"></span><div class="sp"></div><button class="ibtn" onclick="cycleTheme()" aria-label="Design wechseln" title="Design: ${({auto:'Automatisch',light:'Hell',dark:'Dunkel'})[S.settings.theme||'auto']}">${ic(({auto:'auto',light:'sun',dark:'moon'})[S.settings.theme||'auto'])}</button><button class="ibtn ${VIEW==='einstellungen'?'acc':''}" onclick="VIEW==='einstellungen'?goBack():go('einstellungen')" aria-label="${VIEW==='einstellungen'?'Einstellungen schließen':'Einstellungen'}">${ic(VIEW==='einstellungen'?'x':'gear')}</button>`;
   {const sl=document.getElementById('syncslot'),sb=document.getElementById('syncbar');if(sl&&sb)sl.replaceWith(sb)}
 }
 function head(extra=''){
@@ -2057,7 +2066,7 @@ function countUp(root){if(RM())return;
     const f=v=>pre+sign+v.toLocaleString('de-DE',{minimumFractionDigits:dec,maximumFractionDigits:dec,useGrouping:grp})+post;
     const d=900,t0=performance.now();tn.nodeValue=f(0);
     const step=now=>{const k=Math.min(1,(now-t0)/d),e=1-Math.pow(1-k,3);tn.nodeValue=k<1?f(num*e):t;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)})}
-function render(){try{restSync();privSync()}catch(e){}
+function render(){try{restSync();privSync()}catch(e){}try{if(cleanData())save()}catch(e){}
   if(MASK){maskRender();return}
   if(window.event&&window.event.type==='change'&&!render._d){render._d=1;setTimeout(()=>{render._d=0;render()},0);return}
   const _ae=document.activeElement,_fl=[...document.querySelectorAll('#view input,#view select,#view textarea')];const _fi=_fl.indexOf(_ae);const _sel=_fi>=0&&_ae.select?[_ae.selectionStart,_ae.selectionEnd]:null;
@@ -2109,7 +2118,7 @@ const QUOTES_WORK=['Jeder Call bringt dich näher an die 70 %.','Ein Nein ist nu
 function lastWorkday(m){const n=dim(m);for(let i=n;i>=1;i--){const x=dayInfo(`${m}-${pad(i)}`);if(!x.weekend&&!x.hol&&!x.sp)return x.k}return null}
 function workdaysLeft(m,from){let n=0;monthDays(m).forEach(x=>{if(x.k<from||x.weekend||x.hol||x.sp)return;if(x.e&&isFree(x.e.type))return;n+=(x.e&&x.e.type==='halb')?.5:1});return n}
 /* ---------- Startseite: Layout ---------- */
-const HB_DEF=[['entry','Heute eintragen','main'],['umsatz','Umsatz','main'],['ziel','Tagesziel','main'],['mis','Missionen','main'],['qa','Schnellzugriff','main'],['fri','Wochenrückblick (Fr–So)','main'],['tempo','Tempo & Pace-Kurve','more'],['deals','Letzte Verträge','more'],['tiles','Kennzahlen','more'],['week','Letzte 5 Arbeitstage','more'],['strip','Zielerreichung Jahr','more']];
+const HB_DEF=[['entry','Heute eintragen','main'],['umsatz','Umsatz','main'],['mis','Missionen','main'],['qa','Schnellzugriff','main'],['fri','Wochenrückblick (Fr–So)','main'],['tiles','Kennzahlen','more'],['week','Letzte 5 Arbeitstage','more'],['strip','Zielerreichung Jahr','more']];
 const HB_NAME=Object.fromEntries(HB_DEF.map(([id,l])=>[id,l]));
 function homeLay(){const L=S.settings.homeLay||{};const place={};HB_DEF.forEach(([id,,p])=>place[id]=(L.place||{})[id]||p);return{custom:!!L.custom,order:(L.order&&L.order.length?[...L.order.filter(id=>HB_DEF.some(x=>x[0]===id)),...HB_DEF.map(x=>x[0]).filter(id=>!L.order.includes(id))]:HB_DEF.map(x=>x[0])),place}}
 function homeAutoOrder(){const tk=todayK();const di=dayInfo(tk);const e=di.e||{};const wd=!di.weekend&&!di.hol&&!di.sp&&!(e.type&&isFree(e.type));const h=new Date().getHours();
@@ -2140,7 +2149,7 @@ function startNow(){const n=new Date();todaySet('start',pad(n.getHours())+':'+pa
 function dayTile(){
   const d0=new Date(),tk=todayK(),m=ymOf(d0),di=dayInfo(tk),e=S.days[tk];
   const doy=Math.floor((d0-new Date(d0.getFullYear(),0,0))/864e5);
-  const isFinal=lastWorkday(m)===tk; const left=workdaysLeft(m,tk); const vacM=monthStats(m).urlaub;
+  const isFinal=false; const left=workdaysLeft(m,tk); const uY=urlaubYear(String(d0.getFullYear())); const uL=uY.total-uY.used; const wT=e?worked(e):null;
   let status,icon,quote,free=false;
   if(e&&e.type==='urlaub'){status='Urlaub';icon='plane';free=true}
   else if(e&&e.type==='krank'){status='Krank gemeldet';icon='thermo';free=true;quote='Gute Besserung. Heute zählt nur das Gesundwerden.'}
@@ -2156,10 +2165,10 @@ function dayTile(){
   return `<div class="daytile dt-c ${isFinal?'final':''}">${seasonFx(se)}
     <div class="dtop"><span>KW ${isoWeek(d0)}</span><span class="sp"></span><span>${MON[d0.getMonth()]} ${d0.getFullYear()}</span></div>
     <div class="dmain"><div><div class="dw">${WDL[d0.getDay()]}<span class="dd">${d0.getDate()}. ${MON[d0.getMonth()]}</span></div></div><div class="dico">${ic(icon)}</div></div>
-    <div class="dchips"><span class="dchip">${free?ic('check'):ic('clock')}${free?'Heute ist frei':status}</span><span class="dch2" title="Urlaub und Feiertage sind schon abgezogen">${ic('brief')}<b>${left?one(left):'0'}</b> ${left===1?'Arbeitstag':'Arbeitstage'} übrig</span>${vacM?`<span class="dch2">${ic('plane')}<b>${one(vacM)}</b> ${vacM===1?'Urlaubstag':'Urlaubstage'}</span>`:''}</div>
+    <div class="dchips"><span class="dchip">${free?ic('check'):ic('clock')}${free?'Heute ist frei':status}</span><span class="dch2" title="Urlaub und Feiertage sind schon abgezogen">${ic('brief')}<b>${left?one(left):'0'}</b> ${left===1?'Arbeitstag':'Arbeitstage'} übrig</span><span class="dch2">${ic('plane')}<b>${one(uL)}</b> ${uL===1?'Urlaubstag':'Urlaubstage'} übrig</span>${wT!=null?`<span class="dch2">${ic('clock')}<b>${hm(wT)}</b> gearbeitet</span>`:''}</div>
     ${free?`<div class="dsub2">${status}</div>`:''}
-    ${isFinal?`<div class="finalbar">${ic('flag')}<div><b>Finaltag</b><span>Alles, was heute unterschrieben wird, zählt noch im ${MON[d0.getMonth()]}.</span></div></div>`:!free&&left>0&&left<=5?`<div class="endspurt">⏳ Endspurt: noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'}</div>`:''}
-    ${canStart?`<button class="dstart" onclick="startNow()">${ic('clock')} Arbeitsbeginn jetzt eintragen <b>${pad(d0.getHours())}:${pad(d0.getMinutes())}</b></button>`:`<div class="dq">„${quote}“</div>`}
+    ${false?`<div class="finalbar">${ic('flag')}<div><b>Finaltag</b><span>Alles, was heute unterschrieben wird, zählt noch im ${MON[d0.getMonth()]}.</span></div></div>`:!free&&left>0&&left<=5?`<div class="endspurt">⏳ Endspurt: noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'}</div>`:''}
+    <div class="dbtns"><button class="dstart" onclick="editDay('${tk}')">${ic(e?'edit':'clock')} ${e?'Arbeitszeit bearbeiten':'Arbeitszeit eintragen'}</button><button class="dstart dsec" onclick="rangeSheet()">${ic('plane')} Urlaub planen</button></div>
   </div>`;
 }
 /* ---------- Aktivität: Demo-Calls & Opportunities (Tagesziel) ---------- */
@@ -2204,7 +2213,7 @@ function workCard(){const s=workState();if(!s)return '';const a=actOf(s.tk),g=ac
   const done=s.left<=0;const hr=new Date().getHours();const kick=hr<11?'Guten Morgen':hr<14?'Arbeitstag läuft':'Endspurt';
   return `<div class="rest-card rs-work"><div class="rs-sun"></div>${dateLine()}
     <div class="rs-top"><span class="rs-emo">${done?'🏁':hr<11?'☀️':hr<14?'💼':'🔥'}</span><div><div class="rs-kick">${kick}</div><h2 class="rs-h">Seit ${s.e.start} Uhr dabei</h2><div class="rs-sub"><span id="workClock">${hm(s.w)}</span> gearbeitet</div></div></div>
-    <div class="rs-figs">${fig('Demos',`${a.demo}<em>/${g.demo}</em>`)}${fig('Opps',`${a.ops.length}<em>/${g.op}</em>`)}${fig('High-Prios',hpD?'✓':'offen')}</div>
+    <div class="rs-figs">${fig('Missionen',`${missionState(s.tk).filter(Boolean).length}<em>/3</em>`)}${fig('Stundenkonto',hmS(balanceNow()))}${fig('High-Prios',hpD?'✓':'offen')}</div>
     ${s.pAss?`<div class="rs-note">Inkl. ${s.PA.m} min Pause${s.PA.learned?` (dein Schnitt der letzten ${s.PA.n} Tage)`:''}. Trag deine Pausen ein, dann wird’s genauer.</div>`:''}</div>`}
 setInterval(()=>{const el=document.getElementById('workClock');if(!el||document.hidden)return;const s=workState();if(!s){render();return}el.textContent=hm(s.w);const b=document.getElementById('workBar');if(b)b.style.width=Math.round(s.pct*100)+'%'},30000);
 function restCard(){const r=restState();if(!r)return '';const now=new Date();const tk=todayK();const nm=S.settings.name?', '+esc(S.settings.name):'';
@@ -2214,12 +2223,12 @@ function restCard(){const r=restState();if(!r)return '';const now=new Date();con
   const fig=(l,v)=>`<div><small>${l}</small><b>${v}</b></div>`;
   if(r.t==='eve'){const e=r.di.e;const since=toMin(e.end);const free=now.getHours()*60+now.getMinutes()-since;const a=actOf(tk);
     emo='🌙';kick='Feierabend';head=`Seit ${e.end} Uhr frei`;sub=`<span id="restClock">${restDur(free)}</span> Feierabend`;
-    body=`<div class="rs-figs">${fig('Gearbeitet',hm(worked(e)))}${fig('Demos',a.demo)}${fig('Opps',a.ops.length)}</div>`;
+    body=`<div class="rs-figs">${fig('Gearbeitet',hm(worked(e)))}${fig('Missionen',missionState(tk).filter(Boolean).length)}${fig('Stundenkonto',hmS(balanceNow()))}</div>`;
     foot=`${ns?`<div class="rs-next"><span class="rs-ni">☀️</span><div><b>Weiter ${nxL} ab ${ns.st} Uhr</b><small>Zuerst ⚡ High-Prios</small></div></div>`:''}<div class="rs-act"><button onclick="eodShow()">Tagesbilanz</button></div>`}
   else if(r.t==='vacgo'){cls='urlaub';emo='✈️';kick='Urlaub beginnt';head='Ab in den Urlaub';sub=`${r.v.n} ${r.v.n===1?'Urlaubstag':'Urlaubstage'} · zurück ${WDL[pD(r.v.back).getDay()]}, ${dmy(r.v.back)}`;foot=`<div class="rs-act"><button onclick="eodShow()">Tagesbilanz</button></div>`}
   else if(r.t==='we'||r.t==='wkend'){const wr=weekRecap(tk);emo=r.t==='wkend'?'🎉':'🏖️';kick=r.t==='wkend'?'Wochenende beginnt':'Wochenende';
     head=r.t==='wkend'?'Ab ins Wochenende':(now.getDay()===6?'Akku laden':'Genieß den Sonntag');sub=until!=null?`Noch <span id="restClock">${restDur(until)}</span> bis ${WDL[nx.wd]}`:'';
-    body=`<div class="rs-lbl">Deine KW ${wr.kw}</div><div class="rs-figs four">${fig('Stunden',hm(wr.hrs))}${fig('Demos',wr.demo)}${fig('Opps',wr.ops)}${fig('Umsatz',wr.rv?fmtE(wr.rv):'–')}</div>`;
+    body=`<div class="rs-lbl">Deine KW ${wr.kw}</div><div class="rs-figs">${fig('Stunden',hm(wr.hrs))}${fig('Tage',wr.days)}${fig('Stundenkonto',hmS(balanceNow()))}</div>`;
     foot=nx?`<div class="rs-next"><span class="rs-ni">☀️</span><div><b>Weiter ${WDL[nx.wd]} ab ${ns.st} Uhr</b><small>Zuerst ⚡ High-Prios</small></div></div>`:''}
   else if(r.t==='hol'||r.t==='sp'){emo=r.t==='sp'?spEmo(r.di.sp):'🎈';kick=r.t==='sp'?r.di.sp:'Feiertag';head=r.t==='sp'?'Genieß die Feiertage':r.di.hol;sub=until!=null?`Noch <span id="restClock">${restDur(until)}</span> bis ${WDL[nx.wd]}`:'';
     foot=nx?`<div class="rs-next"><span class="rs-ni">☀️</span><div><b>Weiter ${WDL[nx.wd]} ab ${ns.st} Uhr</b><small>Zuerst ⚡ High-Prios</small></div></div>`:''}
@@ -2347,7 +2356,7 @@ function vacBye(k){k=k||todayK();const F=fxStage();const ch=['✈️','🏖️',
 /* ---------- High-Prio zuerst ---------- */
 const hpOn=()=>S.settings.hiprio!==false;
 function hpDone(k){return !!((S.hiprio||{})[k||todayK()])}
-function hpNeeded(k){k=k||todayK();if(restState())return false;return hpOn()&&actWorkday(k)&&!hpDone(k)}
+function hpNeeded(k){return false;k=k||todayK();if(restState())return false;return hpOn()&&actWorkday(k)&&!hpDone(k)}
 function hpCheck(from){const k=todayK();S.hiprio=S.hiprio||{};S.hiprio[k]=new Date().toTimeString().slice(0,5);
   const cut=ymd(new Date(Date.now()-60*864e5));Object.keys(S.hiprio).forEach(x=>{if(x<cut)delete S.hiprio[x]});save();
   const el=document.getElementById('hpCard');if(el&&from!=='kick'){el.classList.add('done');setTimeout(()=>{render()},650)}else render();
@@ -2684,7 +2693,7 @@ function vHome(){
       <button onclick="leadSheet()"><span>${ic('users')}</span>Leads</button>
       <button onclick="rangeSheet()"><span>${ic('plane')}</span>Urlaub</button>
       <button onclick="editDay(todayK())"><span>${ic('clock')}</span>Arbeitszeit</button>
-    </div>`,fri:`${fri?`<div class="panel friday"><div class="fr-emo">${fri.sum>0?'🙌':'🌤️'}</div><div><div class="ptl">Deine Woche</div><div class="lbl">${fri.n} ${fri.n===1?'Deal':'Deals'}, ${fmtE(fri.sum)} Umsatz, ${hm(fri.h)} gearbeitet, ${fri.mis} Missionen</div><div class="fr-msg">${fri.sum>0?'Starke Woche. Genieß das Wochenende!':'Neue Woche, neue Chance. Erst mal abschalten!'}</div></div></div>`:''}`,tempo:`    <div class="panel tempo">
+    </div>`,fri:`${fri?`<div class="panel friday"><div class="fr-emo">${fri.h>0?'🙌':'🌤️'}</div><div><div class="ptl">Deine Woche</div><div class="lbl">${hm(fri.h)} gearbeitet, ${fri.mis} Missionen</div><div class="fr-msg">${fri.h>0?'Starke Woche. Genieß das Wochenende!':'Neue Woche, neue Chance. Erst mal abschalten!'}</div></div></div>`:''}`,tempo:`    <div class="panel tempo">
       <div class="row"><div class="ptl">${ic('zap','class="pi"')}Tempo ${MON[d0.getMonth()]}</div><span class="sp"></span><div class="amp ${T.st}"><i></i><i></i><i></i></div></div>
       <div class="tp-l ${T.st}">${T.lbl}</div>${T.txt?`<div class="lbl">${T.txt}</div>`:''}
       ${paceChart(m)}${paceSummary()}
@@ -2693,13 +2702,9 @@ function vHome(){
       <div class="row"><div class="ptl">${ic('brief','class="pi"')}Letzte Verträge</div><span class="sp"></span><button class="chip acc" onclick="dealSheet()">${ic('plus')} Umsatz</button></div>
       ${deals.length?deals.map(d=>`<div class="li deal" onclick="dealSheet('${d.id}')">${dIco(d)}<div class="t"><b>${pn(dealName(d))}${chfTag(d)}</b><small>${d.storno?'Storno, ':''}${dLabel(d.date)}</small></div><div class="v ${+d.amount<0?'neg':''}">${fmtE(d.amount)}</div></div>`).join(''):`<div class="empty">Noch keine Verträge.</div>`}
     </div>`,tiles:`    <a class="tile" href="#zeit"><div class="ti" style="--tc:${total>=0?'var(--green)':'var(--red)'}">${ic('clock')}</div><div class="tl">Stundenkonto</div><div class="tv ${total>=0?'pos':'neg'}">${sgn(total)}<small> h</small></div><div class="ts">${st.missing?`<span class="neg">${st.missing} Tag(e) offen</span>`:`Monat ${sgn(st.saldo)} h`}</div></a>
-    <a class="tile" href="#forecast"><div class="ti" style="--tc:var(--tY)">${ic('scope')}</div><div class="tl">Forecast</div><div class="tv">${fmtN(fc.pct)}<small> %</small></div><div class="ts">${fmtE(fc.exp)} erwartet</div></a>
-    <a class="tile" href="#gehalt"><div class="ti" style="--tc:var(--amber)">${ic('wallet')}</div><div class="tl">Auszahlung ${MONS[pD(addM(m,1)).getMonth()]}</div><div class="tv">${fmtE(sal.total)}</div><div class="ts">variabel ${fmtE(sal.total-sal.base)}</div></a>
     <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--u)">${ic('plane')}</div><div class="tl">Urlaub übrig</div><div class="tv">${one(u.total-u.used)}<small> Tage</small></div><div class="ts">${nextU?`nächster in ${nextUDays} Tagen`:`${one(u.used)} von ${u.total} verplant`}</div></a>
-    <a class="tile" href="#umsatz"><div class="ti" style="--tc:var(--in)">${ic('users')}</div><div class="tl">Leads</div><div class="tv">${leadSum}</div><div class="ts">im ${MON[d0.getMonth()]}</div></a>
-    <a class="tile" href="#umsatz"><div class="ti" style="--tc:var(--k)">${ic('brief')}</div><div class="tl">Abschlüsse</div><div class="tv">${r.ds.length}</div><div class="ts">${r.ds.length?`Ø ${fmtE(r.tot/r.ds.length)} je Vertrag`:'noch keiner im Monat'}</div></a>
     <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--s)">${ic('coffee')}</div><div class="tl">Ø Arbeitstag</div><div class="tv">${hm(avgDay)}</div><div class="ts">${workedDays.length} Tage erfasst</div></a>
-    <a class="tile" href="#zeit"><div class="ti" style="--tc:var(--h)">${ic('cal')}</div><div class="tl">Arbeitstage übrig</div><div class="tv">${one(left)}</div><div class="ts">inklusive heute</div></a>`,week:`    <div class="panel week">
+`,week:`    <div class="panel week">
       <div class="row"><div class="ptl">${ic('trend','class="pi"')}Letzte 5 Arbeitstage</div><span class="sp"></span><span class="lbl">Soll ${fmtN(S.settings.sollTag)} h</span></div>
       <div class="wk"><div class="goal" style="bottom:${(+S.settings.sollTag/maxH)*112+19}px"></div>
       ${week.map(x=>{const h=x.w||0;const fr=x.e&&isFree(x.e.type);return `<div class="c ${x.k===tk?'today':''}" onclick="editDay('${x.k}')" data-tip="${WDL[x.wd]}, ${dLabel(x.k)}<br>${fr?TYPES[x.e.type].l:x.w!=null?hm(x.w):'kein Eintrag'}"><em>${fr?'':x.w!=null?hm(x.w).replace('m','').replace('h ',':'):''}</em><i class="${fr?'u':h?'':'off'}" style="height:${fr?18:Math.max(4,h/maxH*112)}px"></i><small>${WD[x.wd]}</small></div>`}).join('')}
@@ -2708,19 +2713,15 @@ function vHome(){
       <div class="row"><div class="ptl">${ic('grid','class="pi"')}Zielerreichung ${y}</div><span class="sp"></span><span class="lbl">Verlauf ${ic('right','style="width:14px;height:14px;vertical-align:-2px"')}</span></div>
       <div class="sg">${strip.map(h=>`<div class="sc ${h.v==null?'e':heatCls(h.v)} ${h.live?'live':''}"><b>${h.v==null?'':Math.round(h.v)+'<small> %</small>'}</b><span>${MONS[h.i]}</span></div>`).join('')}</div>
     </a>`};
-  const HS=homeSplit();const moreOpen=!!S.settings.homeMore;
   return `
-  <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={bday:'Happy Birthday',nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',vacgo:'Schönen Urlaub',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();if(document.documentElement.classList.contains('xmon')&&(!rs||rs.t==='eve'||rs.t==='we'))return rs&&rs.t==='eve'?'🌙':'🎄';return rs?({eve:'🌙',vacgo:'🏖️',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
+  <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={bday:'Happy Birthday',nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',vacgo:'Schönen Urlaub',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();return rs?({eve:'🌙',vacgo:'🏖️',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
   ${saveOk?'':`<div class="warn" style="margin-bottom:14px">${ic('alert')} Daten können hier nicht gespeichert werden. Bitte Backup nutzen.</div>`}
-  ${restCard()||workCard()||dayTile()}
+  ${dayTile()}
   <div class="bento">
-    ${carryBanner()}
     ${vacCard()}
-    ${hpCard()}
-    ${HS.main.map(id=>B[id]).join('')}
-  </div>
-  ${HS.more.length?`<button class="more-tg ${moreOpen?'on':''}" onclick="homeMoreToggle()"><span>${moreOpen?'Weniger anzeigen':'Mehr anzeigen'}</span><small>${HS.more.map(id=>({focus:'Fokus',tempo:'Tempo',deals:'Verträge',tiles:'Kennzahlen',week:'5 Tage',strip:'Jahr',entry:'Zeit',umsatz:'Umsatz',ziel:'Tagesziel',mis:'Missionen',qa:'Schnellzugriff',fri:'Woche'})[id]).join(' · ')}</small><span class="mt-ch">›</span></button>
-  ${moreOpen?`<div class="bento more-b">${HS.more.map(id=>B[id]).join('')}</div>`:''}`:''}`;
+    <div class="t3">${B.tiles}</div>
+    ${B.week}
+  </div>`;
 }
 const dealName=d=>d.name||(d.retro?(d.channel==='in'?'Inbound gesamt':'Outbound gesamt'):(d.channel==='in'?'Inbound-Vertrag':'Outbound-Vertrag'));
 
@@ -2792,6 +2793,29 @@ function zeitOverview(m,st,carry,end){
       <div><small>${need!=null?'Zum Ausgleichen':'Pro Tag'}</small><b class="num">${need!=null?hm(need):hm(+S.settings.sollTag)}</b><span>${need!=null?'pro Tag bis Monatsende'+(miss.length?', nach dem Nachtragen':''):(miss.length?'reicht nach dem Nachtragen für ein ausgeglichenes Konto':'reicht für ein ausgeglichenes Konto')}</span></div>
     </div>`:''}
   </div>`}
+function zeitToday(){
+  const tk=todayK(), d0=new Date(); const di=dayInfo(tk); const e=S.days[tk]||{};
+  const type=e.type||'arbeit'; const free=isFree(type)&&S.days[tk];
+  const soll=(di.weekend||di.hol||di.sp)?0:(type==='halb'?+S.settings.sollHalb:+S.settings.sollTag);
+  const w=worked(e); const locked=(di.weekend||di.hol||di.sp)&&!S.days[tk];
+  const week=[];{const d=new Date(d0);let g=0;while(week.length<5&&g++<14){const x=dayInfo(ymd(d));if(!x.weekend)week.unshift(x);d.setDate(d.getDate()-1)}}
+  const weekSum=week.reduce((s,x)=>s+(x.w||0),0);
+  const prevW=(()=>{const d=new Date(d0);for(let i=0;i<14;i++){d.setDate(d.getDate()-1);const x=S.days[ymd(d)];if(x&&x.start&&x.end)return dayInfo(ymd(d))}return null})();
+  return `    <div class="panel today" style="margin-bottom:14px">
+      <div class="row"><div><div class="ptl">${ic(locked?'lock':'edit','class="pi"')}${locked?'Heute':'Heute eintragen'}</div><div class="lbl">${locked?'Heute ist frei':'Soll '+fmtN(soll)+' Stunden'}</div></div><span class="sp"></span>${locked?'':`<button class="chip" onclick="editDay('${tk}')">Details</button>`}</div>
+      ${locked?`<div class="freebox lockbox">${ic(di.hol?'flag':'sun')}<div><b>${di.hol||'Wochenende'}</b><div class="lbl">Heute wird nicht gearbeitet. Die Erfassung ist gesperrt.</div></div></div>`:`
+      <div class="seg tseg" style="margin-top:14px">${['arbeit','koeln','halb','urlaub','krank'].map(t=>`<button class="${(S.days[tk]?type:'')===t?'on':''}" onclick="todaySet('type','${t}')">${ic(TYPES[t].i)}${TYPES[t].l}</button>`).join('')}</div>
+      ${free?`<div class="freebox">${ic(TYPES[type].i)}<div><b>${TYPES[type].l}</b><div class="lbl">Zählt neutral im Stundenkonto.</div></div></div>`:`
+      <div class="tin">
+        <label><span>Beginn</span><input type="time" value="${e.start||''}" onchange="todaySet('start',this.value)"></label>
+        <label><span>Pause (min)</span><input type="text" inputmode="numeric" autocomplete="off" placeholder="0" value="${e.pause||''}" onchange="todayPause(this.value)" onkeydown="if(event.key==='='||event.key==='Enter'){event.preventDefault();this.blur()}"></label>
+        <label><span>Ende</span><input type="time" value="${e.end||''}" onchange="todaySet('end',this.value)"></label>
+      </div>
+      <div class="tq tq-add"><span class="lbl">+ Teilpause</span>${[5,10,15,30].map(p=>`<button onclick="todayPauseAdd(${p})">+${p}</button>`).join('')}<input class="tq-own" type="text" inputmode="numeric" placeholder="Min." onkeydown="if(event.key==='Enter'){event.preventDefault();const v=this.value;this.value='';todayPauseAdd(v)}" onblur="if(this.value){const v=this.value;this.value='';todayPauseAdd(v)}" aria-label="Eigene Teilpause in Minuten"></div>
+      ${e.pauses&&e.pauses.length>1?`<div class="tq-sum">${e.pauses.join(' + ')} = <b>${e.pause} min</b>${e.pause>=60?' · '+hm(e.pause/60):''}<button onclick="todayPauseUndo()">Rückgängig</button></div>`:''}
+      <div class="tq"><span class="lbl">Pause fest</span>${[0,15,30,45,60].map(p=>`<button class="${(+e.pause||0)===p&&e.start?'on':''}" onclick="todaySet('pause',${p})">${p}</button>`).join('')}<span class="sp"></span>${prevW?`<button class="cp" onclick="copyPrev()">${ic('copy')} Wie ${WD[prevW.wd]}</button>`:''}</div>
+      <div class="tres"><div><small>Gearbeitet</small><b>${w!=null?hm(w):'–'}</b></div><div><small>Saldo heute</small><b class="${w!=null?(w-soll>=0?'pos':'neg'):''}">${w!=null?sgn(w-soll)+' h':'–'}</b></div><div><small>5 Arbeitstage</small><b>${hm(weekSum)}</b></div></div>${w!=null&&e.end?`<button class="btn sm block eod-btn" onclick="eodShow()">🌙 Tagesbilanz ansehen</button>`:''}`}`}
+    </div>`}
 function vZeit(){
   const st=monthStats(CUR); const carry=carryIn(CUR); const end=carry!=null?carry+st.saldo:null;
   const y=CUR.slice(0,4); const u=urlaubYear(y);
@@ -3362,11 +3386,11 @@ function vGehalt(){
   const row=(n,l,sub,v)=>`<div class="cr"><div class="n">${n}</div><div><b>${l}</b>${sub?`<small>${sub}</small>`:''}</div><div class="v">${v}</div></div>`;
   const parts=[['Grundgehalt',s.base,'#E9EAEE'],['Provision',s.provision,'#F9DC4A'],['Boni',s.planBonus+s.bigBonus,'#F6C700'],['Kompensation',s.comp,'#4BE39A']];
   const tot=Math.max(1,s.total);
-  const sliderMax=Math.max(s.target*2.5,s.neu*1.2,1000);const GT=subCur('gehalt',['aus','wi','par']);
+  const sliderMax=Math.max(s.target*2.5,s.neu*1.2,1000);const GT=subCur('gehalt',['aus','par']);
   return `${head()}
-  ${subBar('gehalt',[['aus','Auszahlung'],['wi','Was wäre wenn'],['par','Parameter']],GT)}
+  ${subBar('gehalt',[['aus','Auszahlung'],['par','Parameter']],GT)}
   ${GT==='aus'?`
-  ${CUR<S.settings.startMonth?`<div class="warn" style="background:var(--accSoft);color:var(--ink);margin-bottom:14px">${ic('alert')} Das Gehalt rechnet die App ab ${mLabel(S.settings.startMonth)}. Frühere Monate dienen nur zur Orientierung.</div>`:''}
+
   <div class="cols two">
     <div class="hero payhero">
       <div class="row"><span class="hl">${ic('wallet')} Auszahlung ${mLabel(addM(CUR,1))}</span><span class="sp"></span><span class="hchip">für ${MONS[pD(CUR).getMonth()]}</span></div>
@@ -3377,11 +3401,12 @@ function vGehalt(){
       <div class="paylegend">${parts.map(p=>`<div><span style="background:${p[2]}"></span><small>${p[0]}</small><b>${fmtE(p[1])}</b></div>`).join('')}</div>
     </div>
     <div class="stack" style="gap:14px">
+      <button class="panel gin-b" onclick="gSheet('${CUR}')"><span class="mr-i">${ic('edit')}</span><div><b>${s.r.sum?'Umsatz '+fmtE(s.neu):'Umsatz eintragen'}</b><small>${s.r.sum?(s.big?'davon Big Deals '+fmtE(s.big)+' · ':'')+'tippen zum Ändern':MON[pD(CUR).getMonth()]+(CUR===ymOf(new Date())?' läuft':'')+' · Auszahlung im '+MON[pD(addM(CUR,1)).getMonth()]}</small></div>${ic('right','class="chev"')}</button>
       <div class="grid2">
         <div class="tile sm"><div class="ti" style="--tc:var(--tY)">${ic('target')}</div><div class="tl">Zielerreichung</div><div class="tv">${fmtN(s.att,1)}<small> %</small></div></div>
         <div class="tile sm"><div class="ti" style="--tc:var(--green)">${ic('trend')}</div><div class="tl">Provisionssatz</div><div class="tv">${fmtN(s.rate,1)}<small> %</small></div></div>
-        <div class="tile sm"><div class="ti" style="--tc:var(--in)">${ic('brief')}</div><div class="tl">Neu-ARR</div><div class="tv">${fmtE(s.neu)}</div></div>
-        <button class="tile sm" onclick="compSheet()" style="text-align:left"><div class="ti" style="--tc:var(--u)">${ic('plane')}</div><div class="tl">Kompensationstage ${ic('edit','style="width:12px;height:12px;vertical-align:-1px"')}</div><div class="tv">${one(s.compDays)}</div></button>
+        <button class="tile sm" onclick="targetSheet('${CUR}')" style="text-align:left"><div class="ti" style="--tc:var(--in)">${ic('brief')}</div><div class="tl">Monatsziel ${ic('edit','style="width:12px;height:12px;vertical-align:-1px"')}</div><div class="tv">${s.target?fmtE(s.target):'–'}</div></button>
+        <div class="tile sm"><div class="ti" style="--tc:var(--u)">${ic('plane')}</div><div class="tl">Kompensationstage</div><div class="tv">${one(s.compDays)}</div></div>
       </div>
       <div class="panel">
         <div class="row"><div class="lbl">Zielerreichung</div><span class="sp"></span><b class="num">${fmtP(s.att,1)}</b></div>
@@ -3398,10 +3423,10 @@ function vGehalt(){
         ${row(1,'Grundgehalt','',fmtE(s.base))}
         ${row(2,'Variabel bei 100 %','',fmtE(s.variable))}
         ${row(3,'On Target Earnings','(1) + (2)',fmtE(s.ote))}
-        ${row(4,'ARR-Ziel','aus Umsatz',s.target?fmtE(s.target):'<span class="neg">fehlt</span>')}
+        ${row(4,'ARR-Ziel','Monatsziel',s.target?fmtE(s.target):'<span class="neg">fehlt</span>')}
         ${row(5,'OTE-Provisionssatz','(2) / (4)',fmtP(s.otePct,2))}
-        ${row(6,'Neu-ARR',`${s.r.ds.length} ${s.r.ds.length===1?'Vertrag':'Verträge'}`,fmtE(s.neu,2))}
-        ${row(7,'Big-Deal-ARR',`Verträge über ${fmtE(P.bigThreshold)}`,fmtE(s.big,2))}
+        ${row(6,'Neu-ARR',s.r.sum?'eingetragen':'Zielerreichung × Ziel',fmtE(s.neu,2))}
+        ${row(7,'Big-Deal-ARR','davon Big Deals',fmtE(s.big,2))}
       </div>
       <div>
         ${row(8,'Zielerreichung','(6) / (4)',fmtP(s.att,1))}
@@ -3409,7 +3434,7 @@ function vGehalt(){
         ${row(11,'Provision','(6) × (9)',fmtE(s.provision,2))}
         ${row(12,'Erfolgsplan-Bonus',`(6) × ${fmtN(P.planRate)} %`,fmtE(s.planBonus,2))}
         ${row(13,'Big-Deal-Bonus',`(7) × ${fmtN(P.bigRate)} %`,fmtE(s.bigBonus,2))}
-        ${row(14,'Kompensation',`${one(s.compDays)} Tage à ${fmtE(s.perDay,2)}`,fmtE(s.comp,2))}
+        ${row(14,'Kompensation',`${one(s.compDays)} Tage (Urlaub, krank, Feiertag) à ${fmtE(s.perDay,2)}`,fmtE(s.comp,2))}
       </div>
     </div>
     <div class="grp" style="margin-top:16px">Kompensation pro Tag: Ø Provision und Boni ÷ Ø Arbeitstage der letzten 3 Monate</div>
@@ -3624,7 +3649,7 @@ function trendsPanel(){const T=trCalc();if(!T.length)return `<p class="hint" sty
   ${T.filter(t=>!t.good).length?`<div class="tr-grp">Stabil &amp; neutral</div><div class="tr-l">${T.filter(t=>!t.good).map(row).join('')}</div>`:''}
   ${trPending(T.pending)}`}
 function vVerlauf(){
-  const VT=subCur('verlauf',['trend','ins','hist']);
+  const VT='hist';
   const cy=new Date().getFullYear(); const years=[];for(let y=2020;y<=cy+1;y++)years.push(y);
   const mode=S.settings.heatBest||'year';
   const vals={};years.forEach(y=>{for(let i=1;i<=12;i++){const k=`${y}-${pad(i)}`;vals[k]=heatVal(k)}});
@@ -3645,9 +3670,10 @@ function vVerlauf(){
   const prevA=avgs[years.indexOf(cy-1)];
   const diff=curA&&prevA?curA.v-prevA.v:null;
   const maxAvg=Math.max(100,...valid.map(a=>a.v));
+  const nk=addM(cur,1);const lastK=(()=>{let k=nk;for(let i=0;i<24;i++){if(S.heat[k]!=null)return k;k=addM(k,-1)}return null})();
   return `${head()}
-  ${streaksHtml()}
-  ${subBar('verlauf',[['trend','Trends'],['ins','Insights'],['hist','Rückblick']],VT)}
+  <a class="panel mr-cta" href="#gehalt"><span class="mr-i">${ic('clock')}</span><div><b>${MON[pD(cur).getMonth()]} läuft, Auszahlung im ${MON[pD(nk).getMonth()]}</b><small>${S.heat[nk]!=null?'Stand '+fmtP(+S.heat[nk],1):'noch offen'} · Umsatz trägst du im Gehalt ein</small></div>${ic('right','class="chev"')}</a>
+  
   ${VT==='trend'?trendsPanel():''}${VT==='ins'?insightsPanel():''}${VT==='hist'?`
   <div class="panel" style="margin-bottom:14px">
     <div class="ptl">${ic('trend','class="pi"')}Ø Zielerreichung pro Jahr</div>
@@ -3663,13 +3689,7 @@ function vVerlauf(){
   <div class="sh"><h2>${ic('trophy','class="pi"')}Rekorde</h2></div>
   <div class="vtiles">${(()=>{const rc=records();return `
     <div class="tile"><div class="ti" style="--tc:var(--amber)">${ic('crown')}</div><div class="tl">Beste Zielerreichung</div><div class="tv">${rc.best?R(rc.best.v):'–'}<small> %</small></div><div class="ts">${rc.best?mLabel(rc.best.src):''}</div></div>
-    <div class="tile"><div class="ti" style="--tc:var(--in)">${ic('brief')}</div><div class="tl">Größter Deal</div><div class="tv">${rc.big?fmtE(rc.big.amount):'–'}</div><div class="ts">${rc.big?dLabel(rc.big.date):'ab jetzt in der App'}</div></div>
-    <div class="tile"><div class="ti" style="--tc:var(--k)">${ic('users')}</div><div class="tl">Meiste Deals</div><div class="tv">${rc.most?rc.most.n:'–'}</div><div class="ts">${rc.most?mLabel(rc.most.m):''}</div></div>
     <div class="tile"><div class="ti" style="--tc:var(--green)">${ic('flame')}</div><div class="tl">Aktuelle Serie</div><div class="tv">${monthStreak()}<small> Monate</small></div><div class="ts">über 70 % in Folge</div></div>`})()}</div>
-  <div class="sh" id="badges"><h2>${ic('shield','class="pi"')}Abzeichen</h2><span class="sp"></span><span class="meta">${earnedBadges().length} von ${BADGES.length}</span></div>
-  <div class="panel">${badgeShelf()}</div>
-  <div class="sh"><h2>${ic('zap','class="pi"')}Rückblicke</h2></div>
-  <div class="grid2">${(()=>{const pm=addM(ymOf(new Date()),-1);const cm=ymOf(new Date());const opts=[pm,cm].filter(m=>m>=S.settings.startMonth);return opts.map(m=>`<button class="btn block" style="white-space:nowrap;font-size:14px" onclick="showWrap('m','${m}')">🎬 ${MONS[pD(m).getMonth()]} ${m.slice(0,4)}</button>`).join('')+`<button class="btn block" onclick="showWrap('y','${cy}')">🎆 Jahr ${cy}</button>`})()}</div>
   <div style="height:14px"></div>
   <div class="panel" style="margin-top:14px">
     <div class="row" style="flex-wrap:wrap;gap:10px">
@@ -3685,9 +3705,9 @@ function vVerlauf(){
     <div class="hmx"><table class="hm">
       <tr class="hh">${years.map(y=>`<th class="${y===cy?'cy':''}"><span>${y}</span></th>`).join('')}</tr>
       ${MONS.map((mn,i)=>`<tr>${years.map(y=>{const k=`${y}-${pad(i+1)}`;const h=vals[k];
-        if(h.v==null)return `<td class="${k>cur?'f':'e'}" ${k<=addM(cur,1)&&!h.auto?`onclick="heatSheet('${k}')" style="cursor:pointer"`:''}></td>`;
+        if(h.v==null)return `<td class="${k>nk?'f':'e'} ${k===nk?'live':''}"></td>`;
         const b=isBest(y,i+1,h.v);
-        return `<td class="${heatCls(h.v)} ${b?'best':''} ${h.live?'live':''}" onclick="heatSheet('${k}')" data-tip="<b>${MON[i]} ${y}: ${fmtP(h.v,1)}</b><br>Leistung aus ${mLabel(h.src)}${h.auto?'<br>aus deinen Umsätzen':''}${h.live?', läuft noch':''}${b?(mode==='year'?'<br>Bester Monat '+y:'<br>Bester '+MON[i]+' aller Jahre'):''}">${P(h.v)}</td>`}).join('')}</tr>`).join('')}
+        return `<td class="${heatCls(h.v)} ${b?'best':''} ${k===nk?'live':''}" data-tip="<b>${MON[i]} ${y}: ${fmtP(h.v,1)}</b><br>Leistung aus ${mLabel(h.src)}${h.live?', läuft noch':''}${b?(mode==='year'?'<br>Bester Monat '+y:'<br>Bester '+MON[i]+' aller Jahre'):''}">${P(h.v)}</td>`}).join('')}</tr>`).join('')}
       <tr class="sep"><td colspan="${years.length}"></td></tr>
       <tr class="avg">${avgs.map((a,j)=>a==null?'<td></td>':`<td><span class="${heatCls(a.v)} ${bestY&&years[j]===bestY.y?'best':''}">${R(a.v)}&#8239;%</span></td>`).join('')}</tr>
     </table></div></div>
@@ -3700,16 +3720,34 @@ function vVerlauf(){
       <span class="k"><span class="sw" style="outline:2px dashed var(--ink);outline-offset:-2px"></span>läuft noch</span>
     </div>
   </div>
-  <p class="hint" style="margin:14px 4px 0">Zielerreichung ohne Urlaubsberücksichtigung, immer einen Monat verzögert: Umsatz im November steht im Dezember, weil die Provision im Folgemonat kommt. Werte bis November 2026 stammen aus deiner Excel und bleiben fest, auch wenn du frühere Umsätze nachträgst. Ab Dezember 2026 (Leistung November) rechnet die App selbst.</p>`:''}`;
+  <p class="hint" style="margin:14px 4px 0">Zielerreichung ohne Urlaubsberücksichtigung, immer einen Monat verzögert: Umsatz im November steht im Dezember, weil die Provision im Folgemonat kommt. Die Werte kommen automatisch aus dem Umsatz, den du im Gehalt einträgst. Die Farbe ergibt sich daraus: unter 50, unter 70, 70 bis 100 oder ab 100 %.</p>`:''}`;
 }
+function gSheet(m){const s=salary(m);
+  openSheet(`${sheetHead('Umsatz '+MON[pD(m).getMonth()]+' '+m.slice(0,4))}
+   <p class="hint" style="margin-top:-6px">Wird im ${MON[pD(addM(m,1)).getMonth()]} ausgezahlt. Nur Summen, du kannst rechnen, z. B. 1500+2500.</p>
+   <div class="field"><label>Gesamtumsatz in €</label><input class="inp" id="gTot" inputmode="decimal" enterkeyhint="next" autocomplete="off" placeholder="0" value="${s.r.sum?String(Math.round(s.neu*100)/100).replace('.',','):''}" style="font-size:22px;height:56px;font-weight:600"></div>
+   <div class="field" style="margin-top:12px"><label>davon Big Deals in €</label><input class="inp" id="gBig" inputmode="decimal" enterkeyhint="done" autocomplete="off" placeholder="0" value="${s.big?String(s.big).replace('.',','):''}"></div>
+   <div class="gin-f"><span>Ziel <b>${s.target?fmtE(s.target):'fehlt'}</b> <button class="chip sm" onclick="closeSheet();setTimeout(()=>targetSheet('${m}'),250)">${ic('edit')}</button></span></div>
+   <button class="btn pri block" style="margin-top:14px" onclick="gSave('${m}')">${ic('check')} Speichern</button>`)}
+function gSave(m){const num=id=>{const t=((document.getElementById(id)||{}).value||'').trim();if(!t)return null;const c=calcEval(t);return c!=null?c:numIn(t)};
+  const tot=num('gTot'),big=num('gBig')||0;const k=addM(m,1);S.revSum=S.revSum||{};S.bigSum=S.bigSum||{};
+  if(tot==null){delete S.revSum[m];delete S.bigSum[m];delete S.heat[k];closeSheet();save();render();toast('Umsatz entfernt');return}
+  if(big>tot+.005){toast('Big Deals können nicht höher sein als der Gesamtumsatz');return}
+  S.revSum[m]=Math.round(tot*100)/100;if(big>0)S.bigSum[m]=Math.round(big*100)/100;else delete S.bigSum[m];
+  const t=tgtOf(m);if(t)S.heat[k]=Math.round(tot/t*1000)/10;closeSheet();save();render();toast('Gespeichert','ok')}
 function heatSheet(k){
-  const h=heatVal(k);const [y,m]=k.split('-');
-  if(h.auto){toast(`${fmtP(h.v,1)} aus deinen Umsätzen im ${MON[pD(h.src).getMonth()]}`);return}
-  openSheet(`${sheetHead(`${MON[+m-1]} ${y}`)}
-   <p class="hint" style="margin-top:-6px">Zielerreichung der Leistung aus ${mLabel(addM(k,-1))}, ausgezahlt im ${MON[+m-1]}.</p>
-   <div class="field"><label>Zielerreichung in %</label><input class="inp" id="hv" type="number" inputmode="decimal" value="${S.heat[k]??''}" style="font-size:24px;height:58px;font-weight:600"></div>
-   <button class="btn pri block" style="margin-top:16px" onclick="const v=document.getElementById('hv').value;if(v==='')delete S.heat['${k}'];else S.heat['${k}']=+v;save();closeSheet();render()">Speichern</button>`);
+  const [y,m]=k.split('-');const lm=addM(k,-1);const bg=(S.bigSum||{})[lm];
+  openSheet(`${sheetHead(`Ergebnis ${MON[pD(lm).getMonth()]} ${lm.slice(0,4)}`)}
+   <p class="hint" style="margin-top:-6px">Deine Zielerreichung für ${MON[pD(lm).getMonth()]}, ausgezahlt im ${MON[+m-1]}. Trägst du im Gehalt den Umsatz ein, wird sie automatisch gesetzt.</p>
+   <div class="field"><label>Zielerreichung in %</label><input class="inp" id="hv" type="text" inputmode="decimal" enterkeyhint="done" placeholder="z. B. 84" value="${S.heat[k]!=null?String(S.heat[k]).replace('.',','):''}" style="font-size:24px;height:58px;font-weight:600"></div>
+
+   <button class="btn pri block" style="margin-top:16px" onclick="heatSave('${k}')">${ic('check')} Speichern</button>
+   ${S.heat[k]!=null?`<button class="btn block" style="margin-top:10px" onclick="delete S.heat['${k}'];if(S.bigSum)delete S.bigSum['${lm}'];save();closeSheet();render();toast('Gelöscht')">Eintrag löschen</button>`:''}`);
 }
+function heatSave(k){const t=(document.getElementById('hv').value||'').trim();const lm=addM(k,-1);
+  if(t===''){delete S.heat[k]}else{const v=parseFloat(t.replace(',','.'));if(!isFinite(v)||v<0||v>1000){toast('Bitte eine Prozentzahl eingeben');return}S.heat[k]=Math.round(v*10)/10}
+  if(S.revSum&&S.revSum[lm]!=null){const t0=tgtOf(lm);const p0=t0?Math.round(S.revSum[lm]/t0*1000)/10:null;if(S.heat[k]!==p0)delete S.revSum[lm]}
+  save();closeSheet();render();toast('Ergebnis gespeichert','ok')}
 
 /* ============================================================
    Einstellungen
@@ -3733,30 +3771,18 @@ function vSettings(){
       </div>
       <p class="hint" style="margin-bottom:0">Die Sperre schützt vor neugierigen Blicken. Face ID funktioniert in der GitHub-Version auf iPhone und iPad.</p>
     </div>
-    <div class="panel" id="homelay"><div class="ptl" style="margin-bottom:12px">${ic('home','class="pi"')}Startseite anpassen</div>${homeLayPanel()}</div>
     <div class="panel">
-      <div class="row" style="margin-bottom:12px"><div class="ptl">${ic('zap','class="pi"')}Tagesstart</div><span class="sp"></span><div class="seg pill"><button class="${S.settings.kickoff!==false?'on':''}" onclick="S.settings.kickoff=true;save();render()">An</button><button class="${S.settings.kickoff===false?'on':''}" onclick="S.settings.kickoff=false;save();render()">Aus</button></div></div>
-      <p class="hint" style="margin-top:0">Einmal am Tag beim ersten Öffnen: dein Stand, eine Mission für den Tag und ein Spruch zum Loslegen.</p>
-      <button class="btn pri block" onclick="maybeKickoff(true)">Jetzt ansehen 🚀</button>
-      <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Geburtstag 🎂</b><div class="lbl">Für eine kleine Überraschung</div></div><span class="sp"></span><input class="inp" style="width:96px;text-align:center" inputmode="numeric" placeholder="TT.MM." value="${(()=>{const b=S.settings.bday||'02-28';return b.slice(3)+'.'+b.slice(0,2)+'.'})()}" onchange="{const m=this.value.match(/(\d{1,2})\D+(\d{1,2})/);if(m){S.settings.bday=String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');save();toast('Geburtstag gespeichert','ok')}else toast('Bitte als TT.MM. eingeben')}"></div>
+      <div class="ptl" style="margin-bottom:4px">${ic('zap','class="pi"')}Kleine Extras</div>
+      <div class="row" style="margin-top:12px"><div><b style="font-weight:600">Geburtstag 🎂</b><div class="lbl">Für eine kleine Überraschung</div></div><span class="sp"></span><input class="inp" style="width:96px;text-align:center" inputmode="numeric" placeholder="TT.MM." value="${(()=>{const b=S.settings.bday||'02-28';return b.slice(3)+'.'+b.slice(0,2)+'.'})()}" onchange="{const m=this.value.match(/(\d{1,2})\D+(\d{1,2})/);if(m){S.settings.bday=String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');save();toast('Geburtstag gespeichert','ok')}else toast('Bitte als TT.MM. eingeben')}"></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Im Unternehmen seit 🏅</b><div class="lbl">TT.MM. oder TT.MM.JJJJ für die Jahreszahl</div></div><span class="sp"></span><input class="inp" style="width:120px;text-align:center" inputmode="numeric" placeholder="01.09.2024" value="${(()=>{const j=S.settings.jobStart||'2020-09-01';const md=j.slice(-5);return md.slice(3)+'.'+md.slice(0,2)+'.'+(j.length>5?j.slice(0,4):'')})()}" onchange="{const m=this.value.match(/(\d{1,2})\D+(\d{1,2})(?:\D+(\d{4}))?/);if(m){S.settings.jobStart=(m[3]?m[3]+'-':'')+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0');save();toast('Gespeichert','ok')}else toast('Bitte als TT.MM.JJJJ eingeben')}"></div>
       <div class="row" style="margin-top:16px;flex-wrap:wrap;gap:10px"><div><b style="font-weight:600">Freizeit-Tür 🚪</b><div class="lbl">Am Wochenende, im Urlaub, an Feiertagen, an halben Urlaubstagen ab 12 Uhr und nach Feierabend</div></div><span class="sp"></span><div class="seg pill"><button class="${gateOn()?'on':''}" onclick="S.settings.gate=true;save();render()">An</button><button class="${gateOn()?'':'on'}" onclick="S.settings.gate=false;save();render()">Aus</button></div></div>
       <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><span class="lbl">Vorschau:</span><button class="btn sm" onclick="showGate(null,'we')">Wochenende</button><button class="btn sm" onclick="showGate(null,'urlaub')">Urlaub</button><button class="btn sm" onclick="showGate(null,'hol')">Feiertag</button><button class="btn sm" onclick="showGate(null,'eve')">Feierabend</button></div>
       <div class="row" style="margin-top:10px"><div><b style="font-weight:600">Auch nach Feierabend</b><div class="lbl">Sobald dein eingetragenes Arbeitsende erreicht ist</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.gateEve!==false?'on':''}" onclick="S.settings.gateEve=true;save();render()">An</button><button class="${S.settings.gateEve!==false?'':'on'}" onclick="S.settings.gateEve=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Urlaubs-Vorwarnung ✈️</b><div class="lbl">5 Arbeitstage vor dem Urlaub auf Home</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.vacWarn!==false?'on':''}" onclick="S.settings.vacWarn=true;save();render()">An</button><button class="${S.settings.vacWarn!==false?'':'on'}" onclick="S.settings.vacWarn=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Üblicher Arbeitsbeginn</b><div class="lbl">Für „Weiter morgen ab …“ und die Countdowns</div></div><span class="sp"></span><input class="inp" type="time" style="width:110px" value="${S.settings.startTime||'08:00'}" onchange="S.settings.startTime=this.value||'08:00';save();toast('Arbeitsbeginn gespeichert','ok')"></div>
-      <div class="row" style="margin-top:16px"><div><b style="font-weight:600">High-Prio-Erinnerung ⚡</b><div class="lbl">Bleibt auf Home stehen, bis du sie abhakst</div></div><span class="sp"></span><div class="seg pill"><button class="${hpOn()?'on':''}" onclick="S.settings.hiprio=true;save();render()">An</button><button class="${hpOn()?'':'on'}" onclick="S.settings.hiprio=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Feierabend-Bilanz 🌙</b><div class="lbl">Zusammenfassung, sobald du das Ende für heute einträgst</div></div><span class="sp"></span><div class="seg pill"><button class="${eodOn()?'on':''}" onclick="S.settings.eod=true;save();render()">An</button><button class="${eodOn()?'':'on'}" onclick="S.settings.eod=false;save();render()">Aus</button></div></div>
       <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Saison-Motive</b><div class="lbl">Dezente Deko zu Advent, Silvester, Karneval, Ostern & Co.</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.season!==false?'on':''}" onclick="S.settings.season=true;save();render()">An</button><button class="${S.settings.season===false?'on':''}" onclick="S.settings.season=false;save();render()">Aus</button></div></div>
-      <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Umsatz-Effekte 💸</b><div class="lbl">Geldregen und Meilenstein-Momente beim Eintragen</div></div><span class="sp"></span><div class="seg pill"><button class="${fxOn()?'on':''}" onclick="S.settings.fx=true;save();render()">An</button><button class="${!fxOn()?'on':''}" onclick="S.settings.fx=false;save();render()">Aus</button></div></div>
-      <button class="btn sm" style="margin-top:10px" onclick="fxTestSheet()">✨ Effekte testen</button>
-      <div class="row" style="margin-top:16px"><div><b style="font-weight:600">Gong bei Abschluss</b><div class="lbl">Ton bei neuen Deals und Abzeichen</div></div><span class="sp"></span><div class="seg pill"><button class="${S.settings.sound?'on':''}" onclick="S.settings.sound=true;save();render();gong()">An</button><button class="${!S.settings.sound?'on':''}" onclick="S.settings.sound=false;save();render()">Aus</button></div></div>
     </div>
-  </div>
-  <div class="panel">
-    <div class="lbl" style="margin-bottom:12px">App-Icon</div>
-    <div class="logos">${Object.entries(LOGOS).map(([k,l])=>`<button class="${st.logo===k?'on':''}" onclick="S.settings.logo='${k}';save();setTouchIcon();render()"><div class="lg">${logoSvg(k)}</div>${l.name}</button>`).join('')}</div>
-    <p class="hint" style="margin-bottom:0">Das gewählte Icon erscheint auf dem Home-Bildschirm, wenn du die GitHub-Version dort ablegst.</p>
   </div>
   <div class="cols half" style="margin-top:14px">
     <div class="panel">
@@ -3775,22 +3801,20 @@ function vSettings(){
         <button class="btn block" onclick="reportSheet()">${ic('cal')} Jahresauszug für die Steuer</button>
         <button class="btn block" onclick="CUR=ymOf(new Date());exportSheet()">${ic('clock')} Arbeitszeit-Nachweis Monat</button>
         <button class="btn block" onclick="netSheet()">${ic('wallet')} Netto-Schätzung &amp; Steuerdaten</button>
-        <button class="btn block" onclick="fxSheet()">🇨🇭 Wechselkurs CHF (${fmtN(chfRate(),2)} €)</button>
       </div>
       <div class="lbl" style="margin-bottom:12px">Cloud-Sync</div>
       <button class="btn block" style="margin-bottom:20px" onclick="syncSheet()">${ic(syncOn()?'cloudok':'cloud')} ${syncOn()?'Verbunden mit '+esc(SY.repo):'Mit GitHub verbinden'}</button>
       <div class="lbl" style="margin-bottom:12px">Daten und Backup</div>
       <div class="stack">
-        <button class="btn block" onclick="download('sales-dashboard-backup-${todayK()}.json',JSON.stringify(S,null,1),'application/json')">${ic('down')} Backup herunterladen</button>
+        <button class="btn block" onclick="download('zeiterfassung-backup-${todayK()}.json',JSON.stringify(S,null,1),'application/json')">${ic('down')} Backup herunterladen</button>
         <button class="btn block" onclick="copyText(JSON.stringify(S))">${ic('copy')} Backup kopieren</button>
         <label class="btn block" style="cursor:pointer">${ic('up')} Backup einspielen<input type="file" accept=".json,application/json" style="display:none" onchange="importFile(this)"></label>
         <button class="btn block" onclick="pasteImport()">${ic('edit')} Backup aus Text einfügen</button>
         <button class="btn danger block" onclick="resetSheet()">${ic('trash')} Daten zurücksetzen</button>
       </div>
-      <p class="hint" style="margin-bottom:0">Hier kommt später die Synchronisierung über GitHub hin, damit iPhone und iPad dieselben Daten sehen.</p>
     </div>
   </div>
-  <p class="hint" style="text-align:center;margin-top:20px"><span class="ver-lp" ${lpAttr()}>Sales Dashboard, ${verTxt()} <span style="opacity:.6">(Build ${APP_VERSION})</span></span><br><span style="font-size:12px;opacity:.75">Versionsnummer: große Umbauten · neue Funktionen · Korrekturen</span><br><button class="btn sm" style="margin-top:10px" onclick="checkUpdate(true)">Nach Update suchen</button></p>`;
+  <p class="hint" style="text-align:center;margin-top:20px"><span class="ver-lp" ${lpAttr()}>Zeiterfassung, ${verTxt()} <span style="opacity:.6">(Build ${APP_VERSION})</span></span><br><span style="font-size:12px;opacity:.75">Versionsnummer: große Umbauten · neue Funktionen · Korrekturen</span><br><button class="btn sm" style="margin-top:10px" onclick="checkUpdate(true)">Nach Update suchen</button></p>`;
 }
 function importFile(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>doImport(r.result);r.readAsText(f)}
 function doImport(txt){try{const o=JSON.parse(txt);if(!o.settings||!o.days)throw 0;try{localStorage.setItem(LS_KEY,JSON.stringify(o))}catch(_){} S=o;load();if(!saveOk)S=o;save();closeSheet();render();toast('Backup eingespielt')}catch(e){toast('Das ist keine gültige Backup-Datei')}}
@@ -3899,7 +3923,7 @@ async function psKey(k){if(k==='del'){PS.buf=PS.buf.slice(0,-1)}else if(PS.buf.l
   if(PS.buf!==PS.first){PS.step=1;PS.first='';return bad('PINs stimmen nicht überein, nochmal')}
   SEC().pin=await sha(PS.buf);if(SEC().after==null)SEC().after=1;save();closeSheet();render();toast('PIN gespeichert','ok')}
 async function enableFace(){try{if(!window.PublicKeyCredential||!(await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()))throw 0;
-  const cred=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'Sales Dashboard'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:S.settings.name||'nutzer',displayName:S.settings.name||'Nutzer'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required',residentKey:'preferred'},timeout:60000}});
+  const cred=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'Zeiterfassung'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:S.settings.name||'nutzer',displayName:S.settings.name||'Nutzer'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required',residentKey:'preferred'},timeout:60000}});
   SEC().faceId=b64(cred.rawId);save();render();toast('Face ID aktiviert','ok')}catch(e){toast('Face ID geht hier nicht. In der GitHub-Version auf iPhone oder iPad klappt es.')}}
 
 /* ---------- Tagesstart-Motivation ---------- */
@@ -4006,7 +4030,7 @@ function misPanel(k){const o=misDay(k);const core=o.d.slice(0,3).filter(Boolean)
 function misKickHtml(k){const ms=missionsFor(k),mst=missionState(k);return `<div class="kk-mis"><div class="kk-lbl">Deine Missionen für heute</div>${ms.slice(0,3).map((t,i)=>`<label><input type="checkbox" ${mst[i]?'checked':''} onchange="toggleMission(${i})"><span>${esc(t)}</span></label>`).join('')}</div>`}
 
 const KQUOTES=['Jeder Call bringt dich näher an die 70 %.','Ein Nein ist nur der Weg zum nächsten Ja.','Fokus auf die nächsten zwei Deals.','Kleine Schritte, große Quote.','Erst zuhören, dann abschließen.','Dranbleiben schlägt Talent.','Wer fragt, führt. Wer führt, schließt ab.','Die Pipeline von morgen füllst du heute.','Gute Closer haben einen Plan für den nächsten Schritt.','Mut zum Abschluss: einfach fragen.','Heute ist ein guter Tag für einen Abschluss.','Konstanz gewinnt Monate, nicht einzelne Tage.'];
-function maybeKickoff(force){if(LOCKED)return;if(!force&&(S.settings.kickoff===false||S.settings.lastKickoff===todayK()))return;S.settings.lastKickoff=todayK();save();showKickoff()}
+function maybeKickoff(force){return;if(LOCKED)return;if(!force&&(S.settings.kickoff===false||S.settings.lastKickoff===todayK()))return;S.settings.lastKickoff=todayK();save();showKickoff()}
 function showKickoff(){
   const d0=new Date(),m=ymOf(d0),tk=todayK(),di=dayInfo(tk),r=rev(m),left=workdaysLeft(m,tk),nextLv=LEVELS.find(l=>r.pct<l),final=lastWorkday(m)===tk;
   const doy=Math.floor((d0-new Date(d0.getFullYear(),0,0))/864e5);const e=S.days[tk];
@@ -4071,7 +4095,7 @@ function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worke
   const tips=[];if(vacB&&vacB.wd===1)nx=null;
   if(nx&&nx.wd===1&&fcDue())tips.push(`📋 Montag bis 12 Uhr: Forecast KW ${kwOf(nx.k)} abgeben`);
   if(stale.length)tips.push(`⏳ ${stale.length} ${stale.length===1?'Opp wartet':'Opps warten'} seit 14+ Tagen, ${stale.length===1?'nachfassen':'nachfassen'}: ${privOn()?oppN(stale.length):stale.slice(0,2).map(x=>pn(x.n||'Opp')).join(', ')+(stale.length>2?' …':'')}`);
-  if(r.target&&r.pct<70&&nx){const left=workdaysLeft(m,nx.k);if(left)tips.push(`🎯 Bis 70 % fehlen ${fmtE(r.target*.7-r.tot)}, noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'}`)}
+
   const el=document.getElementById('eod');
   el.innerHTML=`<div class="kk-in">
     <div class="kk-top"><span>${WDL[d0.getDay()]}, ${d0.toLocaleDateString('de-DE',{day:'numeric',month:'long'})}</span><button class="kk-x" onclick="closeEod()" aria-label="Schließen">${ic('x')}</button></div>
@@ -4128,14 +4152,11 @@ function records(){const s=series().filter(x=>!x.live);const best=s.reduce((b,x)
   return {best,big,most:most?{m:most[0],n:most[1]}:null}}
 const histBest=()=>Math.max(0,...Object.values(S.heat||{}).map(Number));
 const BADGES=[
- {id:'deal1',e:'🤝',t:'Erster Deal',d:'Ersten Umsatz in der App eingetragen',ok:()=>S.deals.some(d=>!d.retro&&!d.storno)},
  {id:'m70',e:'💸',t:'Provision geknackt',d:'70 % in einem Monat',ok:()=>appMonths().some(m=>rev(m).pct>=70)},
  {id:'m100',e:'🏆',t:'Ziel erreicht',d:'100 % in einem Monat',ok:()=>appMonths().some(m=>rev(m).pct>=100)},
  {id:'m130',e:'🚀',t:'Überflieger',d:'130 % in einem Monat',ok:()=>appMonths().some(m=>rev(m).pct>=130)},
  {id:'m200',e:'👑',t:'Legende',d:'200 % in einem Monat',ok:()=>appMonths().some(m=>rev(m).pct>=200)},
  {id:'record',e:'⭐',t:'Allzeit-Rekord',d:'Beste Zielerreichung aller Zeiten',ok:()=>appMonths().some(m=>rev(m).pct>histBest())},
- {id:'big',e:'💎',t:'Big Deal',d:'Ein Vertrag über der Big-Deal-Schwelle',ok:()=>S.deals.some(d=>!d.retro&&+d.amount>+S.salary.bigThreshold)},
- {id:'deals5',e:'🖐️',t:'High Five',d:'5 Verträge in einem Monat',ok:()=>(records().most?.n||0)>=5},
  {id:'streak3',e:'🔥',t:'Serientäter',d:'3 Monate in Folge über 70 %',ok:()=>monthStreak()>=3&&appMonths().length>0},
  {id:'time5',e:'⏱️',t:'Am Ball',d:'5 Arbeitstage in Folge erfasst',ok:()=>timeStreak()>=5},
  {id:'time20',e:'📅',t:'Zeitprofi',d:'20 Arbeitstage erfasst',ok:()=>workedCount()>=20},
@@ -4320,7 +4341,7 @@ async function cardCanvas(m){
       g.fillStyle=Y;g.beginPath();g.arc(X(P.ist.length-1),YY(P.ist[P.ist.length-1]),13,0,Math.PI*2);g.fill()}
     g.font=`500 26px ${F}`;g.fillStyle=Y;g.fillRect(kx0,ky1+16,34,6);g.fillStyle=MU;g.fillText('Ist',kx0+46,ky1+26);g.setLineDash([10,8]);g.strokeStyle=MU;g.lineWidth=4;g.beginPath();g.moveTo(kx0+110,ky1+19);g.lineTo(kx0+150,ky1+19);g.stroke();g.setLineDash([]);g.fillText('Soll',kx0+162,ky1+26)}
   // Kacheln
-  const tiles=[['Abschlüsse',String(real.length),st.length?`${st.length} Storno`:'Verträge'],['Größter Deal',big?fmtE(big.amount):'–',big&&big.name?big.name:''],['Inbound',fmtE(r.inb),r.tot>0?fmtN(Math.max(0,r.inb)/r.tot*100,0)+' %':''],['Outbound',fmtE(r.out),r.tot>0?fmtN(Math.max(0,r.out)/r.tot*100,0)+' %':'']];
+  const tiles=[['Ziel',r.target?fmtE(r.target):'–',''],['Zielerreichung',fmtN(r.pct)+' %',''],['Inbound',fmtE(r.inb),r.tot>0?fmtN(Math.max(0,r.inb)/r.tot*100,0)+' %':''],['Outbound',fmtE(r.out),r.tot>0?fmtN(Math.max(0,r.out)/r.tot*100,0)+' %':'']];
   tiles.forEach((t,i)=>{const x=60+(i%2)*490,y=1340+Math.floor(i/2)*220;g.fillStyle='rgba(255,255,255,.06)';rr(g,x,y,470,200,32);g.fill();g.fillStyle=MU;g.font=`600 28px ${F}`;g.fillText(t[0].toUpperCase(),x+34,y+58);g.fillStyle=INK;g.font=`800 62px ${F}`;g.fillText(fit(g,t[1],400),x+34,y+130);g.fillStyle=MU;g.font=`500 28px ${F}`;g.fillText(fit(g,t[2],400),x+34,y+174)});
   // Footer
   g.fillStyle=Y;rr(g,60,1790,960,96,48);g.fill();g.fillStyle='#111318';g.font=`700 36px ${F}`;g.textAlign='center';
@@ -4371,7 +4392,7 @@ function closeWrap(){const el=document.getElementById('wrap');el.classList.add('
 function monthSlides(m){const r=rev(m);const pm=addM(m,-1);const rp=rev(pm);const st=monthStats(m);const real=r.ds.filter(d=>!d.retro);const big=real.reduce((b,d)=>!b||+d.amount>+b.amount?d:b,null);const sal=m>=S.settings.startMonth&&S.targets[m]?salary(m):null;const mn=MON[pD(m).getMonth()];const diff=r.pct-rp.pct;
   const sl=[{cls:'y',html:`<div class="wr-emo">🎬</div><div class="wr-k">Dein Rückblick</div><h2 class="wr-h">${mn}<br>${m.slice(0,4)}</h2><p class="wr-p">Tippe rechts für weiter.</p>`},
    {html:`<div class="wr-k">Umsatz</div><div class="wr-big">${fmtE(r.tot)}</div><p class="wr-p">${r.target?`Das sind <b>${fmtN(r.pct,1)} %</b> von deinem Ziel (${fmtE(r.target)}).`:''}</p>${rp.target?`<div class="wr-chip ${diff>=0?'up':'down'}">${diff>=0?'▲':'▼'} ${fmtN(Math.abs(diff),1)} Punkte zum ${MON[pD(pm).getMonth()]}</div>`:''}`,conf:r.pct>=70},
-   {html:`<div class="wr-k">Abschlüsse</div><div class="wr-big">${real.length||r.ds.length}</div><p class="wr-p">${big?`Dein größter Deal: <b>${fmtE(big.amount)}</b>${big.name&&!privOn()?' ('+pn(big.name)+')':''}.`:'Noch keine einzelnen Verträge.'}</p><div class="wr-split"><span>Inbound <b>${fmtE(r.inb)}</b></span><span>Outbound <b>${fmtE(r.out)}</b></span></div>`},
+   {html:`<div class="wr-k">Kanäle</div><div class="wr-split"><span>Inbound <b>${fmtE(r.inb)}</b></span><span>Outbound <b>${fmtE(r.out)}</b></span></div>`},
    {html:`<div class="wr-k">Arbeitszeit</div><div class="wr-big">${hm(st.ist)}</div><p class="wr-p">an ${st.days.filter(x=>x.w>0).length} Arbeitstagen, Saldo <b>${sgn(st.saldo)} h</b>, Urlaub ${one(st.urlaub)} Tage.</p>`},
    {cls:'y',html:`<div class="wr-emo">${r.pct>=100?'🏆':r.pct>=70?'💸':'💪'}</div><div class="wr-k">${sal?'Auszahlung '+MON[pD(addM(m,1)).getMonth()]:'Fazit'}</div>${sal?`<div class="wr-big">${fmtE(sal.total)}</div><p class="wr-p">davon variabel ${fmtE(sal.total-sal.base)}.</p>`:''}<p class="wr-p">${r.pct>=100?'Ziel erreicht. Genau so weiter!':r.pct>=70?'Provision gesichert. Nächster Monat: noch eine Stufe höher.':'Neuer Monat, neue Chance. Du holst dir das zurück.'}</p><button class="kk-go" style="background:rgba(17,19,24,.1);color:#111318;margin-top:18px" onclick="event.stopPropagation();const mm='${m}';closeWrap();setTimeout(()=>monthCard(mm),400)">📸 Als Bild teilen</button><button class="kk-go" style="background:#111318;color:#F9DC4A;margin-top:10px" onclick="event.stopPropagation();closeWrap()">Auf in den ${MON[pD(addM(m,1)).getMonth()]} 🚀</button>`,conf:r.pct>=100}];
   return sl}
@@ -4379,7 +4400,7 @@ function yearSlides(y){const ms=[...Array(12)].map((_,i)=>`${y}-${pad(i+1)}`);co
   return [{cls:'y',html:`<div class="wr-emo">🎆</div><div class="wr-k">Dein Jahr</div><h2 class="wr-h">${y}</h2><p class="wr-p">Tippe rechts für weiter.</p>`},
    {html:`<div class="wr-k">Umsatz im Jahr</div><div class="wr-big">${fmtE(tot)}</div><p class="wr-p">Ø Zielerreichung <b>${fmtN(avg)} %</b>.</p>`,conf:avg>=100},
    {html:`<div class="wr-k">Bester Monat</div><div class="wr-big">${best?fmtN(best.v)+' %':'–'}</div><p class="wr-p">${best?`Leistung im ${mLabel(best.src)}.`:''}</p>`,conf:true},
-   {html:`<div class="wr-k">In Zahlen</div><div class="wr-stats"><div><b>${deals}</b><small>Verträge</small></div><div><b>${R.tot.work}</b><small>Arbeitstage</small></div><div><b>${fmtN(R.tot.hours)}</b><small>Stunden</small></div><div><b>${badges}</b><small>Abzeichen</small></div></div>`},
+   {html:`<div class="wr-k">In Zahlen</div><div class="wr-stats"><div><b>${vals.length}</b><small>Monate</small></div><div><b>${R.tot.work}</b><small>Arbeitstage</small></div><div><b>${fmtN(R.tot.hours)}</b><small>Stunden</small></div><div><b>${badges}</b><small>Abzeichen</small></div></div>`},
    {cls:'y',html:`<div class="wr-emo">🚀</div><div class="wr-k">Auf ein starkes ${+y+1}</div><p class="wr-p">Danke für ein Jahr voller Calls, Deals und Durchhaltevermögen.</p><button class="kk-go" style="background:#111318;color:#F9DC4A;margin-top:18px" onclick="event.stopPropagation();closeWrap()">Los geht's</button>`}]}
 /* ---------- Freizeit-Tür (Wochenende, Urlaub, Feiertag) ---------- */
 const gateOn=()=>S.settings.gate!==false;
@@ -4407,7 +4428,7 @@ function gateScene(g){const tk=todayK();const nx=eodNextWork(tk);const ns=restNe
     halb:{cls:'g-vac',emo:'🍹',k:'Halber Urlaubstag',h:'Ab 12 Uhr ist Feierabend.',p:'Der Vormittag war Arbeit, der Rest gehört dir.',c:until?`Weiter ${WDL[nx.wd]} ab ${ns.st} Uhr`:''},
     hol:{cls:'g-hol',emo:'🎈',k:'Feiertag',h:g.name||'Feiertag',p:'Heute zählt nur eins: frei haben.',c:until?`Noch ${until} bis ${WDL[nx.wd]}`:''},
     sp:{cls:'g-hol',emo:g.name==='Silvester'?'🥂':'🎄',k:g.name,h:'Ab 12 Uhr ist frei.',p:'Genieß die Feiertage, die Zahlen laufen nicht weg.',c:''},
-    eve:{cls:'g-eve',emo:g.wk?'🎉':'🌙',k:g.wk?'Wochenende beginnt':'Feierabend',h:g.wk?'Ab ins Wochenende!':`Seit ${g.end||'–'} Uhr frei.`,p:(()=>{const a=actOf(tk);const w=worked((S.days[tk]||{}));return `Der Tag ist im Kasten: ${w!=null?hm(w):'–'}, ${a.demo} ${a.demo===1?'Demo':'Demos'}, ${a.ops.length} ${a.ops.length===1?'Opp':'Opps'}. Morgen geht's weiter.`})(),c:until?`Noch ${until} bis ${WDL[nx.wd]} ${ns.st} Uhr`:''},
+    eve:{cls:'g-eve',emo:g.wk?'🎉':'🌙',k:g.wk?'Wochenende beginnt':'Feierabend',h:g.wk?'Ab ins Wochenende!':`Seit ${g.end||'–'} Uhr frei.`,p:(()=>{const a=actOf(tk);const w=worked((S.days[tk]||{}));return `Der Tag ist im Kasten: ${w!=null?hm(w):'–'}. Morgen geht's weiter.`})(),c:until?`Noch ${until} bis ${WDL[nx.wd]} ${ns.st} Uhr`:''},
     krank:{cls:'g-sick',emo:'🫖',k:'Krank gemeldet',h:'Gute Besserung!',p:'Heute zählt nur, dass du wieder fit wirst. Leg das Handy weg.',c:''}}[g.t];
   return S1}
 function showGate(cb,preview){const g=preview?{t:preview,k:todayK(),name:preview==='hol'?'Tag der Deutschen Einheit':null,end:(S.days[todayK()]||{}).end||'17:00'}:gateState();if(!g){cb&&cb();return}GATE_CB=cb||null;GATE_PREV=!!preview;GATE_PT=preview||null;
@@ -4441,7 +4462,7 @@ function gateNo(){const el=document.getElementById('gate');if(!GATE_PREV){const 
   try{const F=fxStage();for(let i=0;i<20;i++)fxAdd({ch:pick(['🌴','☀️','🍹','🏖️','😎']),sz:30,x:Math.random()*F.W,y:-40,vy:60,g:180,tv:170,flut:110,delay:Math.random()*1.2,ttl:6})}catch(e){}}
 function gateBack(){showGate(GATE_CB,GATE_PT)}
 function dailyFlow(){if(LOCKED||MASK)return;if(document.getElementById('gate').classList.contains('on'))return;if(gateNeeded()){showGate(dailyFlow2);return}dailyFlow2()}
-function dailyFlow2(){const pm=addM(ymOf(new Date()),-1);
+function dailyFlow2(){return;const pm=addM(ymOf(new Date()),-1);
   if(pm>=S.settings.startMonth&&S.settings.lastWrap!==pm&&S.targets[pm]){S.settings.lastWrap=pm;save();
     const after=()=>{if(pm.endsWith('-12')&&S.settings.lastYearWrap!==pm.slice(0,4)){S.settings.lastYearWrap=pm.slice(0,4);save();showWrap('y',pm.slice(0,4),()=>maybeKickoff())}else maybeKickoff()};
     showWrap('m',pm,after);return}
@@ -4469,7 +4490,7 @@ let _egg=0,_eggT=0;
 function egg(ev){const n=Date.now();_egg=n-_eggT<700?_egg+1:1;_eggT=n;const lg=ev.currentTarget;lg.classList.remove('spin');void lg.offsetWidth;lg.classList.add('spin');if(_egg>=5){_egg=0;confetti();const q=[...QUOTES_WORK,...QUOTES_FREE];toast('🐝 '+q[Math.floor(Math.random()*q.length)])}}
 /* ---------- Touch-Icon ---------- */
 function setTouchIcon(){
-  if((S.settings.logo||'a')==='c'){const l=document.querySelector('link[rel=apple-touch-icon]');if(l)l.href='icon-180.png';return}
+  if(false){const l=document.querySelector('link[rel=apple-touch-icon]');if(l)l.href='icon-180.png';return}
   try{const svg=logoSvg(S.settings.logo);const img=new Image();img.onload=()=>{const c=document.createElement('canvas');c.width=c.height=180;const x=c.getContext('2d');x.drawImage(img,0,0,180,180);const url=c.toDataURL('image/png');
     let l=document.querySelector('link[rel=apple-touch-icon]');if(!l){l=document.createElement('link');l.rel='apple-touch-icon';document.head.appendChild(l)}l.href=url;
     };
@@ -4570,7 +4591,127 @@ async function syncConnect(){const o=document.getElementById('syO').value.trim()
   catch(e){const pwErr=typeof e==='string'&&/Passwort/.test(e);if(!validated||pwErr){SY=prev;saveSY()}else{saveSY()}toast(typeof e==='string'?e:'Keine Verbindung zu GitHub möglich');}}
 
 /* ---------- Start ---------- */
-load(); if(syncOn()){initialPulled=false;bootTs=S._ts||0;setTimeout(finishBoot,4000)} if(S.salary.provHist['2026-10']==null)S.salary.provHist['2026-10']=0; if(!S.settings.appName||['Takt','Zeitwerk','ClosingTime'].includes(S.settings.appName))S.settings.appName='Sales Dashboard'; S.deals.forEach(d=>{if(d.name==='Übernahme aus Excel'){d.name='';if(d.date<(S.settings.startMonth||'2026-11'))d.retro=true}});S.leads.forEach(l=>{if(l.note==='Übernahme aus Excel')l.note=''});if(!S.settings.name)S.settings.name='Alexander'; if(!LOGOS[S.settings.logo])S.settings.logo='a'; if(!S.settings.theme)S.settings.theme='auto'; _rawSave(); applyTheme(); setTouchIcon(); route(); paintSync(); if(syncOn()){pullNow('boot');idbSet(SYNC_KEY,JSON.parse(JSON.stringify(SY)))}else{idbGet(SYNC_KEY).then(v=>{if(v&&v.token&&!syncOn()){SY=v;try{localStorage.setItem(SYNC_KEY,JSON.stringify(SY))}catch(e){}initialPulled=false;bootTs=S._ts||0;setTimeout(finishBoot,4000);pullNow('boot');paintSync()}})} if(lockActive())showLock(); else setTimeout(()=>afterInitial(dailyFlow),500);
+function bigOld(m){const P=S.salary;const ds=dealsOf(m);const stM=ds.filter(d=>d.storno).map(d=>({...d,left:Math.abs(+d.amount)}));
+return ds.filter(d=>!d.retro&&!d.storno&&+d.amount>0).map(d=>{let v=+d.amount;
+    stM.filter(x=>x.left>0&&(x.ref?x.ref===d.id:((x.name||'')&&(x.name||'').trim().toLowerCase()===(d.name||'').trim().toLowerCase())||(!x.name&&Math.abs(x.left-v)<.01))).forEach(x=>{const c=Math.min(v,x.left);v-=c;x.left-=c});
+    return v}).filter(v=>v>+P.bigThreshold).reduce((s,v)=>s+v,0);}
+/* ---------- Datenschutz: nur Monatssummen, keine Einzelverträge/Opps/Forecast ---------- */
+function cleanData(){if(!S||!Array.isArray(S.deals))return false;let ch=false;if(!Array.isArray(S.leads))S.leads=[];
+  const real=S.deals.filter(d=>!d.retro);
+  if(real.length||S.deals.some(d=>d.name||d.cur||d.storno)){
+    S.bigSum=S.bigSum||{};
+    [...new Set(real.map(d=>d.date.slice(0,7)))].forEach(m=>{const b=bigOld(m);if(b>0)S.bigSum[m]=Math.round(((+S.bigSum[m]||0)+b)*100)/100});
+    const agg={};S.deals.forEach(d=>{const m=d.date.slice(0,7);const c=d.channel==='in'?'in':'out';agg[m]=agg[m]||{in:0,out:0};agg[m][c]+=+d.amount||0});
+    S.deals=[];Object.keys(agg).sort().forEach(m=>['in','out'].forEach(c=>{const v=Math.round(agg[m][c]*100)/100;if(v)S.deals.push({id:uid(),date:m+'-'+pad(dim(m)),amount:v,channel:c,name:'',retro:true})}));
+    ch=true}
+  if(S.deals.length){S.heat=S.heat||{};const ms=[...new Set(S.deals.map(d=>d.date.slice(0,7)))];
+    ms.forEach(m=>{const t=tgtOf(m);if(!t)return;const tot=S.deals.filter(d=>d.date.startsWith(m)).reduce((a,d)=>a+ +d.amount,0);const k=addM(m,1);if(m>=S.settings.startMonth){S.revSum=S.revSum||{};if(S.revSum[m]==null)S.revSum[m]=Math.round(tot*100)/100;if(S.heat[k]==null)S.heat[k]=Math.round(tot/t*1000)/10}});
+    S.deals=[];ch=true}
+  if(Array.isArray(S.leads)&&S.leads.length){S.leads=[];ch=true}
+  if(S.salary&&S.salary.compDays&&Object.keys(S.salary.compDays).length){S.salary.compDays={};ch=true}
+  if(S.act&&Object.keys(S.act).length){S.act={};ch=true}
+  if(S.forecast&&Object.keys(S.forecast).length){S.forecast={};ch=true}
+  if(S.closed&&S.closed.length){S.closed=[];ch=true}
+  if(S.fcSubs&&S.fcSubs.length){S.fcSubs=[];ch=true}
+  if(Array.isArray(S.leads)&&S.leads.some(l=>l.note)){S.leads.forEach(l=>{l.note=''});ch=true}
+  return ch}
+function dealSheet(){closeSheet();go('umsatz')}
+function leadSheet(){closeSheet();go('umsatz')}
+function carryBanner(){return ''}
+function actCard(){return ''}
+const mrVal=v=>v?String(Math.round(v*100)/100).replace('.',','):'';
+function mrNum(id){const t=((document.getElementById(id)||{}).value||'').trim();if(!t)return 0;const c=calcEval(t);return c!=null?c:(numIn(t)||0)}
+function mrSave(m){const inb=mrNum('mrIn'),out=mrNum('mrOut'),big=Math.max(0,mrNum('mrBig')),ld=Math.max(0,Math.round(mrNum('mrLd')));
+  if(big>inb+out+.005){toast('Big Deals können nicht höher sein als der Gesamtumsatz');return}
+  const dt=m+'-'+pad(dim(m));S.deals=S.deals.filter(d=>!d.date.startsWith(m));
+  if(inb)S.deals.push({id:uid(),date:dt,amount:Math.round(inb*100)/100,channel:'in',name:'',retro:true});
+  if(out)S.deals.push({id:uid(),date:dt,amount:Math.round(out*100)/100,channel:'out',name:'',retro:true});
+  S.bigSum=S.bigSum||{};if(big)S.bigSum[m]=Math.round(big*100)/100;else delete S.bigSum[m];
+  S.leads=S.leads.filter(l=>!l.date.startsWith(m));if(ld)S.leads.push({id:uid(),date:m+'-01',count:ld,note:''});
+  save();render();toast('Monatsergebnis gespeichert','ok')}
+function vUmsatz(){
+  const r=rev(CUR); const ls=leadsOf(CUR); const leadSum=ls.reduce((s,l)=>s+ +l.count,0);
+  const nextLv=LEVELS.find(l=>r.pct<l); const mn=MON[pD(CUR).getMonth()];
+  const y=CUR.slice(0,4); const months=[...Array(12)].map((_,i)=>`${y}-${pad(i+1)}`);
+  const yd=months.map(m=>({m,...rev(m)})); const ymax=Math.max(1,...yd.map(d=>Math.max(d.tot,d.target)));
+  const ytot=yd.reduce((s,d)=>s+d.tot,0), ytar=yd.reduce((s,d)=>s+d.target,0);
+  const bg=+((S.bigSum||{})[CUR])||0;
+  const fld=(id,l,v,im)=>`<div class="field"><label>${l}</label><input class="inp" id="${id}" inputmode="${im||'decimal'}" enterkeyhint="done" autocomplete="off" placeholder="0" value="${v}" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"></div>`;
+  return `${head()}
+  <div class="cols two">
+    <div class="panel">
+      <div class="row"><div class="lbl">Ist-Umsatz ${mn}</div><span class="sp"></span><button class="chip" onclick="targetSheet('${CUR}')">${ic('edit')} Ziel ${r.target?fmtE(r.target):'festlegen'}</button></div>
+      <div class="row" style="align-items:baseline;margin-top:10px"><div class="big">${fmtE(r.tot)}</div><span class="sp"></span><div class="mid gt" style="font-size:34px">${fmtN(r.pct,r.pct<10?1:0)} %</div></div>
+      ${rail(r.pct,[70,100,130])}
+      <div class="lbl">${!r.target?'Lege ein Monatsziel fest, um die Quote zu sehen.':nextLv?`Noch ${fmtE(r.target*nextLv/100-r.tot)} bis ${nextLv} %.`:'Über 200 %. Rekordverdächtig.'}</div>
+      <div style="border-top:1px solid var(--hair);margin:18px 0 0;padding-top:16px">
+        <div class="split">${r.tot?`<i style="flex:${Math.max(r.inb,0.0001)};background:var(--in)"></i><i style="flex:${Math.max(r.out,0.0001)};background:var(--out)"></i>`:'<i style="flex:1;background:var(--raise)"></i>'}</div>
+        <div class="figs" style="--n:2">
+          <div><div class="lbl"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--in);margin-right:6px"></span>Inbound</div><div class="v">${fmtE(r.inb)}</div><div class="s">${fmtP(r.target?r.inb/r.target*100:0,1)} vom Ziel</div></div>
+          <div><div class="lbl"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--out);margin-right:6px"></span>Outbound</div><div class="v">${fmtE(r.out)}</div><div class="s">${fmtP(r.target?r.out/r.target*100:0,1)} vom Ziel</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="row"><div class="ptl">${ic('trend','class="pi"')}Zielstufen</div><span class="sp"></span><span class="lbl">${fmtP(r.pct,1)} erreicht</span></div>
+      <div class="ladder">${LEVELS.map(l=>{const amt=r.target*l/100;const f=amt?Math.min(1,r.tot/amt):0;const hit=r.target&&r.pct>=l;const base=l===100;
+        return `<div class="lv2 ${hit?'hit':''} ${base?'base':''} ${l===nextLv&&r.target?'next':''}" ${base?`onclick="targetSheet('${CUR}')"`:''}>
+          <div class="lp">${l}<small>%</small></div>
+          <div class="lm"><div class="la"><b>${fmtE(amt)}</b><span>${base?'Dein Ziel, tippen zum Ändern':l===70?'Ab hier Provision':hit?'erreicht':'berechnet'}</span></div><div class="lb"><i style="width:${f*100}%"></i></div></div>
+          <div class="ls">${hit?ic('check'):base?ic('edit'):ic('lock')}</div></div>`}).join('')}</div>
+      ${r.target&&nextLv?`<div class="nextline">${ic('target')}<span>Nächste Stufe <b>${nextLv} %</b>: noch <b>${fmtE(r.target*nextLv/100-r.tot)}</b></span></div>`:''}
+    </div>
+  </div>
+
+  <div class="sh"><h2>${ic('edit','class="pi"')}Summen ${mn}</h2><span class="sp"></span><button class="chip" onclick="monthCard('${CUR}')">📸 Monatskarte</button></div>
+  <div class="panel">
+    <p class="hint" style="margin-top:0">Nur Summen, keine einzelnen Verträge. Du kannst rechnen, z. B. <b>1500+2500</b>. Gespeichert wird nur das Ergebnis.</p>
+    <div class="grid2">
+      ${fld('mrIn','Inbound gesamt in €',mrVal(r.inb))}
+      ${fld('mrOut','Outbound gesamt in €',mrVal(r.out))}
+      ${fld('mrBig','davon Big Deals in €',mrVal(bg))}
+      ${fld('mrLd','Angeforderte Leads',leadSum||'','numeric')}
+    </div>
+    <p class="hint">Big Deals: Summe aller Verträge über ${fmtE(S.salary.bigThreshold)}, zählt für den Big-Deal-Bonus.</p>
+    <button class="btn pri block" style="margin-top:12px" onclick="mrSave('${CUR}')">${ic('check')} Speichern</button>
+  </div>
+  <div style="margin-top:14px">
+    <div class="panel">
+      <div class="row"><div class="lbl">Jahr ${y}</div><span class="sp"></span><span class="lbl num">${fmtE(ytot)} von ${fmtE(ytar)}</span></div>
+      <div class="yr">${yd.map((d,i)=>`<div class="c ${d.m===CUR?'cur':''}" onclick="CUR='${d.m}';render()" data-tip="<b>${MON[i]}</b><br>Ist ${fmtE(d.tot)}<br>Ziel ${d.target?fmtE(d.target):'–'}${d.target?'<br>'+fmtP(d.pct,1):''}">${d.target?`<div class="tg" style="bottom:${d.target/ymax*110+20}px"></div>`:''}<i class="${d.tot?'':'none'}" style="height:${Math.max(3,d.tot/ymax*110)}px"></i><small>${MONS[i].slice(0,1)}</small></div>`).join('')}</div>
+      <p class="hint" style="margin-bottom:10px">Graue Linie: Monatsziel.</p>
+      <div class="grid2"><button class="btn sm block" onclick="yearTargets('${y}')">${ic('edit')} Monatsziele</button>${y<=S.settings.startMonth.slice(0,4)?`<button class="btn sm block" onclick="retroSheet('${y}')">${ic('range')} Nachtragen</button>`:''}</div>
+    </div>
+
+  </div>`;
+}
+function eodShow(k){k=k||todayK();const di=dayInfo(k);const e=di.e;const w=worked(e);if(w==null){toast('Für heute fehlt noch Beginn oder Ende');return}
+  const d0=pD(k),m=k.slice(0,7);const r=rev(m);const saldo=w-di.soll;const bal=balanceNow();
+  const mst=missionState(k);const mDone=mst.filter(Boolean).length;
+  let nx=eodNextWork(k);const vacB=S.settings.vacWarn!==false&&vacAhead(k);
+  let emo='🌙',head='Feierabend',msg=saldo>=-1/120?'Der Tag ist im Kasten. Morgen geht es weiter.':'Nicht jeder Tag ist lang. Morgen geht es weiter.';
+
+  if(vacB&&vacB.wd===1){const ok=!vacMissing(vacB).length;emo='🏖️';head='Schönen Urlaub!';msg=ok?`Alles erledigt und übergeben. Bis ${WDL[pD(vacB.back).getDay()]}, ${dmy(vacB.back)} Jetzt wird abgeschaltet.`:`${vacMissing(vacB).length} Punkte auf der Urlaubs-Checkliste sind noch offen. Zurück am ${WDL[pD(vacB.back).getDay()]}, ${dmy(vacB.back)}`}
+  const tips=[];if(vacB&&vacB.wd===1)nx=null;
+  if(r.target&&r.pct<70&&nx){const left=workdaysLeft(m,nx.k);if(left)tips.push(`🎯 Bis 70 % fehlen ${fmtE(r.target*.7-r.tot)}, noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'}`)}
+  const el=document.getElementById('eod');
+  el.innerHTML=`<div class="kk-in">
+    <div class="kk-top"><span>${WDL[d0.getDay()]}, ${d0.toLocaleDateString('de-DE',{day:'numeric',month:'long'})}</span><button class="kk-x" onclick="closeEod()" aria-label="Schließen">${ic('x')}</button></div>
+    <div class="kk-emo">${emo}</div>
+    <div class="kk-hi">Deine Tagesbilanz${S.settings.name?', '+esc(S.settings.name):''}</div>
+    <h2 class="kk-h">${head}</h2>
+    <p class="kk-msg">${msg}</p>
+    <div class="eod-sec"><div class="kk-lbl">⏱ Arbeitszeit</div><div class="kk-stats">
+      <div><small>Gearbeitet</small><b>${hm(w)}</b></div>
+      <div><small>Heute</small><b class="${saldo>=-1/120?'eod-p':'eod-n'}">${hmS(saldo)}</b></div>
+      <div><small>Stundenkonto</small><b class="${bal>=-1/120?'eod-p':'eod-n'}">${hmS(bal)}</b></div></div>
+      <div class="eod-t">${e.start}–${e.end} Uhr${+e.pause?` · ${e.pauses&&e.pauses.length>1?e.pauses.join(' + ')+' = ':''}${e.pause} min Pause`:''}</div></div>
+    ${tips.length?`<div class="kk-mis"><div class="kk-lbl">Für ${nx?(nx.k===ymd(new Date(d0.getTime()+864e5))?'morgen':WDL[nx.wd]):'die nächsten Tage'}</div>${tips.map(t=>`<div class="eod-tip">${t}</div>`).join('')}</div>`:''}
+    <button class="kk-go" onclick="closeEod()">${vacB&&vacB.wd===1?'Schönen Urlaub 🏖️':'Schönen Feierabend 🌙'}</button>
+  </div>`;
+  el.classList.remove('out');el.classList.add('on');lockScroll()}
+
+load(); cleanData(); if(syncOn()){initialPulled=false;bootTs=S._ts||0;setTimeout(finishBoot,4000)} if(S.salary.provHist['2026-10']==null)S.salary.provHist['2026-10']=0; S.settings.appName='Zeiterfassung';S.settings.logo='z';try{localStorage.removeItem('priv')}catch(e){} S.deals.forEach(d=>{if(d.name==='Übernahme aus Excel'){d.name='';if(d.date<(S.settings.startMonth||'2026-11'))d.retro=true}});S.leads.forEach(l=>{if(l.note==='Übernahme aus Excel')l.note=''});if(!S.settings.name)S.settings.name='Alexander';  if(!S.settings.theme)S.settings.theme='auto'; _rawSave(); applyTheme(); setTouchIcon(); route(); paintSync(); if(syncOn()){pullNow('boot');idbSet(SYNC_KEY,JSON.parse(JSON.stringify(SY)))}else{idbGet(SYNC_KEY).then(v=>{if(v&&v.token&&!syncOn()){SY=v;try{localStorage.setItem(SYNC_KEY,JSON.stringify(SY))}catch(e){}initialPulled=false;bootTs=S._ts||0;setTimeout(finishBoot,4000);pullNow('boot');paintSync()}})} if(lockActive())showLock(); else setTimeout(()=>afterInitial(dailyFlow),500);
 setInterval(()=>{if(!document.hidden&&VIEW==='home'&&!document.getElementById('sheet').classList.contains('on')&&document.activeElement.tagName!=='INPUT')render()},60000);
 </script>
 </body>
