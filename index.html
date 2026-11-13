@@ -520,6 +520,10 @@ textarea.inp{height:auto;padding:12px 14px}
 .hm td.live,.hm td.e.live{outline:2px dashed var(--ink);outline-offset:-3px}
 .gin-b{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit;margin:0}.gin-b .mr-i{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--accSoft);color:var(--acc);flex:none}.gin-b .mr-i svg{width:20px;height:20px}.gin-b b{display:block;font-size:16px}.gin-b small{display:block;color:var(--muted);font-size:13px;margin-top:2px}.gin-b .chev{margin-left:auto;color:var(--muted);width:18px;height:18px;flex:none}
 a.mr-cta{text-decoration:none}
+
+.hbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0 14px}.hbtns .btn{height:48px;padding:0 10px;justify-content:center;white-space:nowrap;font-size:15px;min-width:0;overflow:hidden;text-overflow:ellipsis}.hbtns .btn svg{flex:none}
+@media (max-width:380px){.hbtns .btn{font-size:13.5px;gap:6px}.t3 .tile .tv{font-size:19px}.t3 .tile .tl,.t3 .tile .ts{font-size:11px}.dchips .dch2,.dchips .dchip{font-size:12.5px}}
+.dchips{min-width:0}.dch2,.dchip{max-width:100%;white-space:nowrap}
 html.mask .app,html.mask .tabs,html.mask .side{display:none!important}
 #srf{position:fixed;inset:0;width:100%;height:100%;border:0;z-index:40;background:#F3F6FB;display:block}
 
@@ -1604,7 +1608,7 @@ html[data-theme=dark] .hp-c{border-color:color-mix(in srgb,var(--y) 60.0%,transp
    Eine Datei. Daten im localStorage (Schlüssel: quota_v1).
    ============================================================ */
 const LS_KEY='quota_v1';
-const APP_VERSION='146';const APP_SEMVER='3.13.0';const APP_DATE='2026-11-13';
+const APP_VERSION='147';const APP_SEMVER='3.13.1';const APP_DATE='2026-11-13';
 const verTxt=()=>{const d=pD(APP_DATE);return `Version ${APP_SEMVER} vom ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`};
 /* ---------- Auto-Update: prüft beim Öffnen, ob eine neuere Version online ist ---------- */
 let UPD_BUSY=false;
@@ -2158,7 +2162,7 @@ function startNow(){const n=new Date();todaySet('start',pad(n.getHours())+':'+pa
 function dayTile(){
   const d0=new Date(),tk=todayK(),m=ymOf(d0),di=dayInfo(tk),e=S.days[tk];
   const doy=Math.floor((d0-new Date(d0.getFullYear(),0,0))/864e5);
-  const isFinal=false; const left=workdaysLeft(m,tk); const uY=urlaubYear(String(d0.getFullYear())); const uL=uY.total-uY.used; const wT=e?worked(e):null;
+  const isFinal=false; const left=workdaysLeft(m,tk); const uM=(()=>{let n=0;for(let i=d0.getDate();i<=dim(m);i++){const k=`${m}-${pad(i)}`;const x=dayInfo(k);if(x.weekend||x.hol||x.sp)continue;const t=S.days[k]&&S.days[k].type;if(t==='urlaub')n+=1;else if(t==='halb')n+=.5}return n})();
   let status,icon,quote,free=false;
   if(e&&e.type==='urlaub'){status='Urlaub';icon='plane';free=true}
   else if(e&&e.type==='krank'){status='Krank gemeldet';icon='thermo';free=true;quote='Gute Besserung. Heute zählt nur das Gesundwerden.'}
@@ -2174,10 +2178,10 @@ function dayTile(){
   return `<div class="daytile dt-c ${isFinal?'final':''}">${seasonFx(se)}
     <div class="dtop"><span>KW ${isoWeek(d0)}</span><span class="sp"></span><span>${MON[d0.getMonth()]} ${d0.getFullYear()}</span></div>
     <div class="dmain"><div><div class="dw">${WDL[d0.getDay()]}<span class="dd">${d0.getDate()}. ${MON[d0.getMonth()]}</span></div></div><div class="dico">${ic(icon)}</div></div>
-    <div class="dchips"><span class="dchip">${free?ic('check'):ic('clock')}${free?'Heute ist frei':status}</span><span class="dch2" title="Urlaub und Feiertage sind schon abgezogen">${ic('brief')}<b>${left?one(left):'0'}</b> ${left===1?'Arbeitstag':'Arbeitstage'} übrig</span><span class="dch2">${ic('plane')}<b>${one(uL)}</b> ${uL===1?'Urlaubstag':'Urlaubstage'} übrig</span>${wT!=null?`<span class="dch2">${ic('clock')}<b>${hm(wT)}</b> gearbeitet</span>`:''}</div>
+    <div class="dchips"><span class="dchip">${free?ic('check'):ic('clock')}${free?'Heute ist frei':status}</span><span class="dch2" title="Urlaub und Feiertage sind schon abgezogen">${ic('brief')}<b>${left?one(left):'0'}</b> ${left===1?'Arbeitstag':'Arbeitstage'} übrig</span><span class="dch2">${ic('plane')}<b>${one(uM)}</b> ${uM===1?'Urlaubstag':'Urlaubstage'} im ${MON[d0.getMonth()]}</span></div>
     ${free?`<div class="dsub2">${status}</div>`:''}
     ${false?`<div class="finalbar">${ic('flag')}<div><b>Finaltag</b><span>Alles, was heute unterschrieben wird, zählt noch im ${MON[d0.getMonth()]}.</span></div></div>`:!free&&left>0&&left<=5?`<div class="endspurt">⏳ Endspurt: noch ${one(left)} ${left===1?'Arbeitstag':'Arbeitstage'}</div>`:''}
-    <div class="dbtns"><button class="dstart" onclick="editDay('${tk}')">${ic(e?'edit':'clock')} ${e?'Arbeitszeit bearbeiten':'Arbeitszeit eintragen'}</button><button class="dstart dsec" onclick="rangeSheet()">${ic('plane')} Urlaub planen</button></div>
+
   </div>`;
 }
 /* ---------- Aktivität: Demo-Calls & Opportunities (Tagesziel) ---------- */
@@ -2726,6 +2730,7 @@ function vHome(){
   <div class="title" style="margin-bottom:18px"><h1 class="hi">${(()=>{const fg={bday:'Happy Birthday',nye:'Guten Rutsch',xmas:'Frohe Weihnachten',xmas2:'Frohe Weihnachten',ny:'Frohes neues Jahr',ostern:'Frohe Ostern',rosi:'Alaaf',k1111:''}[(festOf()||{}).id];if(fg)return fg;const rs=restState();return rs?({eve:'Schönen Feierabend',vacgo:'Schönen Urlaub',wkend:'Schönes Wochenende',we:'Schönes Wochenende',hol:'Schönen Feiertag',sp:'Frohe Feiertage',urlaub:'Schönen Urlaub',krank:'Gute Besserung'}[rs.t]):greet()})()}<span style="white-space:nowrap">${nm} <span class="emo" ${festOf()?'onclick="festPlay(true)" style="cursor:pointer"':''}>${(()=>{const fe=festOf();if(fe)return fe.emo;const rs=restState();return rs?({eve:'🌙',vacgo:'🏖️',wkend:'🎉',we:'🏖️',hol:'🎈',sp:'🎄',urlaub:'✈️',krank:'🫖'}[rs.t]):greetEmo()})()}</span></span></h1></div>
   ${saveOk?'':`<div class="warn" style="margin-bottom:14px">${ic('alert')} Daten können hier nicht gespeichert werden. Bitte Backup nutzen.</div>`}
   ${dayTile()}
+  <div class="hbtns"><button class="btn pri" onclick="editDay('${tk}')">${ic(S.days[tk]?'edit':'clock')}${S.days[tk]?'Zeit bearbeiten':'Zeit eintragen'}</button><button class="btn" onclick="rangeSheet()">${ic('plane')}Urlaub planen</button></div>
   <div class="bento">
     ${vacCard()}
     <div class="t3">${B.tiles}</div>
@@ -3681,7 +3686,7 @@ function vVerlauf(){
   const maxAvg=Math.max(100,...valid.map(a=>a.v));
   const nk=addM(cur,1);const lastK=(()=>{let k=nk;for(let i=0;i<24;i++){if(S.heat[k]!=null)return k;k=addM(k,-1)}return null})();
   return `${head()}
-  <a class="panel mr-cta" href="#gehalt"><span class="mr-i">${ic('clock')}</span><div><b>${MON[pD(cur).getMonth()]} läuft, Auszahlung im ${MON[pD(nk).getMonth()]}</b><small>${S.heat[nk]!=null?'Stand '+fmtP(+S.heat[nk],1):'noch offen'} · Umsatz trägst du im Gehalt ein</small></div>${ic('right','class="chev"')}</a>
+
   
   ${VT==='trend'?trendsPanel():''}${VT==='ins'?insightsPanel():''}${VT==='hist'?`
   <div class="panel" style="margin-bottom:14px">
@@ -3729,7 +3734,7 @@ function vVerlauf(){
       <span class="k"><span class="sw" style="outline:2px dashed var(--ink);outline-offset:-2px"></span>läuft noch</span>
     </div>
   </div>
-  <p class="hint" style="margin:14px 4px 0">Zielerreichung ohne Urlaubsberücksichtigung, immer einen Monat verzögert: Umsatz im November steht im Dezember, weil die Provision im Folgemonat kommt. Die Werte kommen automatisch aus dem Umsatz, den du im Gehalt einträgst. Die Farbe ergibt sich daraus: unter 50, unter 70, 70 bis 100 oder ab 100 %.</p>`:''}`;
+`:''}`;
 }
 function gSheet(m){const s=salary(m);
   openSheet(`${sheetHead('Umsatz '+MON[pD(m).getMonth()]+' '+m.slice(0,4))}
